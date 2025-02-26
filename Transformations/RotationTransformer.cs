@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Rotation
+public static class RotationTransformer
 {
     public enum RotationPlane
     {

@@ -2,36 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class Tetrahedron : MonoBehaviour
+public class Tetrahedron 
 {
-    private Vector3[] vertices = new Vector3[]
+    private Vector4[] _vertices;
+    public Vector4[] vertices
     {
-        new Vector3(1, 1, 1),
-        new Vector3(-1, -1, 1),
-        new Vector3(-1, 1, -1),
-        new Vector3(1, -1, -1)
-    };
+        get { return _vertices; }
+        set
+        {
+            if (_vertices.Length != 4)
+            {
+                throw new System.ArgumentException("Tetrahedron must have 4 vertices");
+            }
+            _vertices = value;
+        }
+    }
 
-    private int[] triangles = new int[]
+    public Tetrahedron(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
+        : this(new Vector4[4] { a, b, c, d }) { }
+    public Tetrahedron(Vector4[] vertices)
     {
-        0, 2, 1, // First triangle
-        0, 3, 2, // Second triangle
-        0, 1, 3, // Third triangle
-        1, 2, 3  // Fourth triangle
-    };
-
-    private void Start()
-    {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Mesh mesh = new Mesh();
-        mesh.name = "Tetrahedron";
-
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-
-        mesh.RecalculateNormals();
-
-        meshFilter.mesh = mesh;
+        this.vertices = vertices;
     }
 }
