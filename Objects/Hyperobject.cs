@@ -6,7 +6,7 @@ public abstract class Hyperobject
 {
     public readonly Tetrahedron[] hypermesh;
     public Vector4 position;
-    public Hyperrotation rotation;
+    public Rotation4 rotation;
 
     public Hyperobject(Tetrahedron[] hypermesh)
     {
