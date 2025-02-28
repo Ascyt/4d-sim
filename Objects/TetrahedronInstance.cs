@@ -13,14 +13,6 @@ public class TetrahedronInstance : MonoBehaviour
         new Vector3(1, -1, -1)
     };
 
-    private int[] triangles = new int[]
-    {
-        0, 2, 1, // First triangle
-        0, 3, 2, // Second triangle
-        0, 1, 3, // Third triangle
-        1, 2, 3  // Fourth triangle
-    };
-
     private void Start()
     {
         MeshFilter meshFilter = GetComponent<MeshFilter>();
@@ -28,7 +20,7 @@ public class TetrahedronInstance : MonoBehaviour
         mesh.name = "Tetrahedron";
 
         mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        //mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
 

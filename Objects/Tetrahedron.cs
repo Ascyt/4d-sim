@@ -8,9 +8,9 @@ public class Tetrahedron
     public Vector4[] vertices
     {
         get { return _vertices; }
-        set
+        set 
         {
-            if (_vertices.Length != 4)
+            if (value.Length != 4)
             {
                 throw new System.ArgumentException("Tetrahedron must have 4 vertices");
             }
@@ -23,5 +23,10 @@ public class Tetrahedron
     public Tetrahedron(Vector4[] vertices)
     {
         this.vertices = vertices;
+    }
+
+    public void PlaceInWorld()
+    {
+        
     }
 }
