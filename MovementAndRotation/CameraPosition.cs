@@ -12,12 +12,17 @@ public class CameraPosition : MonoBehaviour
 
     private CameraMovement cameraMovement;
 
+    public delegate void OnValuesUpdate();
+    public OnValuesUpdate onValuesUpdate;
+
     private void Awake()
     {
         instance = this;
 
         cameraMovement = GetComponent<CameraMovement>();
         cameraMovement.onPositionUpdate += OnPositionUpdate;
+
+        this.onValuesUpdate += OnValuesUpdateSelf;
     }
     private void Start()
     {
@@ -27,7 +32,12 @@ public class CameraPosition : MonoBehaviour
     public Vector4 position = new Vector4(0,0,0,0);
     public Rotation4 rotation = new Rotation4(0,0,0,0,0,0);
 
-    public void OnPositionUpdate()
+    private void OnPositionUpdate()
+    {
+        onValuesUpdate();
+    }
+
+    private void OnValuesUpdateSelf()
     {
         positionText.text = 
             $"x: {position.x}\n" +

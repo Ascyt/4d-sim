@@ -16,6 +16,7 @@ public class TetrahedronInstantiater : MonoBehaviour
     }
     private void Start()
     {
+        return;
         Tetrahedron[] t = new Tesseract().hypermesh;
         for (int i = 0; i < t.Length; i++)
         {
