@@ -49,7 +49,7 @@ public class TetrahedronInstantiater : MonoBehaviour
         }
 
         mesh.RecalculateNormals();
-        /*
+        
         // Check if normals are facing upwards, flip if necessary
         if (Vector3.Dot(mesh.normals[0], Vector3.up) < 0)
         {
@@ -57,7 +57,7 @@ public class TetrahedronInstantiater : MonoBehaviour
         }
 
         mesh.RecalculateBounds();
-        */
+        
         meshFilter.mesh = mesh;
         meshRenderer.material = new Material(tetrahedronMaterial);
         meshRenderer.material.color = Color.white;
