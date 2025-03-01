@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tetrahedron 
+public class Tetrahedron : RenderableObject
 {
     private Vector4[] _vertices;
-    public Vector4[] vertices
+    public new Vector4[] vertices
     {
         get { return _vertices; }
         set 
@@ -20,9 +20,8 @@ public class Tetrahedron
 
     public Tetrahedron(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
         : this(new Vector4[4] { a, b, c, d }) { }
-    public Tetrahedron(Vector4[] vertices)
+    public Tetrahedron(Vector4[] vertices) : base(vertices)
     {
-        this.vertices = vertices;
     }
 
     public void PlaceInWorld()

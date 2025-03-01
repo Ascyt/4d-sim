@@ -22,9 +22,8 @@ public class Hyperscene : MonoBehaviour
     }
     private void Start()
     {
-        Tesseract t = new Tesseract(new Vector4(0, 0, 0, 2));
-
-        objects.Add(t);
+        objects.Add(new Tesseract(new Vector4(0, 0, 0, 2)));
+        objects.Add(new Cube(new Vector4(0, 0, 2, 2)));
     }
 
     public void RenderObjects()
@@ -45,9 +44,9 @@ public class Hyperscene : MonoBehaviour
 
         foreach (Hyperobject obj in objects) 
         {
-            foreach (Tetrahedron t in obj.hypermesh)
+            foreach (RenderableObject ro in obj.hypermesh)
             {
-                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, t.vertices, obj.position, angle);
+                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, ro.vertices, obj.position, angle);
 
                 Vector3 averagePos = new Vector3(
                     transformedVertices.Select(v => v.x).Average(), 

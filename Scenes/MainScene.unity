@@ -701,7 +701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f08b83ac2ec9b4d9130bfd48eba5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tetrahedronMaterial: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  tetrahedronMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0

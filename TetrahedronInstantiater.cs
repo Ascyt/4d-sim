@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class TetrahedronInstantiater : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class TetrahedronInstantiater : MonoBehaviour
 
     public GameObject InstantiateTetrahedron(Vector3[] vertices, Vector4 position)
     {
+        if (VertexIsFaulty(position))
+        {
+            return null;
+        }
+
         Vector3[] filteredVertices = RemoveFaultyVertices(GetUniqueVertices(vertices), position);
 
         GameObject newGameObject = new GameObject("Tetrahedron");
@@ -55,7 +61,7 @@ public class TetrahedronInstantiater : MonoBehaviour
         mesh.RecalculateNormals();
         
         // Check if normals are facing upwards, flip if necessary
-        if (Vector3.Dot(mesh.normals[0], Vector3.up) < 0)
+        if (Vector3.Dot(mesh.normals[0], Vector3.up) > 0)
         {
             FlipTriangles(mesh);
         }
@@ -90,9 +96,7 @@ public class TetrahedronInstantiater : MonoBehaviour
         {
             Vector3 pos = vert + position;
 
-            if ((!float.IsNaN(vert.x) && !float.IsNaN(vert.y) && !float.IsNaN(vert.z)) &&
-                (!float.IsInfinity(vert.x) && !float.IsInfinity(vert.y) && !float.IsInfinity(vert.z)) &&
-                (pos.x > -10 && pos.x < 10 && pos.y > -10 && pos.y < 10 && pos.z > -10 && pos.z < 10))
+            if (!VertexIsFaulty(pos))
             {
                 output.Add(vert);
             }
@@ -100,6 +104,10 @@ public class TetrahedronInstantiater : MonoBehaviour
         return output.ToArray();
     }
 
+    private static bool VertexIsFaulty(Vector3 vertex)
+    =>  (float.IsNaN(vertex.x) || float.IsNaN(vertex.y) || float.IsNaN(vertex.z)) ||
+        (float.IsInfinity(vertex.x) || float.IsInfinity(vertex.y) || float.IsInfinity(vertex.z)) /*||
+        (vertex.x < -10 || vertex.x > 10 || vertex.y < -10 || vertex.y > 10 || vertex.z < -10 || vertex.z > 10)*/;
     private static void FlipTriangles(Mesh mesh)
     {
         int[] triangles = mesh.triangles;
