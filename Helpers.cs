@@ -59,4 +59,41 @@ public static class Helpers
         // Calculate the wc column-vector
         wc = Cross4(wd, wa, wb);
     }
+
+    public static Matrix4x4 CreatePerspectiveViewingTransform(Vector4 from, Vector4 to, Vector4 up, Vector4 over)
+    {
+        Vector4 wa, wb, wc, wd;
+        GetPerspectiveViewingTransformMatrix(from, to, up, over, out wa, out wb, out wc, out wd);
+
+        Matrix4x4 matrix = new Matrix4x4();
+
+        // Assign the column vectors to the matrix
+        matrix[0, 0] = wa.x;
+        matrix[1, 0] = wa.y;
+        matrix[2, 0] = wa.z;
+        matrix[3, 0] = wa.w;
+
+        matrix[0, 1] = wb.x;
+        matrix[1, 1] = wb.y;
+        matrix[2, 1] = wb.z;
+        matrix[3, 1] = wb.w;
+
+        matrix[0, 2] = wc.x;
+        matrix[1, 2] = wc.y;
+        matrix[2, 2] = wc.z;
+        matrix[3, 2] = wc.w;
+
+        matrix[0, 3] = wd.x;
+        matrix[1, 3] = wd.y;
+        matrix[2, 3] = wd.z;
+        matrix[3, 3] = wd.w;
+
+        return matrix;
+    }
+
+    public static Vector4 GetTransformedCoordinate(Matrix4x4 matrix, Vector4 camera, Vector4 position)
+    {
+        Vector4 transformed = matrix * (position - camera);
+        return transformed;
+    }
 }

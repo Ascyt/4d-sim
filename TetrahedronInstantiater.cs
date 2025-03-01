@@ -14,16 +14,6 @@ public class TetrahedronInstantiater : MonoBehaviour
     {
         instance = this;
     }
-    private void Start()
-    {
-        return;
-        Tetrahedron[] t = new Tesseract().hypermesh;
-        for (int i = 0; i < t.Length; i++)
-        {
-            Vector3 delta = new Vector3(t[i].vertices.Select(v => v.w).Average(), 0, 0);
-            InstantiateTetrahedron(t[i], delta * 0f);
-        }
-    }
 
     private int[] triangles = new int[]
     {
@@ -33,14 +23,11 @@ public class TetrahedronInstantiater : MonoBehaviour
         2, 3, 0
     };
 
-    public GameObject InstantiateTetrahedron(Tetrahedron tetrahedron, Vector3 position)
+    public GameObject InstantiateTetrahedron(Vector3[] vertices, Vector4 position)
     {
-        // TODO: Use perspective projection https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
-        Vector3[] vertices = tetrahedron.vertices.Select(v => new Vector3(v.x, v.y, v.z)).ToArray();
-
         Vector3[] uniqueVertices = GetUniqueVertices(vertices);
 
-        GameObject newGameObject = new GameObject($"Tetrahedron");
+        GameObject newGameObject = new GameObject("Tetrahedron");
 
         newGameObject.transform.position = position;
 
