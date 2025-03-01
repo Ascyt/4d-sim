@@ -25,7 +25,7 @@ public class TetrahedronInstantiater : MonoBehaviour
 
     public GameObject InstantiateTetrahedron(Vector3[] vertices, Vector4 position)
     {
-        Vector3[] uniqueVertices = GetUniqueVertices(vertices);
+        Vector3[] filteredVertices = RemoveFaultyVertices(GetUniqueVertices(vertices), position);
 
         GameObject newGameObject = new GameObject("Tetrahedron");
 
@@ -38,7 +38,11 @@ public class TetrahedronInstantiater : MonoBehaviour
         mesh.vertices = vertices;
 
 
-        if (uniqueVertices.Length == 3)
+        if (filteredVertices.Length <= 2)
+        {
+            return null;
+        }
+        else if (filteredVertices.Length == 3)
         {
             // Create a triangle
             mesh.triangles = new int[] { 0, 1, 2 };
@@ -67,7 +71,6 @@ public class TetrahedronInstantiater : MonoBehaviour
 
     private static Vector3[] GetUniqueVertices(Vector3[] verts)
     {
-        // Use a list to store unique vertices
         List<Vector3> uniqueVerts = new List<Vector3>();
 
         foreach (var vert in verts)
@@ -79,6 +82,22 @@ public class TetrahedronInstantiater : MonoBehaviour
         }
 
         return uniqueVerts.ToArray();
+    }
+    private static Vector3[] RemoveFaultyVertices(Vector3[] verts, Vector3 position)
+    {
+        List<Vector3> output = new List<Vector3>();
+        foreach (var vert in verts)
+        {
+            Vector3 pos = vert + position;
+
+            if ((!float.IsNaN(vert.x) && !float.IsNaN(vert.y) && !float.IsNaN(vert.z)) &&
+                (!float.IsInfinity(vert.x) && !float.IsInfinity(vert.y) && !float.IsInfinity(vert.z)) &&
+                (pos.x > -10 && pos.x < 10 && pos.y > -10 && pos.y < 10 && pos.z > -10 && pos.z < 10))
+            {
+                output.Add(vert);
+            }
+        }
+        return output.ToArray();
     }
 
     private static void FlipTriangles(Mesh mesh)

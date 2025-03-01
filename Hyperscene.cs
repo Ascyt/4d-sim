@@ -38,7 +38,7 @@ public class Hyperscene : MonoBehaviour
         Vector4 from = cameraPos.position;
         Vector4 to = from + new Vector4(0, 0, 0, 1);
         Vector4 up = from + new Vector4(0, 1, 0, 0);
-        Vector4 over = from + new Vector4(1, 0, 0, 0);
+        Vector4 over = from + new Vector4(0, 0, 1, 0);
         Helpers.GetViewingTransformMatrix(from, to, up, over, out Vector4 wa, out Vector4 wb, out Vector4 wc, out Vector4 wd);
 
         float angle = Mathf.PI / 4f;
@@ -49,32 +49,6 @@ public class Hyperscene : MonoBehaviour
             {
                 Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, t.vertices, obj.position, angle);
 
-                bool invalid = false;
-                foreach (Vector3 v in transformedVertices)
-                {
-                    if (float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z))
-                    {
-                        invalid = true;
-                        break;
-                    }
-                    if (float.IsInfinity(v.x) || float.IsInfinity(v.y) || float.IsInfinity(v.z))
-                    {
-                        invalid = true;
-                        break;
-                    }
-
-                    /*if (v.x < -10 || v.x > 10 || v.y < -10 || v.y > 10 || v.z < -10 || v.z > 10)
-                    {
-                        invalid = true;
-                        break;
-                    }*/
-                }
-
-                if (invalid)
-                {
-                    continue;
-                }
-
                 Vector3 averagePos = new Vector3(
                     transformedVertices.Select(v => v.x).Average(), 
                     transformedVertices.Select(v => v.y).Average(),
@@ -83,7 +57,9 @@ public class Hyperscene : MonoBehaviour
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
                 GameObject instance = TetrahedronInstantiater.instance.InstantiateTetrahedron(transformedVertices, averagePos);
-                instantiatedObjects.Add(instance);
+
+                if (instance != null)
+                    instantiatedObjects.Add(instance);
             }
         }
     }
