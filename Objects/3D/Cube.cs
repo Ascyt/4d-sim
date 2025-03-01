@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cube : Hyperobject
 {
-    public Cube() : base(new Tetrahedron[]
+    public Cube(Vector4 position) : base(new Tetrahedron[]
     {
         new Tetrahedron(
             new Vector4(0, 0, 0, 0),
@@ -36,7 +36,7 @@ public class Cube : Hyperobject
             new Vector4(1, 1, 1, 0),
             new Vector4(0, 0, 1, 0)
             )
-    })
+    }, position)
     {
         
     }

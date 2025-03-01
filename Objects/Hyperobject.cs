@@ -8,8 +8,9 @@ public abstract class Hyperobject
     public Vector4 position;
     public Rotation4 rotation;
 
-    public Hyperobject(Tetrahedron[] hypermesh)
+    public Hyperobject(Tetrahedron[] hypermesh, Vector4 position)
     {
         this.hypermesh = hypermesh;
+        this.position = position;
     }
 }

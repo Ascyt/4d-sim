@@ -91,9 +91,11 @@ public static class Helpers
         return matrix;
     }
 
-    public static Vector4 GetTransformedCoordinate(Matrix4x4 matrix, Vector4 camera, Vector4 position)
+    public static Vector3 GetTransformedCoordinate(Matrix4x4 matrix, Vector4 camera, Vector4 position, float angle)
     {
         Vector4 transformed = matrix * (position - camera);
-        return transformed;
+        Vector3 withoutW = new Vector3(transformed.x, transformed.y, transformed.z);
+        float distance = transformed.w * Mathf.Tan(angle / 2f);
+        return withoutW / (transformed.w * distance);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tesseract : Hyperobject
 {
-    public Tesseract() : base(GenerateTetrahedrons().ToArray())
+    public Tesseract(Vector4 position) : base(GenerateTetrahedrons().ToArray(), position)
     {
 
     }
