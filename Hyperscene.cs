@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -42,19 +43,24 @@ public class Hyperscene : MonoBehaviour
         float angle = Mathf.PI / 4f;
 
         foreach (Hyperobject obj in objects) 
-        { 
-            Vector3 objPos = Helpers.GetTransformedCoordinate(transformationMatrix, cameraPos.position, obj.position, angle);
-
+        {
             foreach (Tetrahedron t in obj.hypermesh)
-            {   
+            {
                 Vector3[] transformedVertices = new Vector3[t.vertices.Length];
                 for (int i = 0; i < t.vertices.Length; i++)
                 {
-                    Vector4 transformedVertex = Helpers.GetTransformedCoordinate(transformationMatrix, cameraPos.position, t.vertices[i], angle);
-                    transformedVertices[i] = new Vector3(transformedVertex.x, transformedVertex.y, transformedVertex.z);
+                    Vector4 vertexPos = t.vertices[i] + obj.position;
+                    Vector3 transformedVertex = Helpers.GetTransformedCoordinate(transformationMatrix, cameraPos.position, vertexPos, angle);
+                    transformedVertices[i] = transformedVertex;
                 }
+                Vector3 averagePos = new Vector3(
+                    transformedVertices.Select(v => v.x).Average(), 
+                    transformedVertices.Select(v => v.y).Average(),
+                    transformedVertices.Select(v => v.z).Average());
 
-                GameObject instance = TetrahedronInstantiater.instance.InstantiateTetrahedron(transformedVertices, objPos);
+                transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
+
+                GameObject instance = TetrahedronInstantiater.instance.InstantiateTetrahedron(transformedVertices, averagePos);
                 instantiatedObjects.Add(instance);
             }
         }
