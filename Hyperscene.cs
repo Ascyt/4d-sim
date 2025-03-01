@@ -62,6 +62,12 @@ public class Hyperscene : MonoBehaviour
                         invalid = true;
                         break;
                     }
+
+                    /*if (v.x < -10 || v.x > 10 || v.y < -10 || v.y > 10 || v.z < -10 || v.z > 10)
+                    {
+                        invalid = true;
+                        break;
+                    }*/
                 }
 
                 if (invalid)

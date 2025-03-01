@@ -59,7 +59,7 @@ public class TetrahedronInstantiater : MonoBehaviour
         mesh.RecalculateBounds();
         
         meshFilter.mesh = mesh;
-        meshRenderer.material = new Material(tetrahedronMaterial);
+        meshRenderer.material = tetrahedronMaterial;
         meshRenderer.material.color = Color.white;
 
         return newGameObject;
