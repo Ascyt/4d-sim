@@ -9,6 +9,8 @@ public class CameraPosition : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI positionText;
+    [SerializeField]
+    private TextMeshProUGUI rotationText;
 
     private CameraMovement cameraMovement;
 
@@ -44,5 +46,12 @@ public class CameraPosition : MonoBehaviour
             $"y: {position.y}\n" +
             $"z: {position.z}\n" +
             $"w: {position.w}";
+        rotationText.text =
+            $"xy: {rotation.xy * Mathf.Rad2Deg}°\n" +
+            $"xz: {rotation.xz * Mathf.Rad2Deg}°\n" +
+            $"yz: {rotation.yz * Mathf.Rad2Deg}°\n" +
+            $"xw: {rotation.xw * Mathf.Rad2Deg}°\n" +
+            $"yw: {rotation.yw * Mathf.Rad2Deg}°\n" +
+            $"zw: {rotation.zw * Mathf.Rad2Deg}°";
     }
 }
