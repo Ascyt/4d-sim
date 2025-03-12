@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     public float movementSpeed;
 
-    private const bool USE_DVORAK = true;
+    private const bool USE_DVORAK = false;
     private static KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
     private static KeyCode MoveLeft         = USE_DVORAK ? KeyCode.A : KeyCode.A;
     private static KeyCode MoveUp           = KeyCode.Space;

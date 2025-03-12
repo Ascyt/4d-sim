@@ -4,13 +4,13 @@ using UnityEngine;
 
 public abstract class Hyperobject
 {
-    public readonly Tetrahedron[] hypermesh;
+    public readonly ConnectedVertices[] vertices;
     public Vector4 position;
     public Rotation4 rotation;
 
-    public Hyperobject(Tetrahedron[] hypermesh, Vector4 position)
+    public Hyperobject(ConnectedVertices[] vertices, Vector4 position)
     {
-        this.hypermesh = hypermesh;
+        this.vertices = vertices;
         this.position = position;
     }
 }

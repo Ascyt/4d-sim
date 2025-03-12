@@ -44,9 +44,9 @@ public class Hyperscene : MonoBehaviour
 
         foreach (Hyperobject obj in objects) 
         {
-            foreach (RenderableObject ro in obj.hypermesh)
+            foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
-                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, ro.vertices, obj.position, angle);
+                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, connectedVertices.vertices, obj.position, angle);
 
                 Vector3 averagePos = new Vector3(
                     transformedVertices.Select(v => v.x).Average(), 
@@ -55,7 +55,7 @@ public class Hyperscene : MonoBehaviour
 
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
-                GameObject instance = TetrahedronInstantiater.instance.InstantiateTetrahedron(transformedVertices, averagePos);
+                GameObject instance = ObjectInstantiator.instance.InstantiateObject(transformedVertices, averagePos);
 
                 if (instance != null)
                     instantiatedObjects.Add(instance);
