@@ -1,33 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraRotation : MonoBehaviour
 {
-
-    [SerializeField]
-    public float movementSpeed;
-
-    private const bool USE_DVORAK = false;
-
     private CameraPosition cameraPos;
 
-    public delegate void OnPositionUpdate();
-    public OnPositionUpdate onPositionUpdate;
+    public delegate void OnRotationUpdate();
+    public OnRotationUpdate onRotationUpdate;
+
+    public Slider xySlider;
+    public Slider xzSlider;
+    public Slider yzSlider;
+    public Slider xwSlider;
+    public Slider ywSlider;
+    public Slider zwSlider;
 
     private void Awake()
     {
         cameraPos = GetComponent<CameraPosition>();
     }
 
-    private void Update()
+    public void OnSliderChange()
     {
-        float speed = movementSpeed * Time.deltaTime;
-        bool rotationUpdated = false;
+        cameraPos.rotation = new Rotation4(xySlider.value, xzSlider.value, yzSlider.value, xwSlider.value, ywSlider.value, zwSlider.value);
 
-        if (rotationUpdated)
-        {
-            onPositionUpdate();
-        }
+        onRotationUpdate();
     }
 }

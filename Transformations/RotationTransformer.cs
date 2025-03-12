@@ -15,7 +15,18 @@ public static class RotationTransformer
         ZW
     }
 
-    public static Vector4 GetRotation(Vector4 point, RotationPlane plane, float angle)
+    public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
+    {
+        return point
+            .Rotate(RotationPlane.XY, rotation.xy)
+            .Rotate(RotationPlane.XZ, rotation.xz)
+            .Rotate(RotationPlane.YZ, rotation.yz)
+            .Rotate(RotationPlane.XW, rotation.xw)
+            .Rotate(RotationPlane.YW, rotation.yw)
+            .Rotate(RotationPlane.ZW, rotation.zw);
+    }
+
+    public static Vector4 Rotate(this Vector4 point, RotationPlane plane, float angle)
     {
         float cos = Mathf.Cos(angle);
         float sin = Mathf.Sin(angle);

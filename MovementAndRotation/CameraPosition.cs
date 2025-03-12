@@ -13,6 +13,7 @@ public class CameraPosition : MonoBehaviour
     private TextMeshProUGUI rotationText;
 
     private CameraMovement cameraMovement;
+    private CameraRotation cameraRotation;
 
     public delegate void OnValuesUpdate();
     public OnValuesUpdate onValuesUpdate;
@@ -22,19 +23,22 @@ public class CameraPosition : MonoBehaviour
         instance = this;
 
         cameraMovement = GetComponent<CameraMovement>();
-        cameraMovement.onPositionUpdate += OnPositionUpdate;
+        cameraMovement.onPositionUpdate += OnPositionOrRotationUpdate;
+
+        cameraRotation = GetComponent<CameraRotation>();
+        cameraRotation.onRotationUpdate += OnPositionOrRotationUpdate;
 
         this.onValuesUpdate += OnValuesUpdateSelf;
     }
     private void Start()
     {
-        OnPositionUpdate();
+        OnPositionOrRotationUpdate();
     }
 
     public Vector4 position = new Vector4(0,0,0,0);
     public Rotation4 rotation = new Rotation4(0,0,0,0,0,0);
 
-    private void OnPositionUpdate()
+    private void OnPositionOrRotationUpdate()
     {
         onValuesUpdate();
     }

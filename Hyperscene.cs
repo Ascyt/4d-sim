@@ -35,10 +35,13 @@ public class Hyperscene : MonoBehaviour
         instantiatedObjects.Clear();
 
         Vector4 origin = cameraPos.position;
+        Rotation4 rotation = cameraPos.rotation;
+
         Vector4 from = new Vector4(0, 0, 0, 0);
         Vector4 to = new Vector4(0, 0, 0, 1);
         Vector4 up = new Vector4(0, 1, 0, 0);
         Vector4 over = new Vector4(0, 0, 1, 0);
+
         Helpers.GetViewingTransformMatrix(from, to, up, over, out Vector4 wa, out Vector4 wb, out Vector4 wc, out Vector4 wd);
 
         float angle = Mathf.PI / 4f;
@@ -49,7 +52,14 @@ public class Hyperscene : MonoBehaviour
             {
                 Vector4 pos = obj.position - origin;
 
-                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, connectedVertices.vertices, pos, angle);
+                // Transform vertices so camera rotation and position is 0
+                Vector4[] verticesRelativeToCamera = connectedVertices.vertices
+                    .Select(v => (v + pos).Rotate(-rotation))
+                    .Where(v => v.w > 0)
+                    .ToArray();
+
+                // Project the vertices to 3D
+                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, angle);
 
                 Vector3 averagePos = new Vector3(
                     transformedVertices.Select(v => v.x).Average(), 

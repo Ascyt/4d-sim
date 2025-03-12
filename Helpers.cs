@@ -62,14 +62,14 @@ public static class Helpers
     }
 
     // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
-    public static Vector3[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4[] vertices, Vector4 delta, float angle)
+    public static Vector3[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4[] vertices, float angle)
     {
         float t = 1f / Mathf.Tan(angle / 2f);
         Vector3[] result = new Vector3[vertices.Length];
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            Vector4 v = (vertices[i] + delta) - camera;
+            Vector4 v = vertices[i] - camera;
 
             float s = t / Vector4.Dot(v, wd);
 

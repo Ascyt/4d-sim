@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ViewCameraMovement : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class ViewCameraMovement : MonoBehaviour
     }
     private void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         precision = Input.GetKey(KeyCode.LeftAlt) ? precisionChange : 1;
 
         MoveControls();
