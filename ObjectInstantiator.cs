@@ -35,10 +35,6 @@ public class ObjectInstantiator : MonoBehaviour
 
         // Compute the convex hull using MIConvexHull.
         // The returned hull contains Faces, where each face has a set of vertices.
-
-        foreach (var p in points)
-            Debug.Log("Point: " + p);
-
         var convexHullResult = ConvexHull.Create<MIVertex, DefaultConvexFace<MIVertex>>(vertices);
 
         if (convexHullResult.Outcome != ConvexHullCreationResultOutcome.Success)
