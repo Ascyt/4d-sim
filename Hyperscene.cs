@@ -24,9 +24,9 @@ public class Hyperscene : MonoBehaviour
     {
         objects.Add(new Axes());
 
-        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
+        //objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
 
-        objects.Add(new Tesseract(new Vector4(0, 0, 0, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan));
+        objects.Add(new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan));
         objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow));
 
         objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta));

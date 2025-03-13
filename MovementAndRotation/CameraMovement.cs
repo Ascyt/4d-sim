@@ -6,6 +6,8 @@ public class CameraMovement : MonoBehaviour
 {
     [SerializeField]
     public float movementSpeed;
+    [SerializeField]
+    public bool heightIsIndependentOfRotation;
 
     private const bool USE_DVORAK = false;
     private static KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
@@ -47,12 +49,20 @@ public class CameraMovement : MonoBehaviour
 
         if (Input.GetKey(MoveUp))
         {
-            delta += new Vector4(0, speed, 0, 0);
+            if (heightIsIndependentOfRotation)
+                cameraPos.position += new Vector4(0, speed, 0, 0);
+            else
+                delta += new Vector4(0, speed, 0, 0);
+
             positionUpdated = true;
         }
         if (Input.GetKey(MoveDown))
         {
-            delta += new Vector4(0, -speed, 0, 0);
+            if (heightIsIndependentOfRotation)
+                cameraPos.position += new Vector4(0, -speed, 0, 0);
+            else
+                delta += new Vector4(0, -speed, 0, 0);
+
             positionUpdated = true;
         }
 
