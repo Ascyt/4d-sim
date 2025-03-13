@@ -69,9 +69,6 @@ public class Hyperscene : MonoBehaviour
                 // Project the vertices to 3D
                 Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, angle);
 
-                if (transformedVertices.Length == 0)
-                    continue;
-
                 Vector3 averagePos = new Vector3(
                     transformedVertices.Select(v => v.x).Average(), 
                     transformedVertices.Select(v => v.y).Average(),

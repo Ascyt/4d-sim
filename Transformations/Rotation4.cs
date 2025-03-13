@@ -18,6 +18,6 @@ public struct Rotation4
     public static Rotation4 operator -(Rotation4 a)
     {
         float tau = Mathf.PI * 2;
-        return new Rotation4(tau - a.xy, tau - a.xz, tau - a.yz, tau - a.xw, tau - a.yw, tau - a.zw);
+        return new Rotation4((tau - a.xy) % tau, (tau - a.xz) % tau, (tau - a.yz) % tau, (tau - a.xw) % tau, (tau - a.yw) % tau, (tau - a.zw) % tau);
     }
 }
