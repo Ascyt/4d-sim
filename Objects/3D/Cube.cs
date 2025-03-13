@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class Cube : Hyperobject
 {
-    public Cube(Vector4 position) : base(new ConnectedVertices[]
+    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
-            new Vector4(0, 0, 0, 0),
-            new Vector4(1, 0, 0, 0),
-            new Vector4(0, 1, 0, 0),
-            new Vector4(1, 1, 0, 0),
-            new Vector4(0, 0, 1, 0),
-            new Vector4(1, 0, 1, 0),
-            new Vector4(0, 1, 1, 0),
-            new Vector4(1, 1, 1, 0)
-            )
+            connectionMethod,
+
+            new Vector4[] {
+                new Vector4(-.5f, -.5f, -.5f, -.5f),
+                new Vector4(.5f, -.5f, -.5f, -.5f),
+                new Vector4(-.5f, .5f, -.5f, -.5f),
+                new Vector4(.5f, .5f, -.5f, -.5f),
+                new Vector4(-.5f, -.5f, .5f, -.5f),
+                new Vector4(.5f, -.5f, .5f, -.5f),
+                new Vector4(-.5f, .5f, .5f, -.5f),
+                new Vector4(.5f, .5f, .5f, -.5f)
+            }
+        )
     }, position)
     {
         

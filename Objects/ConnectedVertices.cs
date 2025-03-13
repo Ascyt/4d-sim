@@ -4,10 +4,19 @@ using UnityEngine;
 
 public class ConnectedVertices 
 {
-    public Vector4[] vertices;
-
-    public ConnectedVertices(params Vector4[] vertices)
+    public enum ConnectionMethod
     {
+        Solid, Wireframe, Vertices
+    }
+
+    public ConnectionMethod connectionMethod;
+    public Vector4[] vertices;
+    public int[,] connections;
+
+    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, int[,] connections=null)
+    {
+        this.connectionMethod = connectionMethod;
         this.vertices = vertices;
+        this.connections = connections;
     }
 }

@@ -18,15 +18,32 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public GameObject InstantiateObject(Vector3[] points, Vector3 position)
+    public GameObject InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, int[,] connections=null)
+    {
+        if (points.Any(p => IsVector3NaNOrInfinity(p)))
+        {
+            return null;
+        }
+
+        switch (connectionMethod)
+        {
+            case ConnectedVertices.ConnectionMethod.Solid:
+                return InstantiateObjectSolid(points, position);
+            case ConnectedVertices.ConnectionMethod.Wireframe:
+                return InstantiateObjectWireframe(points, position, connections);
+            case ConnectedVertices.ConnectionMethod.Vertices:
+                return InstantiateObjectVertices(points, position);
+        }
+
+        Debug.LogError("Unknown ConnectionMethod");
+        return null;
+    }
+
+    private GameObject InstantiateObjectSolid(Vector3[] points, Vector3 position)
     {
         if (points == null || points.Length < 4)
         {
             Debug.LogError("At least 4 non-coplanar points are needed to compute a 3D convex hull.");
-            return null;
-        }
-        if (points.Any(p => IsVector3NaNOrInfinity(p)))
-        {
             return null;
         }
 
@@ -100,7 +117,69 @@ public class ObjectInstantiator : MonoBehaviour
 
         return obj;
     }
+
+
+    // Creates a parent GameObject with sphere children placed at the given vertex positions.
+    private GameObject InstantiateObjectVertices(Vector3[] points, Vector3 position)
+    {
+        GameObject parent = new GameObject("VertexObject");
+        parent.transform.position = position;
+
+        foreach (Vector3 pt in points)
+        {
+            GameObject vertexSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            vertexSphere.transform.parent = parent.transform;
+            vertexSphere.transform.localPosition = pt;
+            vertexSphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+        }
+
+        return parent;
+    }
+
+    // Creates the wireframe object that connects every vertex to every other vertex.
+
+    // This method creates a wireframe by instantiating vertices and connecting specific vertices
+    // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
+    private GameObject InstantiateObjectWireframe(Vector3[] points, Vector3 position, int[,] connectedVertices)
+    {
+        // Create the basic vertex GameObjects.
+        GameObject wireframeParent = InstantiateObjectVertices(points, position);
+        wireframeParent.name = "WireframeObject";
+
+        if (connectedVertices.GetLength(1) != 2)
+        {
+            Debug.LogError("Connected vertices must be matrix of [n, 2]");
+            return null;
+        }
+
+        // For each connection, create a child GameObject with a LineRenderer.
+        for (int i = 0; i < connectedVertices.GetLength(0); i++)
+        {
+            // Create a child GameObject for the line segment.
+            GameObject lineObject = new GameObject("WireframeLine_" + i);
+            // Set as child of the parent,
+            // so that the line positions can be specified in local space.
+            lineObject.transform.parent = wireframeParent.transform;
+            lineObject.transform.localPosition = Vector3.zero;
+
+            // Add and configure the LineRenderer.
+            LineRenderer lr = lineObject.AddComponent<LineRenderer>();
+            lr.useWorldSpace = false; // use local positions to match the spheres.
+            lr.positionCount = 2; // Each connection is just 2 points.
+            lr.SetPosition(0, points[connectedVertices[i, 0]]);
+            lr.SetPosition(1, points[connectedVertices[i, 1]]);
+
+            // Set width and material.
+            lr.startWidth = 0.01f;
+            lr.endWidth = 0.01f;
+            Material lineMat = material;
+            lineMat.color = Color.white;
+            lr.material = lineMat;
+        }
+
+        return wireframeParent;
+    }
     bool IsVector3NaNOrInfinity(Vector3 vector)
-        => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
-           float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
+            => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
+               float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
 }
