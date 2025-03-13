@@ -10,6 +10,11 @@ public class ViewCameraMovement : MonoBehaviour
     [Tooltip("How much the actions should get divided by when the Alt key is pressed")]
     private float precisionChange;
     private float precision;
+
+    private bool isRotating = false;
+    private bool isRotatingAround = false;
+    private bool isPanning = false;
+
     private void Start()
     {
         distanceFromTarget = defaultDistanceFromTarget;
@@ -21,6 +26,21 @@ public class ViewCameraMovement : MonoBehaviour
             return;
 
         precision = Input.GetKey(KeyCode.LeftAlt) ? precisionChange : 1;
+
+        if (Input.GetMouseButtonDown(0))
+            isRotating = true;
+        if (!Input.GetMouseButton(0))
+            isRotating = false;
+
+        if (Input.GetMouseButtonDown(1))
+            isRotatingAround = true;
+        if (!Input.GetMouseButton(1))
+            isRotatingAround = false;
+
+        if (Input.GetMouseButtonDown(2))
+            isPanning = true;
+        if (!Input.GetMouseButton(2))
+            isPanning = false;
 
         MoveControls();
         RotationControls();
@@ -72,25 +92,24 @@ public class ViewCameraMovement : MonoBehaviour
     private float panSensitivity;
     private void RotationControls()
     {
-        bool isRotating = Input.GetMouseButton(0);
-        bool isRotatingAround = Input.GetMouseButton(1);
-        bool isPanning = Input.GetMouseButton(2);
-        int boolCount = (isRotating?1:0) + (isRotatingAround?1:0) + (isPanning?1:0);
+        bool anyMouseDown = isRotating || isRotatingAround || isPanning;
 
-        if (boolCount == 1)
+        if (anyMouseDown)
         {
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
             {
                 // lock the cursor
                 mouseOrigin = MousePosition.GetCursorPosition();
+                Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
-        else if (boolCount == 0 && mouseOrigin != null) // null check is to make sure it only happens once
+        else if (mouseOrigin != null) // null check is to make sure it only happens once
         {
             // unlock the cursor
+            Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            MousePosition.SetCursorPosition(mouseOrigin ?? throw new Exception("Achievement earned: How did we get here?"));
+            MousePosition.SetCursorPosition(mouseOrigin ?? new MousePosition.Point(0, 0));
 
             mouseOrigin = null;
             return;
