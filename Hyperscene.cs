@@ -22,12 +22,14 @@ public class Hyperscene : MonoBehaviour
     }
     private void Start()
     {
-        objects.Add(new Point(new Vector4(0, 0, 0, 0)));
+        objects.Add(new Axes());
 
-        objects.Add(new Tesseract(new Vector4(0, 0, 0, 2), ConnectedVertices.ConnectionMethod.Solid));
-        objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid));
+        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
 
-        objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe));
+        objects.Add(new Tesseract(new Vector4(0, 0, 0, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan));
+        objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow));
+
+        objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta));
     }
 
     public void RenderObjects()
@@ -78,7 +80,7 @@ public class Hyperscene : MonoBehaviour
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
                 GameObject instance = ObjectInstantiator.instance
-                    .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.connections);
+                    .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections);
 
                 if (instance != null)
                     instantiatedObjects.Add(instance);

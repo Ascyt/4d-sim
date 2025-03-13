@@ -13,10 +13,13 @@ public class ConnectedVertices
     public Vector4[] vertices;
     public int[,] connections;
 
-    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, int[,] connections=null)
+    public Color color;
+
+    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[,] connections=null)
     {
         this.connectionMethod = connectionMethod;
         this.vertices = vertices;
+        this.color = color;
         this.connections = connections;
     }
 }

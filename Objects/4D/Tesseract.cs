@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Tesseract : Hyperobject
 {
-    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod) : base(new ConnectedVertices[]
+    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
 
              new Vector4[] {
                 new Vector4(-.5f, -.5f, -.5f, -.5f), // 0
-                new Vector4(.5f, -.5f, -.5f, -.5f), // .5f
+                new Vector4(.5f, -.5f, -.5f, -.5f), // 1
                 new Vector4(.5f, .5f, -.5f, -.5f), // 2
                 new Vector4(-.5f, .5f, -.5f, -.5f), // 3
                 new Vector4(-.5f, .5f, .5f, -.5f), // 4
@@ -28,6 +28,8 @@ public class Tesseract : Hyperobject
                 new Vector4(.5f, -.5f, .5f, .5f), // 14
                 new Vector4(-.5f, -.5f, .5f, .5f)  // 15
             },
+
+            color,
 
             connections: new int[,]
             {
