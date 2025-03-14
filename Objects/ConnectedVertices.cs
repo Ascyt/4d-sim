@@ -12,14 +12,16 @@ public class ConnectedVertices
     public ConnectionMethod connectionMethod;
     public Vector4[] vertices;
     public int[,] connections;
+    public float? vertexScale;
 
     public Color color;
 
-    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[,] connections=null)
+    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[,] connections=null, float? vertexScale=null)
     {
         this.connectionMethod = connectionMethod;
         this.vertices = vertices;
         this.color = color;
         this.connections = connections;
+        this.vertexScale = vertexScale;
     }
 }

@@ -17,7 +17,9 @@ public class Axes : Hyperobject
             Color.red,
 
             connections: new int[,]
-                { { 0, 1 } }
+                { { 0, 1 } },
+
+            vertexScale: 1f
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
@@ -30,7 +32,9 @@ public class Axes : Hyperobject
             Color.green,
 
             connections: new int[,]
-                { { 0, 1 } }
+                { { 0, 1 } },
+
+            vertexScale: 1f
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
@@ -43,7 +47,9 @@ public class Axes : Hyperobject
             new Color(0f, 0.5f, 1f),
 
             connections: new int[,]
-                { { 0, 1 } }
+                { { 0, 1 } },
+
+            vertexScale: 1f
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
@@ -56,7 +62,9 @@ public class Axes : Hyperobject
             Color.yellow,
 
             connections: new int[,]
-                { { 0, 1 } }
+                { { 0, 1 } },
+
+            vertexScale: 1f
         ),
 
         new ConnectedVertices(
@@ -66,7 +74,9 @@ public class Axes : Hyperobject
                 new Vector4(0, 0, 0, 0)
             },
 
-            Color.black
+            Color.black,
+
+            vertexScale: 2f
         ),
     }, Vector4.zero)
     {

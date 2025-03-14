@@ -18,7 +18,7 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public GameObject InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null)
+    public GameObject InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
     {
         if (points.Any(p => IsVector3NaNOrInfinity(p)))
         {
@@ -30,9 +30,9 @@ public class ObjectInstantiator : MonoBehaviour
             case ConnectedVertices.ConnectionMethod.Solid:
                 return InstantiateObjectSolid(points, position, color);
             case ConnectedVertices.ConnectionMethod.Wireframe:
-                return InstantiateObjectWireframe(points, position, color, connections);
+                return InstantiateObjectWireframe(points, position, color, connections, vertexScale);
             case ConnectedVertices.ConnectionMethod.Vertices:
-                return InstantiateObjectVertices(points, position, color);
+                return InstantiateObjectVertices(points, position, color, vertexScale);
         }
 
         Debug.LogError("Unknown ConnectionMethod");
@@ -121,7 +121,7 @@ public class ObjectInstantiator : MonoBehaviour
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private GameObject InstantiateObjectVertices(Vector3[] points, Vector3 position, Color color)
+    private GameObject InstantiateObjectVertices(Vector3[] points, Vector3 position, Color color, float? vertexScale)
     {
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
@@ -131,7 +131,7 @@ public class ObjectInstantiator : MonoBehaviour
             GameObject vertexSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             vertexSphere.transform.parent = parent.transform;
             vertexSphere.transform.localPosition = pt;
-            vertexSphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+            vertexSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f) * (vertexScale ?? 1f);
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
             mr.material = new Material(material);
@@ -145,10 +145,10 @@ public class ObjectInstantiator : MonoBehaviour
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private GameObject InstantiateObjectWireframe(Vector3[] points, Vector3 position, Color color, int[,] connectedVertices)
+    private GameObject InstantiateObjectWireframe(Vector3[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
     {
         // Create the basic vertex GameObjects.
-        GameObject wireframeParent = InstantiateObjectVertices(points, position, color);
+        GameObject wireframeParent = InstantiateObjectVertices(points, position, color, vertexScale);
         wireframeParent.name = "WireframeObject";
 
         if (connectedVertices.GetLength(1) != 2)

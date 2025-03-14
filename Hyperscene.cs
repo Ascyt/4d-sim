@@ -83,7 +83,7 @@ public class Hyperscene : MonoBehaviour
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
                 GameObject instance = ObjectInstantiator.instance
-                    .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections);
+                    .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
                 if (instance != null)
                     instantiatedObjects.Add(instance);
@@ -108,7 +108,7 @@ public class Hyperscene : MonoBehaviour
                 .ToArray();
 
             GameObject instance = ObjectInstantiator.instance
-                .InstantiateObject(transformedVertices, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections);
+                .InstantiateObject(transformedVertices, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
             if (instance != null)
                 instantiatedObjects.Add(instance);
