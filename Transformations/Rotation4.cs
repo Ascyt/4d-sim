@@ -23,7 +23,7 @@ public struct Rotation4
         yw = Helpers.Mod(yw, tau);
         zw = Helpers.Mod(zw, tau);
         xy = Helpers.Mod(xy, tau);
-        xz = Helpers.Mod(yz, tau);
+        xz = Helpers.Mod(xz, tau);
         yz = Helpers.Mod(yz, tau);
     }
 
