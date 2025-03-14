@@ -17,14 +17,31 @@ public class CameraRotation : MonoBehaviour
     public Slider ywSlider;
     public Slider zwSlider;
 
+    public float rotationSpeed;
+
     private void Awake()
     {
         cameraPos = GetComponent<CameraPosition>();
     }
 
+    private void Update()
+    {
+        
+    }
+
+    public void UpdateSliderValues()
+    {
+        xwSlider.value = cameraPos.rotation.xw;
+        ywSlider.value = cameraPos.rotation.yw;
+        zwSlider.value = cameraPos.rotation.zw;
+        xySlider.value = cameraPos.rotation.xy;
+        xzSlider.value = cameraPos.rotation.xz;
+        yzSlider.value = cameraPos.rotation.yz;
+    }
+
     public void OnSliderChange()
     {
-        cameraPos.rotation = new Rotation4(xySlider.value, xzSlider.value, yzSlider.value, xwSlider.value, ywSlider.value, zwSlider.value);
+        cameraPos.rotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
 
         onRotationUpdate();
     }
