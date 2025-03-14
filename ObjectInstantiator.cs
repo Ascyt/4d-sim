@@ -20,10 +20,7 @@ public class ObjectInstantiator : MonoBehaviour
 
     public (GameObject, List<Material>)? InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
     {
-        if (points.Any(p => IsVector3NaNOrInfinity(p)))
-        {
-            return null;
-        }
+        points = points.Where(p => !IsVector3NaNOrInfinity(p)).ToArray();
 
         switch (connectionMethod)
         {
@@ -43,7 +40,6 @@ public class ObjectInstantiator : MonoBehaviour
     {
         if (points == null || points.Length < 4)
         {
-            Debug.LogError("At least 4 non-coplanar points are needed to compute a 3D convex hull.");
             return null;
         }
 
@@ -58,7 +54,7 @@ public class ObjectInstantiator : MonoBehaviour
 
         if (convexHullResult.Outcome != ConvexHullCreationResultOutcome.Success)
         {
-            Debug.LogError("Convex hull generation failed: " + convexHullResult.ErrorMessage);
+            //Debug.LogError("Convex hull generation failed: " + convexHullResult.ErrorMessage);
             return null;
         }
 
@@ -173,6 +169,11 @@ public class ObjectInstantiator : MonoBehaviour
         // For each connection, create a child GameObject with a LineRenderer.
         for (int i = 0; i < connectedVertices.GetLength(0); i++)
         {
+            if (connectedVertices[i, 0] >= points.Length || connectedVertices[i, 1] >= points.Length)
+            {
+                continue;
+            }
+
             // Create a child GameObject for the line segment.
             GameObject lineObject = new GameObject("WireframeLine_" + i);
             // Set as child of the parent,

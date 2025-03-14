@@ -60,7 +60,7 @@ public class Hyperscene : MonoBehaviour
         Rotation4 rotation = cameraPos.rotation;
 
         Vector4 from = new Vector4(0, 0, 0, 0);
-        Vector4 to = new Vector4(0, 0, 0, 1);
+        Vector4 to = new Vector4(0, 0, 0, -1);
         Vector4 up = new Vector4(0, 1, 0, 0);
         Vector4 over = new Vector4(0, 0, 1, 0);
 
@@ -77,10 +77,13 @@ public class Hyperscene : MonoBehaviour
                 // Transform vertices so camera rotation and position is 0
                 Vector4[] verticesRelativeToCamera = connectedVertices.vertices
                     .Select(v => (v + pos).RotateNeg(rotation))
+                    .Where(v => v.w > 0)
                     .ToArray();
 
-                if (verticesRelativeToCamera.Any(v => v.w < 0))
+                if (verticesRelativeToCamera.Length == 0)
+                {
                     continue;
+                }
 
                 // Project the vertices to 3D
                 Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, angle);
