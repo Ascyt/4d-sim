@@ -34,6 +34,9 @@ public class Hyperscene : MonoBehaviour
 
         objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta));
 
+        objects.Add(new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green));
+
+
         fixedAxes = new Axes();
 
         RenderObjects();
@@ -73,7 +76,7 @@ public class Hyperscene : MonoBehaviour
 
                 // Transform vertices so camera rotation and position is 0
                 Vector4[] verticesRelativeToCamera = connectedVertices.vertices
-                    .Select(v => (v + pos).Rotate(-rotation))
+                    .Select(v => (v + pos).RotateNeg(rotation))
                     .ToArray();
 
                 if (verticesRelativeToCamera.Any(v => v.w < 0))
@@ -110,7 +113,7 @@ public class Hyperscene : MonoBehaviour
         foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
         {
             Vector4[] rotatedVertices = connectedVertices.vertices
-                .Select(v => v.Rotate(-rotation))
+                .Select(v => v.RotateNeg(rotation))
                 .ToArray();
 
             Vector3[] transformedVertices = rotatedVertices

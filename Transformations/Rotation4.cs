@@ -31,7 +31,7 @@ public struct Rotation4
     {
         float tau = Mathf.PI * 2f;
         Rotation4 newRotation = new Rotation4(tau - a.xw, tau - a.yw, tau - a.zw, tau - a.xy, tau - a.xz, tau - a.yz);
-
+    
         newRotation.ModuloPlanes();
         return newRotation;
     }
