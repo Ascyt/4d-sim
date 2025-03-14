@@ -10,12 +10,12 @@ public class CameraMovement : MonoBehaviour
     private const bool USE_DVORAK = true;
     private static KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
     private static KeyCode MoveLeft         = USE_DVORAK ? KeyCode.A : KeyCode.A;
-    private static KeyCode MoveUp           = KeyCode.Space;
-    private static KeyCode MoveDown         = KeyCode.LeftShift;
+    private static KeyCode MoveUp           = USE_DVORAK ? KeyCode.Period : KeyCode.E;
+    private static KeyCode MoveDown         = USE_DVORAK ? KeyCode.Quote : KeyCode.Q; 
     private static KeyCode MoveForwards     = USE_DVORAK ? KeyCode.Comma : KeyCode.W;
-    private static KeyCode MoveBackwards    = USE_DVORAK ? KeyCode.O : KeyCode.S;
-    private static KeyCode MoveAna          = USE_DVORAK ? KeyCode.Period : KeyCode.E;
-    private static KeyCode MoveKata         = USE_DVORAK ? KeyCode.Quote : KeyCode.Q;
+    private static KeyCode MoveBackwards    = USE_DVORAK ? KeyCode.O : KeyCode.S;   
+    private static KeyCode MoveAna          = KeyCode.Space;   
+    private static KeyCode MoveKata         = KeyCode.LeftShift;
 
     private CameraPosition cameraPos;
 
