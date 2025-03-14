@@ -13,6 +13,7 @@ public class Hyperscene : MonoBehaviour
     public Hyperobject fixedAxes;
 
     private List<GameObject> instantiatedObjects = new();
+    private List<Material> instantiatedMaterials = new();
 
     private CameraPosition cameraPos;
 
@@ -45,6 +46,12 @@ public class Hyperscene : MonoBehaviour
             Destroy(obj);
         }
         instantiatedObjects.Clear();
+
+        foreach (Material m in instantiatedMaterials)
+        {
+            Destroy(m);
+        }
+        instantiatedMaterials.Clear();
 
         Vector4 origin = cameraPos.position;
         Rotation4 rotation = cameraPos.rotation;
@@ -82,11 +89,14 @@ public class Hyperscene : MonoBehaviour
 
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
-                GameObject instance = ObjectInstantiator.instance
+                (GameObject, List<Material>)? instance = ObjectInstantiator.instance
                     .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
                 if (instance != null)
-                    instantiatedObjects.Add(instance);
+                {
+                    instantiatedObjects.Add(instance.Value.Item1);
+                    instantiatedMaterials.AddRange(instance.Value.Item2);
+                }
             }
         }
 
@@ -107,11 +117,14 @@ public class Hyperscene : MonoBehaviour
                 .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
                 .ToArray();
 
-            GameObject instance = ObjectInstantiator.instance
+            (GameObject, List<Material>)? instance = ObjectInstantiator.instance
                 .InstantiateObject(transformedVertices, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
             if (instance != null)
-                instantiatedObjects.Add(instance);
+            {
+                instantiatedObjects.Add(instance.Value.Item1);
+                instantiatedMaterials.AddRange(instance.Value.Item2);
+            }
         }
     }
 }

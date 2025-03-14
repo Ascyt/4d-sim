@@ -18,7 +18,7 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public GameObject InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
+    public (GameObject, List<Material>)? InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
     {
         if (points.Any(p => IsVector3NaNOrInfinity(p)))
         {
@@ -39,7 +39,7 @@ public class ObjectInstantiator : MonoBehaviour
         return null;
     }
 
-    private GameObject InstantiateObjectSolid(Vector3[] points, Vector3 position, Color color)
+    private (GameObject, List<Material>)? InstantiateObjectSolid(Vector3[] points, Vector3 position, Color color)
     {
         if (points == null || points.Length < 4)
         {
@@ -49,6 +49,8 @@ public class ObjectInstantiator : MonoBehaviour
 
         // Convert Unity Vector3 points to MIVertex objects.
         MIVertex[] vertices = points.Select(p => new MIVertex(p)).ToArray();
+
+        List<Material> materials = new();
 
         // Compute the convex hull using MIConvexHull.
         // The returned hull contains Faces, where each face has a set of vertices.
@@ -113,18 +115,22 @@ public class ObjectInstantiator : MonoBehaviour
         MeshRenderer mr = obj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
 
-        mr.material = new Material(material);
+        Material m = new Material(material);
+        mr.material = m;
         mr.material.color = color;
 
-        return obj;
+        materials.Add(m);
+
+        return (obj, materials);
     }
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private GameObject InstantiateObjectVertices(Vector3[] points, Vector3 position, Color color, float? vertexScale)
+    private (GameObject, List<Material>)? InstantiateObjectVertices(Vector3[] points, Vector3 position, Color color, float? vertexScale)
     {
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
+        List<Material> materials = new();
 
         foreach (Vector3 pt in points)
         {
@@ -134,21 +140,28 @@ public class ObjectInstantiator : MonoBehaviour
             vertexSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f) * (vertexScale ?? 1f);
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
-            mr.material = new Material(material);
+            Material m = new Material(material);
+            materials.Add(m);
+            mr.material = m;
             mr.material.color = color;
         }
 
-        return parent;
+        return (parent, materials);
     }
 
     // Creates the wireframe object that connects every vertex to every other vertex.
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private GameObject InstantiateObjectWireframe(Vector3[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
+    private (GameObject, List<Material>)? InstantiateObjectWireframe(Vector3[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
     {
         // Create the basic vertex GameObjects.
-        GameObject wireframeParent = InstantiateObjectVertices(points, position, color, vertexScale);
+        (GameObject, List<Material>)? vertices = InstantiateObjectVertices(points, position, color, vertexScale);
+        if (vertices is null)
+            return null;
+
+        GameObject wireframeParent = vertices.Value.Item1;
+        List<Material> materials = vertices.Value.Item2;
         wireframeParent.name = "WireframeObject";
 
         if (connectedVertices.GetLength(1) != 2)
@@ -178,11 +191,12 @@ public class ObjectInstantiator : MonoBehaviour
             lr.startWidth = 0.01f;
             lr.endWidth = 0.01f;
             Material lineMat = new Material(material);
+            materials.Add(lineMat);
             lineMat.color = color;
             lr.material = lineMat;
         }
 
-        return wireframeParent;
+        return (wireframeParent, materials);
     }
     bool IsVector3NaNOrInfinity(Vector3 vector)
             => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
