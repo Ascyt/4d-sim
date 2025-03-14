@@ -51,11 +51,11 @@ public class CameraPosition : MonoBehaviour
             $"z: {position.z}\n" +
             $"w: {position.w}";
         rotationText.text =
-            $"xy: {rotation.xy * Mathf.Rad2Deg}°\n" +
-            $"xz: {rotation.xz * Mathf.Rad2Deg}°\n" +
-            $"yz: {rotation.yz * Mathf.Rad2Deg}°\n" +
             $"xw: {rotation.xw * Mathf.Rad2Deg}°\n" +
             $"yw: {rotation.yw * Mathf.Rad2Deg}°\n" +
-            $"zw: {rotation.zw * Mathf.Rad2Deg}°";
+            $"zw: {rotation.zw * Mathf.Rad2Deg}°\n" +
+            $"xy: {rotation.xy * Mathf.Rad2Deg}°\n" +
+            $"xz: {rotation.xz * Mathf.Rad2Deg}°\n" +
+            $"yz: {rotation.yz * Mathf.Rad2Deg}°";
     }
 }

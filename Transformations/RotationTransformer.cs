@@ -7,23 +7,23 @@ public static class RotationTransformer
 {
     public enum RotationPlane
     {
-        XY,
-        XZ,
-        YZ,
         XW,
         YW,
-        ZW
+        ZW,
+        XY,
+        XZ,
+        YZ
     }
 
     public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
     {
         return point
-            .Rotate(RotationPlane.XY, rotation.xy)
-            .Rotate(RotationPlane.XZ, rotation.xz)
-            .Rotate(RotationPlane.YZ, rotation.yz)
             .Rotate(RotationPlane.XW, rotation.xw)
             .Rotate(RotationPlane.YW, rotation.yw)
-            .Rotate(RotationPlane.ZW, rotation.zw);
+            .Rotate(RotationPlane.ZW, rotation.zw)
+            .Rotate(RotationPlane.XY, rotation.xy)
+            .Rotate(RotationPlane.XZ, rotation.xz)
+            .Rotate(RotationPlane.YZ, rotation.yz);
     }
 
     public static Vector4 Rotate(this Vector4 point, RotationPlane plane, float angle)
