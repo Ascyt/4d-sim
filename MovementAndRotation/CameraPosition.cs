@@ -32,7 +32,7 @@ public class CameraPosition : MonoBehaviour
     }
     private void Start()
     {
-        OnPositionOrRotationUpdate();
+
     }
 
     public Vector4 position = new Vector4(0,0,0,0);

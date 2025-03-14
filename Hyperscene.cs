@@ -10,6 +10,8 @@ public class Hyperscene : MonoBehaviour
     public static Hyperscene instance { get; private set; }
 
     public readonly List<Hyperobject> objects = new();
+    public Hyperobject fixedAxes;
+
     private List<GameObject> instantiatedObjects = new();
 
     private CameraPosition cameraPos;
@@ -30,6 +32,10 @@ public class Hyperscene : MonoBehaviour
         objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow));
 
         objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta));
+
+        fixedAxes = new Axes();
+
+        RenderObjects();
     }
 
     public void RenderObjects()
@@ -82,6 +88,30 @@ public class Hyperscene : MonoBehaviour
                 if (instance != null)
                     instantiatedObjects.Add(instance);
             }
+        }
+
+        RenderFixedAxes();
+    }
+
+    private void RenderFixedAxes()
+    {
+        Rotation4 rotation = cameraPos.rotation;
+
+        foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
+        {
+            Vector4[] rotatedVertices = connectedVertices.vertices
+                .Select(v => v.Rotate(-rotation))
+                .ToArray();
+
+            Vector3[] transformedVertices = rotatedVertices
+                .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
+                .ToArray();
+
+            GameObject instance = ObjectInstantiator.instance
+                .InstantiateObject(transformedVertices, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections);
+
+            if (instance != null)
+                instantiatedObjects.Add(instance);
         }
     }
 }
