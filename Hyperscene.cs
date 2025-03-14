@@ -57,7 +57,7 @@ public class Hyperscene : MonoBehaviour
         Rotation4 rotation = cameraPos.rotation;
 
         Vector4 from = new Vector4(0, 0, 0, 0);
-        Vector4 to = new Vector4(0, 0, 0, -1);
+        Vector4 to = new Vector4(0, 0, 0, 1);
         Vector4 up = new Vector4(0, 1, 0, 0);
         Vector4 over = new Vector4(0, 0, 1, 0);
 

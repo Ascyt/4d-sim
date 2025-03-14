@@ -12,6 +12,9 @@ public class CameraPosition : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI rotationText;
 
+    [SerializeField]
+    public bool platformerMode;
+
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
 

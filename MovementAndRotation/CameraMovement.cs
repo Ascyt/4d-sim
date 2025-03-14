@@ -7,7 +7,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     public float movementSpeed;
 
-    private const bool USE_DVORAK = false;
+    private const bool USE_DVORAK = true;
     private static KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
     private static KeyCode MoveLeft         = USE_DVORAK ? KeyCode.A : KeyCode.A;
     private static KeyCode MoveUp           = KeyCode.Space;
@@ -78,9 +78,15 @@ public class CameraMovement : MonoBehaviour
             positionUpdated = true;
         }
 
-        delta = delta.Rotate(cameraPos.rotation);
+        Rotation4 rotation = !cameraPos.platformerMode ? cameraPos.rotation : new Rotation4(cameraPos.rotation.xw, cameraPos.rotation.yw, cameraPos.rotation.zw, 0f, 0f, 0f);
+        Vector4 rotatedDelta = delta.Rotate(rotation);
 
-        cameraPos.position += delta;
+        if (cameraPos.platformerMode)
+        {
+            //rotatedDelta = new Vector4(rotatedDelta.x, rotatedDelta.y, rotatedDelta.z, rotatedDelta.w);
+        }
+
+        cameraPos.position += rotatedDelta;
 
         if (positionUpdated)
         {

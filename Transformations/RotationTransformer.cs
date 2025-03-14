@@ -18,12 +18,12 @@ public static class RotationTransformer
     public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
     {
         return point
-            .Rotate(RotationPlane.XW, rotation.xw)
-            .Rotate(RotationPlane.YW, rotation.yw)
             .Rotate(RotationPlane.ZW, rotation.zw)
+            .Rotate(RotationPlane.YW, rotation.yw)
+            .Rotate(RotationPlane.XW, rotation.xw)
             .Rotate(RotationPlane.XY, rotation.xy)
-            .Rotate(RotationPlane.XZ, rotation.xz)
-            .Rotate(RotationPlane.YZ, rotation.yz);
+            .Rotate(RotationPlane.YZ, rotation.yz)
+            .Rotate(RotationPlane.XZ, rotation.xz);
     }
 
     public static Vector4 Rotate(this Vector4 point, RotationPlane plane, float angle)
@@ -68,17 +68,17 @@ public static class RotationTransformer
             case RotationPlane.YW:
                 return new Vector4(
                     point.x,
-                    cos * point.y + sin * point.w,
+                    cos * point.y - sin * point.w,
                     point.z,
-                    -sin * point.y + cos * point.w
+                    sin * point.y + cos * point.w
                 );
 
             case RotationPlane.ZW:
                 return new Vector4(
                     point.x,
                     point.y,
-                    cos * point.z + sin * point.w,
-                    -sin * point.z + cos * point.w
+                    cos * point.z - sin * point.w,
+                    sin * point.z + cos * point.w
                 );
 
             default:

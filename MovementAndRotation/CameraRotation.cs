@@ -26,15 +26,15 @@ public class CameraRotation : MonoBehaviour
     [SerializeField]
     private float rotationSpeed;
 
-    private const bool USE_DVORAK = false;
+    private const bool USE_DVORAK = true;
     private static KeyCode RotateXWPos = USE_DVORAK ? KeyCode.N : KeyCode.L;
     private static KeyCode RotateXWNeg = USE_DVORAK ? KeyCode.H : KeyCode.J;
 
-    private static KeyCode RotateYWPos = USE_DVORAK ? KeyCode.C : KeyCode.I;
-    private static KeyCode RotateYWNeg = USE_DVORAK ? KeyCode.T : KeyCode.K;
+    private static KeyCode RotateYWPos = USE_DVORAK ? KeyCode.R : KeyCode.O;
+    private static KeyCode RotateYWNeg = USE_DVORAK ? KeyCode.G : KeyCode.U;
 
-    private static KeyCode RotateZWPos = USE_DVORAK ? KeyCode.R : KeyCode.O;
-    private static KeyCode RotateZWNeg = USE_DVORAK ? KeyCode.G : KeyCode.U;
+    private static KeyCode RotateZWPos = USE_DVORAK ? KeyCode.C : KeyCode.I;
+    private static KeyCode RotateZWNeg = USE_DVORAK ? KeyCode.T : KeyCode.K;
 
     private void Awake()
     {
