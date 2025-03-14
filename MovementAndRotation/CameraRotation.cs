@@ -10,14 +10,31 @@ public class CameraRotation : MonoBehaviour
     public delegate void OnRotationUpdate();
     public OnRotationUpdate onRotationUpdate;
 
-    public Slider xySlider;
-    public Slider xzSlider;
-    public Slider yzSlider;
-    public Slider xwSlider;
-    public Slider ywSlider;
-    public Slider zwSlider;
+    [SerializeField]
+    private Slider xwSlider;
+    [SerializeField]
+    private Slider ywSlider;
+    [SerializeField]
+    private Slider zwSlider;
+    [SerializeField]
+    private Slider xySlider;
+    [SerializeField]
+    private Slider xzSlider;
+    [SerializeField]
+    private Slider yzSlider;
 
-    public float rotationSpeed;
+    [SerializeField]
+    private float rotationSpeed;
+
+    private const bool USE_DVORAK = false;
+    private static KeyCode RotateXWPos = USE_DVORAK ? KeyCode.N : KeyCode.L;
+    private static KeyCode RotateXWNeg = USE_DVORAK ? KeyCode.H : KeyCode.J;
+
+    private static KeyCode RotateYWPos = USE_DVORAK ? KeyCode.C : KeyCode.I;
+    private static KeyCode RotateYWNeg = USE_DVORAK ? KeyCode.T : KeyCode.K;
+
+    private static KeyCode RotateZWPos = USE_DVORAK ? KeyCode.R : KeyCode.O;
+    private static KeyCode RotateZWNeg = USE_DVORAK ? KeyCode.G : KeyCode.U;
 
     private void Awake()
     {
@@ -26,17 +43,58 @@ public class CameraRotation : MonoBehaviour
 
     private void Update()
     {
-        
+        float speed = rotationSpeed * Time.deltaTime;
+        bool rotationUpdated = false;
+
+        if (Input.GetKey(RotateXWPos))
+        {
+            cameraPos.rotation.xw += speed;
+            rotationUpdated = true;
+        }
+        if (Input.GetKey(RotateXWNeg))
+        {
+            cameraPos.rotation.xw -= speed;
+            rotationUpdated = true;
+        }
+
+        if (Input.GetKey(RotateYWPos))
+        {
+            cameraPos.rotation.yw += speed;
+            rotationUpdated = true;
+        }
+        if (Input.GetKey(RotateYWNeg))
+        {
+            cameraPos.rotation.yw -= speed;
+            rotationUpdated = true;
+        }
+
+        if (Input.GetKey(RotateZWPos))
+        {
+            cameraPos.rotation.zw += speed;
+            rotationUpdated = true;
+        }
+        if (Input.GetKey(RotateZWNeg))
+        {
+            cameraPos.rotation.zw -= speed;
+            rotationUpdated = true;
+        }
+
+        if (rotationUpdated)
+        {
+            cameraPos.rotation.ModuloPlanes();
+            UpdateSliderValues();
+            onRotationUpdate();
+        }
     }
 
-    public void UpdateSliderValues()
+    private void UpdateSliderValues()
     {
-        xwSlider.value = cameraPos.rotation.xw;
-        ywSlider.value = cameraPos.rotation.yw;
-        zwSlider.value = cameraPos.rotation.zw;
-        xySlider.value = cameraPos.rotation.xy;
-        xzSlider.value = cameraPos.rotation.xz;
-        yzSlider.value = cameraPos.rotation.yz;
+        xwSlider.SetValueWithoutNotify(cameraPos.rotation.xw);
+        ywSlider.SetValueWithoutNotify(cameraPos.rotation.yw);
+        zwSlider.SetValueWithoutNotify(cameraPos.rotation.zw);
+        xySlider.SetValueWithoutNotify(cameraPos.rotation.xy);
+        xzSlider.SetValueWithoutNotify(cameraPos.rotation.xz);
+        yzSlider.SetValueWithoutNotify(cameraPos.rotation.yz);
     }
 
     public void OnSliderChange()

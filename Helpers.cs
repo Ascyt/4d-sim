@@ -78,4 +78,9 @@ public static class Helpers
 
         return result;
     }
+
+    public static float Mod(float x, float m)
+    {
+        return (x % m + m) % m;
+    }
 }

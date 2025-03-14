@@ -3403,12 +3403,12 @@ MonoBehaviour:
   rotationText: {fileID: 1655795038}
   position: {x: 0, y: 0, z: 0, w: 0}
   rotation:
-    xy: 0
-    xz: 0
-    yz: 0
     xw: 0
     yw: 0
     zw: 0
+    xy: 0
+    xz: 0
+    yz: 0
 --- !u!114 &963194232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3466,12 +3466,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9315ed4f104b1c947b199035d6a0007b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xySlider: {fileID: 213183848}
-  xzSlider: {fileID: 1305533206}
-  yzSlider: {fileID: 474804061}
   xwSlider: {fileID: 35592701}
   ywSlider: {fileID: 1583830527}
   zwSlider: {fileID: 866461806}
+  xySlider: {fileID: 213183848}
+  xzSlider: {fileID: 1305533206}
+  yzSlider: {fileID: 474804061}
+  rotationSpeed: 1
 --- !u!1 &1001024356
 GameObject:
   m_ObjectHideFlags: 0
