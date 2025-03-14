@@ -18,10 +18,8 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public (GameObject, List<Material>)? InstantiateObject(Vector3[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
+    public (GameObject, List<Material>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
     {
-        points = points.Where(p => !IsVector3NaNOrInfinity(p)).ToArray();
-
         switch (connectionMethod)
         {
             case ConnectedVertices.ConnectionMethod.Solid:
@@ -36,15 +34,17 @@ public class ObjectInstantiator : MonoBehaviour
         return null;
     }
 
-    private (GameObject, List<Material>)? InstantiateObjectSolid(Vector3[] points, Vector3 position, Color color)
+    private (GameObject, List<Material>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
     {
-        if (points == null || points.Length < 4)
+        Vector3[] pointsValues = points.Where(p => p.HasValue).Select(p => p.Value).ToArray();
+
+        if (pointsValues.Length < 4)
         {
             return null;
         }
 
         // Convert Unity Vector3 points to MIVertex objects.
-        MIVertex[] vertices = points.Select(p => new MIVertex(p)).ToArray();
+        MIVertex[] vertices = pointsValues.Select(p => new MIVertex(p)).ToArray();
 
         List<Material> materials = new();
 
@@ -122,17 +122,22 @@ public class ObjectInstantiator : MonoBehaviour
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private (GameObject, List<Material>)? InstantiateObjectVertices(Vector3[] points, Vector3 position, Color color, float? vertexScale)
+    private (GameObject, List<Material>)? InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
     {
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
         List<Material> materials = new();
 
-        foreach (Vector3 pt in points)
+        foreach (Vector3? pt in points)
         {
+            if (!pt.HasValue)
+            {
+                continue;
+            }
+
             GameObject vertexSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             vertexSphere.transform.parent = parent.transform;
-            vertexSphere.transform.localPosition = pt;
+            vertexSphere.transform.localPosition = pt.Value;
             vertexSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f) * (vertexScale ?? 1f);
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
@@ -149,7 +154,7 @@ public class ObjectInstantiator : MonoBehaviour
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private (GameObject, List<Material>)? InstantiateObjectWireframe(Vector3[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
+    private (GameObject, List<Material>)? InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
     {
         // Create the basic vertex GameObjects.
         (GameObject, List<Material>)? vertices = InstantiateObjectVertices(points, position, color, vertexScale);
@@ -173,6 +178,10 @@ public class ObjectInstantiator : MonoBehaviour
             {
                 continue;
             }
+            if (!points[connectedVertices[i, 0]].HasValue || !points[connectedVertices[i, 1]].HasValue)
+            {
+                continue;
+            }
 
             // Create a child GameObject for the line segment.
             GameObject lineObject = new GameObject("WireframeLine_" + i);
@@ -185,8 +194,8 @@ public class ObjectInstantiator : MonoBehaviour
             LineRenderer lr = lineObject.AddComponent<LineRenderer>();
             lr.useWorldSpace = false; // use local positions to match the spheres.
             lr.positionCount = 2; // Each connection is just 2 points.
-            lr.SetPosition(0, points[connectedVertices[i, 0]]);
-            lr.SetPosition(1, points[connectedVertices[i, 1]]);
+            lr.SetPosition(0, points[connectedVertices[i, 0]].Value);
+            lr.SetPosition(1, points[connectedVertices[i, 1]].Value);
 
             // Set width and material.
             lr.startWidth = 0.01f;
@@ -199,7 +208,4 @@ public class ObjectInstantiator : MonoBehaviour
 
         return (wireframeParent, materials);
     }
-    bool IsVector3NaNOrInfinity(Vector3 vector)
-            => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
-               float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
 }

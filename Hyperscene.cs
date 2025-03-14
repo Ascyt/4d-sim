@@ -77,21 +77,31 @@ public class Hyperscene : MonoBehaviour
                 // Transform vertices so camera rotation and position is 0
                 Vector4[] verticesRelativeToCamera = connectedVertices.vertices
                     .Select(v => (v + pos).RotateNeg(rotation))
-                    .Where(v => v.w > 0)
                     .ToArray();
 
-                if (verticesRelativeToCamera.Length == 0)
+                Vector4?[] verticesRelativeToCameraNullable = new Vector4?[verticesRelativeToCamera.Length];
+                for (int i = 0; i < verticesRelativeToCamera.Length; i++)
+                {
+                    verticesRelativeToCameraNullable[i] = verticesRelativeToCamera[i].w > 0 ? verticesRelativeToCamera[i] : null;
+                }
+
+                if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
                 {
                     continue;
                 }
 
                 // Project the vertices to 3D
-                Vector3[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, angle);
+                Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCameraNullable, angle);
+
+                if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
+                {
+                    continue;
+                }
 
                 Vector3 averagePos = new Vector3(
-                    transformedVertices.Select(v => v.x).Average(), 
-                    transformedVertices.Select(v => v.y).Average(),
-                    transformedVertices.Select(v => v.z).Average());
+                    transformedVertices.Where(v => v.HasValue).Select(v => v.Value.x).Average(), 
+                    transformedVertices.Where(v => v.HasValue).Select(v => v.Value.y).Average(),
+                    transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
 
                 transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
@@ -123,8 +133,14 @@ public class Hyperscene : MonoBehaviour
                 .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
                 .ToArray();
 
+            Vector3?[] transformedVerticesNullable = new Vector3?[transformedVertices.Length];
+            for (int i = 0; i < transformedVertices.Length; i++)
+            {
+                transformedVerticesNullable[i] = transformedVertices[i];
+            }
+
             (GameObject, List<Material>)? instance = ObjectInstantiator.instance
-                .InstantiateObject(transformedVertices, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
+                .InstantiateObject(transformedVerticesNullable, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
             if (instance != null)
             {
