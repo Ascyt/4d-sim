@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cube : Hyperobject
 {
-    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color) : base(new ConnectedVertices[]
+    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
@@ -21,6 +21,8 @@ public class Cube : Hyperobject
             },
             
             color,
+
+            material,
 
             connections: new int[,]
             {

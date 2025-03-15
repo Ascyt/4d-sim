@@ -10,31 +10,28 @@ public class ObjectInstantiator : MonoBehaviour
 {
     public static ObjectInstantiator instance { get; private set; }
 
-    [SerializeField]
-    private Material material;
-
     private void Awake()
     {
         instance = this;
     }
 
-    public (GameObject, List<Material>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
+    public GameObject InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material, int[,] connections=null, float? vertexScale=null)
     {
         switch (connectionMethod)
         {
             case ConnectedVertices.ConnectionMethod.Solid:
-                return InstantiateObjectSolid(points, position, color);
+                return InstantiateObjectSolid(points, position, color, material);
             case ConnectedVertices.ConnectionMethod.Wireframe:
-                return InstantiateObjectWireframe(points, position, color, connections, vertexScale);
+                return InstantiateObjectWireframe(points, position, color, material, connections, vertexScale);
             case ConnectedVertices.ConnectionMethod.Vertices:
-                return InstantiateObjectVertices(points, position, color, vertexScale);
+                return InstantiateObjectVertices(points, position, color, material, vertexScale);
         }
 
         Debug.LogError("Unknown ConnectionMethod");
         return null;
     }
 
-    private (GameObject, List<Material>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
+    private GameObject InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color, Material material)
     {
         Vector3[] pointsValues = points.Where(p => p.HasValue).Select(p => p.Value).ToArray();
 
@@ -45,9 +42,7 @@ public class ObjectInstantiator : MonoBehaviour
 
         // Convert Unity Vector3 points to MIVertex objects.
         MIVertex[] vertices = pointsValues.Select(p => new MIVertex(p)).ToArray();
-
-        List<Material> materials = new();
-
+        
         // Compute the convex hull using MIConvexHull.
         // The returned hull contains Faces, where each face has a set of vertices.
         var convexHullResult = ConvexHull.Create<MIVertex, DefaultConvexFace<MIVertex>>(vertices);
@@ -111,22 +106,18 @@ public class ObjectInstantiator : MonoBehaviour
         MeshRenderer mr = obj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
 
-        Material m = new Material(material);
-        mr.material = m;
+        mr.material = material;
         mr.material.color = color;
 
-        materials.Add(m);
-
-        return (obj, materials);
+        return obj;
     }
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private (GameObject, List<Material>)? InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
+    private GameObject InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, Material material, float? vertexScale)
     {
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
-        List<Material> materials = new();
 
         foreach (Vector3? pt in points)
         {
@@ -141,28 +132,24 @@ public class ObjectInstantiator : MonoBehaviour
             vertexSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f) * (vertexScale ?? 1f);
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
-            Material m = new Material(material);
-            materials.Add(m);
-            mr.material = m;
+            mr.material = material;
             mr.material.color = color;
         }
 
-        return (parent, materials);
+        return parent;
     }
 
     // Creates the wireframe object that connects every vertex to every other vertex.
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private (GameObject, List<Material>)? InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
+    private GameObject InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, Material material, int[,] connectedVertices, float? vertexScale)
     {
         // Create the basic vertex GameObjects.
-        (GameObject, List<Material>)? vertices = InstantiateObjectVertices(points, position, color, vertexScale);
-        if (vertices is null)
+        GameObject wireframeParent = InstantiateObjectVertices(points, position, color, material, vertexScale);
+        if (wireframeParent is null)
             return null;
 
-        GameObject wireframeParent = vertices.Value.Item1;
-        List<Material> materials = vertices.Value.Item2;
         wireframeParent.name = "WireframeObject";
 
         if (connectedVertices.GetLength(1) != 2)
@@ -200,12 +187,10 @@ public class ObjectInstantiator : MonoBehaviour
             // Set width and material.
             lr.startWidth = 0.01f;
             lr.endWidth = 0.01f;
-            Material lineMat = new Material(material);
-            materials.Add(lineMat);
-            lineMat.color = color;
-            lr.material = lineMat;
+            lr.material = material;
+            lr.material.color = color;
         }
 
-        return (wireframeParent, materials);
+        return wireframeParent;
     }
 }

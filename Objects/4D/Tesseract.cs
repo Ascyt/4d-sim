@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tesseract : Hyperobject
 {
-    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color) : base(new ConnectedVertices[]
+    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
@@ -30,6 +30,8 @@ public class Tesseract : Hyperobject
             },
 
             color,
+
+            material,
 
             connections: new int[,]
             {
