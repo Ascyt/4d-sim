@@ -17,6 +17,7 @@ public class Hyperscene : MonoBehaviour
     public Hyperobject fixedAxes;
 
     private List<GameObject> instantiatedObjects = new();
+    private List<Object> instantiatedObjectsResources = new();
 
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
@@ -47,20 +48,20 @@ public class Hyperscene : MonoBehaviour
     private void Start()
     {
         objects.Add(new Axes(new Material(material)));
-
-        //objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
+        
+        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white, new Material(material)));
 
         objects.Add(new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan, new Material(material), 1f));
         objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow, new Material(material)));
-
+        
         objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta, new Material(material), 1f));
-
+        
         objects.Add(new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green, new Material(material)));
-
+        
         objects.Add(new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, new Material(material), 3f));
         objects.Add(new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, new Material(material), .5f));
 
-        fixedAxes = new Axes(new Material(material));
+        //fixedAxes = new Axes(new Material(material));
 
         RenderObjectsInitially();
     }
@@ -130,6 +131,12 @@ public class Hyperscene : MonoBehaviour
             Destroy(obj);
         }
         instantiatedObjects.Clear();
+
+        foreach (Object resource in instantiatedObjectsResources)
+        {
+            Destroy(resource);
+        }
+        instantiatedObjectsResources.Clear();
     }
 
     private void ProjectVertices(ConnectedVertices connectedVertices, Vector4[] verticesRelativeToCamera)
@@ -159,13 +166,13 @@ public class Hyperscene : MonoBehaviour
             transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
+        (GameObject, List<Object>)? instance = ObjectInstantiator.instance
+          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
 
-        GameObject instance = ObjectInstantiator.instance
-            .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
-
-        if (instance is not null)
+        if (instance != null)
         {
-            instantiatedObjects.Add(instance);
+            instantiatedObjects.Add(instance.Value.Item1);
+            instantiatedObjectsResources.AddRange(instance.Value.Item2);
         }
     }
 
@@ -190,12 +197,12 @@ public class Hyperscene : MonoBehaviour
                 transformedVerticesNullable[i] = transformedVertices[i];
             }
 
-            GameObject instance = ObjectInstantiator.instance
-                .InstantiateObject(transformedVerticesNullable, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
+            //GameObject instance = ObjectInstantiator.instance
+             //   .InstantiateObject(transformedVerticesNullable, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
 
-            if (instance is not null)
+            if (instance != null)
             {
-                instantiatedObjects.Add(instance);
+               // instantiatedObjects.Add(instance);
             }
         }
     }

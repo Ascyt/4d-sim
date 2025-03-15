@@ -15,7 +15,7 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public GameObject InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material, int[,] connections=null, float? vertexScale=null)
+    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material, int[,] connections=null, float? vertexScale=null)
     {
         switch (connectionMethod)
         {
@@ -31,8 +31,10 @@ public class ObjectInstantiator : MonoBehaviour
         return null;
     }
 
-    private GameObject InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color, Material material)
+    private (GameObject, List<Object>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color, Material material)
     {
+        List<Object> resources = new();
+
         Vector3[] pointsValues = points.Where(p => p.HasValue).Select(p => p.Value).ToArray();
 
         if (pointsValues.Length < 4)
@@ -98,8 +100,11 @@ public class ObjectInstantiator : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
+        resources.Add(mesh);
+
         // Create a GameObject and assign the mesh.
         GameObject obj = new GameObject("ConvexHullObject");
+
         obj.transform.position = position;
 
         MeshFilter mf = obj.AddComponent<MeshFilter>();
@@ -109,13 +114,17 @@ public class ObjectInstantiator : MonoBehaviour
         mr.material = material;
         mr.material.color = color;
 
-        return obj;
+        resources.Add(mr.material);
+
+        return (obj, resources);
     }
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private GameObject InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, Material material, float? vertexScale)
+    private (GameObject, List<Object>) InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, Material material, float? vertexScale)
     {
+        List<Object> resources = new();
+
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
 
@@ -127,26 +136,35 @@ public class ObjectInstantiator : MonoBehaviour
             }
 
             GameObject vertexSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
             vertexSphere.transform.parent = parent.transform;
             vertexSphere.transform.localPosition = pt.Value;
             vertexSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f) * (vertexScale ?? 1f);
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
+
             mr.material = material;
             mr.material.color = color;
+
+            resources.Add(mr.material);
         }
 
-        return parent;
+        return (parent, resources);
     }
 
     // Creates the wireframe object that connects every vertex to every other vertex.
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private GameObject InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, Material material, int[,] connectedVertices, float? vertexScale)
+    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, Material material, int[,] connectedVertices, float? vertexScale)
     {
+        List<Object> resources = new();
+
         // Create the basic vertex GameObjects.
-        GameObject wireframeParent = InstantiateObjectVertices(points, position, color, material, vertexScale);
+        (GameObject wireframeParent, List<Object> wireframeParentResources) = InstantiateObjectVertices(points, position, color, material, vertexScale);
+
+        resources.AddRange(wireframeParentResources);
+
         if (wireframeParent is null)
             return null;
 
@@ -189,8 +207,10 @@ public class ObjectInstantiator : MonoBehaviour
             lr.endWidth = 0.01f;
             lr.material = material;
             lr.material.color = color;
+
+            resources.Add(lr.material);
         }
 
-        return wireframeParent;
+        return (wireframeParent, resources);
     }
 }
