@@ -1359,14 +1359,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 353990974}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.24072808, y: 0.29309106, z: 0.6921259, w: 0.61409235}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -44.537, y: 2.15, z: 95.957}
 --- !u!1 &381312791
 GameObject:
   m_ObjectHideFlags: 0
@@ -3465,8 +3465,6 @@ MonoBehaviour:
   positionText: {fileID: 1281007518}
   rotationText: {fileID: 1655795038}
   platformerMode: 1
-  cameraMovement: {fileID: 0}
-  cameraRotation: {fileID: 0}
   movementRotationSwitch: 0
   movementRotationSwitchText: {fileID: 582894827}
   position: {x: 0, y: 0, z: 0, w: 0}

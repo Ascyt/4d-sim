@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class Tesseract : Hyperobject
 {
-    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material) : base(new ConnectedVertices[]
+    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material, float scale) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
 
              new Vector4[] {
-                new Vector4(-.5f, -.5f, -.5f, -.5f), // 0
-                new Vector4(.5f, -.5f, -.5f, -.5f), // 1
-                new Vector4(.5f, .5f, -.5f, -.5f), // 2
-                new Vector4(-.5f, .5f, -.5f, -.5f), // 3
-                new Vector4(-.5f, .5f, .5f, -.5f), // 4
-                new Vector4(.5f, .5f, .5f, -.5f), // 5
-                new Vector4(.5f, -.5f, .5f, -.5f), // 6
-                new Vector4(-.5f, -.5f, .5f, -.5f),  // 7
+                new Vector4(-1, -1, -1, -1) * (scale / 2f), // 0
+                new Vector4(1, -1, -1, -1)  * (scale / 2f), // 1
+                new Vector4(1, 1, -1, -1)   * (scale / 2f), // 2
+                new Vector4(-1, 1, -1, -1)  * (scale / 2f), // 3
+                new Vector4(-1, 1, 1, -1)   * (scale / 2f), // 4
+                new Vector4(1, 1, 1, -1)    * (scale / 2f), // 5
+                new Vector4(1, -1, 1, -1)   * (scale / 2f), // 6
+                new Vector4(-1, -1, 1, -1)  * (scale / 2f), // 7
     
-                new Vector4(-.5f, -.5f, -.5f, .5f), // 8
-                new Vector4(.5f, -.5f, -.5f, .5f), // 9
-                new Vector4(.5f, .5f, -.5f, .5f), // 10
-                new Vector4(-.5f, .5f, -.5f, .5f), // 11
-                new Vector4(-.5f, .5f, .5f, .5f), // 12
-                new Vector4(.5f, .5f, .5f, .5f), // 13
-                new Vector4(.5f, -.5f, .5f, .5f), // 14
-                new Vector4(-.5f, -.5f, .5f, .5f)  // 15
+                new Vector4(-1, -1, -1, 1)  * (scale / 2f), // 8
+                new Vector4(1, -1, -1, 1)   * (scale / 2f), // 9
+                new Vector4(1, 1, -1, 1)    * (scale / 2f), // 10
+                new Vector4(-1, 1, -1, 1)   * (scale / 2f), // 11
+                new Vector4(-1, 1, 1, 1)    * (scale / 2f), // 12
+                new Vector4(1, 1, 1, 1)     * (scale / 2f), // 13
+                new Vector4(1, -1, 1, 1)    * (scale / 2f), // 14
+                new Vector4(-1, -1, 1, 1)   * (scale / 2f)  // 15
             },
 
             color,

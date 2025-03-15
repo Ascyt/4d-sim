@@ -35,4 +35,18 @@ public struct Rotation4
         newRotation.ModuloPlanes();
         return newRotation;
     }
+
+    public static Rotation4 operator +(Rotation4 a, Rotation4 b)
+    {
+        Rotation4 newRotation = new Rotation4(a.xw + b.xw, a.yw + b.yw, a.zw + b.zw, a.xy + b.xy, a.xz + b.xz, a.yz + b.yz);
+        newRotation.ModuloPlanes();
+        return newRotation;
+    }
+
+    public static Rotation4 operator -(Rotation4 a, Rotation4 b)
+    {
+        Rotation4 newRotation = new Rotation4(a.xw - b.xw, a.yw - b.yw, a.zw - b.zw, a.xy - b.xy, a.xz - b.xz, a.yz - b.yz);
+        newRotation.ModuloPlanes();
+        return newRotation;
+    }
 }

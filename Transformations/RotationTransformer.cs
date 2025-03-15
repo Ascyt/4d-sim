@@ -18,24 +18,24 @@ public static class RotationTransformer
     public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
     {
         return point
-            .Rotate(RotationPlane.XY, rotation.xy)
-            .Rotate(RotationPlane.XZ, rotation.xz)
             .Rotate(RotationPlane.XW, rotation.xw)
-            .Rotate(RotationPlane.YZ, rotation.yz)
             .Rotate(RotationPlane.YW, rotation.yw)
-            .Rotate(RotationPlane.ZW, rotation.zw);
+            .Rotate(RotationPlane.ZW, rotation.zw)
+            .Rotate(RotationPlane.YZ, rotation.yz)
+            .Rotate(RotationPlane.XZ, rotation.xz)
+            .Rotate(RotationPlane.XY, rotation.xy);
     }
     public static Vector4 RotateNeg(this Vector4 point, Rotation4 rotation)
     {
         rotation = -rotation;
 
         return point
+            .Rotate(RotationPlane.XY, rotation.xy)
+            .Rotate(RotationPlane.XZ, rotation.xz)
+            .Rotate(RotationPlane.YZ, rotation.yz)
             .Rotate(RotationPlane.ZW, rotation.zw)
             .Rotate(RotationPlane.YW, rotation.yw)
-            .Rotate(RotationPlane.YZ, rotation.yz)
-            .Rotate(RotationPlane.XW, rotation.xw)
-            .Rotate(RotationPlane.XZ, rotation.xz)
-            .Rotate(RotationPlane.XY, rotation.xy);
+            .Rotate(RotationPlane.XW, rotation.xw);
     }
     public static Vector4 Rotate(this Vector4 point, RotationPlane plane, float angle)
     {

@@ -11,6 +11,10 @@ public class ConnectedVertices
 
     public ConnectionMethod connectionMethod;
     public Vector4[] vertices;
+    /// <summary>
+    /// Vertices transformed so camera position and rotation is at 0 (no projection)
+    /// </summary>
+    public Vector4[] transformedVertices;
     public int[,] connections;
     public float? vertexScale;
 

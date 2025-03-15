@@ -7,7 +7,7 @@ public class CameraRotation : MonoBehaviour
 {
     private CameraPosition cameraPos;
 
-    public delegate void OnRotationUpdate();
+    public delegate void OnRotationUpdate(Rotation4 rotationDelta);
     public OnRotationUpdate onRotationUpdate;
 
     [SerializeField]
@@ -43,45 +43,46 @@ public class CameraRotation : MonoBehaviour
     {
         float speed = rotationSpeed * Time.deltaTime;
         bool rotationUpdated = false;
+        Rotation4 rotationDelta = new Rotation4(0, 0, 0, 0, 0, 0);
 
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWPos : CameraMovement.MoveRight))
         {
-            cameraPos.rotation.xw += speed;
+            rotationDelta.xw += speed;
             rotationUpdated = true;
         }
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWNeg : CameraMovement.MoveLeft))
         {
-            cameraPos.rotation.xw -= speed;
+            rotationDelta.xw -= speed;
             rotationUpdated = true;
         }
 
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWPos : CameraMovement.MoveUp))
         {
-            cameraPos.rotation.yw += speed;
+            rotationDelta.yw += speed;
             rotationUpdated = true;
         }
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWNeg : CameraMovement.MoveDown))
         {
-            cameraPos.rotation.yw -= speed;
+            rotationDelta.yw -= speed;
             rotationUpdated = true;
         }
 
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWPos : CameraMovement.MoveForwards))
         {
-            cameraPos.rotation.zw += speed;
+            rotationDelta.zw += speed;
             rotationUpdated = true;
         }
         if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWNeg : CameraMovement.MoveBackwards))
         {
-            cameraPos.rotation.zw -= speed;
+            rotationDelta.zw -= speed;
             rotationUpdated = true;
         }
 
         if (rotationUpdated)
         {
-            cameraPos.rotation.ModuloPlanes();
+            rotationDelta.ModuloPlanes();
             UpdateSliderValues();
-            onRotationUpdate();
+            onRotationUpdate(rotationDelta);
         }
     }
 
@@ -97,8 +98,9 @@ public class CameraRotation : MonoBehaviour
 
     public void OnSliderChange()
     {
-        cameraPos.rotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
+        Rotation4 sliderRotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
+        Rotation4 rotationDelta = sliderRotation - cameraPos.rotation;
 
-        onRotationUpdate();
+        onRotationUpdate(rotationDelta);
     }
 }

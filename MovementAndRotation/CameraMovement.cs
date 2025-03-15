@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class CameraMovement : MonoBehaviour
 
     private CameraPosition cameraPos;
 
-    public delegate void OnPositionUpdate();
+    public delegate void OnPositionUpdate(Vector4 positionDelta);
     public OnPositionUpdate onPositionUpdate;
 
     private void Awake()
@@ -78,19 +79,14 @@ public class CameraMovement : MonoBehaviour
             positionUpdated = true;
         }
 
-        Rotation4 rotation = !cameraPos.platformerMode ? cameraPos.rotation : new Rotation4(cameraPos.rotation.xw, cameraPos.rotation.yw, cameraPos.rotation.zw, 0f, 0f, 0f);
-        Vector4 rotatedDelta = delta.Rotate(rotation);
-
         if (cameraPos.platformerMode)
         {
             //rotatedDelta = new Vector4(rotatedDelta.x, rotatedDelta.y, rotatedDelta.z, rotatedDelta.w);
         }
 
-        cameraPos.position += rotatedDelta;
-
         if (positionUpdated)
         {
-            onPositionUpdate();
+            onPositionUpdate(delta);
         }
     }
 }

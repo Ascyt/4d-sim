@@ -15,13 +15,8 @@ public class CameraPosition : MonoBehaviour
     [SerializeField]
     public bool platformerMode;
 
-    [HideInInspector]
-    public CameraMovement cameraMovement;
-    [HideInInspector]
-    public CameraRotation cameraRotation;
-
-    public delegate void OnValuesUpdate();
-    public OnValuesUpdate onValuesUpdate;
+    private CameraMovement cameraMovement;
+    private CameraRotation cameraRotation;
 
     [SerializeField]
     public bool movementRotationSwitch = false;
@@ -30,17 +25,23 @@ public class CameraPosition : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
 
+    public Vector4 position = new Vector4(0, 0, 0, 0);
+    public Rotation4 rotation = new Rotation4(0, 0, 0, 0, 0, 0);
+
+    private Vector4 right = new Vector4(1, 0, 0, 0);
+    private Vector4 up = new Vector4(0, 1, 0, 0);
+    private Vector4 forward = new Vector4(0, 0, 1, 0);
+    private Vector4 ana = new Vector4(0, 0, 0, 1);
+
     private void Awake()
     {
         instance = this;
 
         cameraMovement = GetComponent<CameraMovement>();
-        cameraMovement.onPositionUpdate += OnPositionOrRotationUpdate;
-
         cameraRotation = GetComponent<CameraRotation>();
-        cameraRotation.onRotationUpdate += OnPositionOrRotationUpdate;
 
-        this.onValuesUpdate += OnValuesUpdateSelf;
+        cameraMovement.onPositionUpdate += OnPositionUpdate;
+        cameraRotation.onRotationUpdate += OnRotationUpdate;
     }
     private void Start()
     {
@@ -54,9 +55,6 @@ public class CameraPosition : MonoBehaviour
         }
     }
 
-    public Vector4 position = new Vector4(0,0,0,0);
-    public Rotation4 rotation = new Rotation4(0,0,0,0,0,0);
-
     public void UpdateMovementRotationSwitch(bool? newValue = null)
     {
         newValue = newValue ?? !movementRotationSwitch;
@@ -64,9 +62,21 @@ public class CameraPosition : MonoBehaviour
         movementRotationSwitchText.text = $"Movement/Rotation switched: {movementRotationSwitch}";
     }
 
-    private void OnPositionOrRotationUpdate()
+    private void OnPositionUpdate(Vector4 positionDelta)
     {
-        onValuesUpdate();
+        position += (positionDelta.x * right) + (positionDelta.y * up) + (positionDelta.z * forward) + (positionDelta.w * ana);
+        OnValuesUpdateSelf();
+    }
+    private void OnRotationUpdate(Rotation4 rotationDelta)
+    {
+        rotation += rotationDelta;
+
+        right = right.Rotate(rotationDelta);
+        up = up.Rotate(rotationDelta);
+        forward = forward.Rotate(rotationDelta);
+        ana = ana.Rotate(rotationDelta);
+
+        OnValuesUpdateSelf();
     }
 
     private void OnValuesUpdateSelf()
