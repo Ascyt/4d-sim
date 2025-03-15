@@ -52,22 +52,13 @@ public static class RotationTransformer
                     point.w
                 );
 
-            case RotationPlane.YZ:
-                return new Vector4(
-                    point.x,
-                    cos * point.y + sin * point.z,
-                    -sin * point.y + cos * point.z,
-                    point.w
-                );
-
             case RotationPlane.XZ:
                 return new Vector4(
-                    cos * point.x - sin * point.z,
+                    cos * point.x + sin * point.z,
                     point.y,
-                    sin * point.x + cos * point.z,
+                    -sin * point.x + cos * point.z,
                     point.w
                 );
-
             case RotationPlane.XW:
                 return new Vector4(
                     cos * point.x + sin * point.w,
@@ -76,20 +67,28 @@ public static class RotationTransformer
                     -sin * point.x + cos * point.w
                 );
 
+            case RotationPlane.YZ:
+                return new Vector4(
+                    point.x,
+                    cos * point.y + sin * point.z,
+                    -sin * point.y + cos * point.z,
+                    point.w
+                );
+
             case RotationPlane.YW:
                 return new Vector4(
                     point.x,
-                    cos * point.y - sin * point.w,
+                    cos * point.y + sin * point.w,
                     point.z,
-                    sin * point.y + cos * point.w
+                    -sin * point.y + cos * point.w
                 );
 
             case RotationPlane.ZW:
                 return new Vector4(
                     point.x,
                     point.y,
-                    cos * point.z - sin * point.w,
-                    sin * point.z + cos * point.w
+                    cos * point.z + sin * point.w,
+                    -sin * point.z + cos * point.w
                 );
 
             default:
