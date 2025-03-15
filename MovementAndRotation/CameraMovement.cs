@@ -50,7 +50,7 @@ public class CameraMovement : MonoBehaviour
             delta += new Vector4(0, speed, 0, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveDown : CameraRotation.RotateXWNeg))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveDown : CameraRotation.RotateYWNeg))
         {
             delta += new Vector4(0, -speed, 0, 0);
             positionUpdated = true;
