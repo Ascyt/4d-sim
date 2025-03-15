@@ -15,11 +15,20 @@ public class CameraPosition : MonoBehaviour
     [SerializeField]
     public bool platformerMode;
 
-    private CameraMovement cameraMovement;
-    private CameraRotation cameraRotation;
+    [HideInInspector]
+    public CameraMovement cameraMovement;
+    [HideInInspector]
+    public CameraRotation cameraRotation;
 
     public delegate void OnValuesUpdate();
     public OnValuesUpdate onValuesUpdate;
+
+    [SerializeField]
+    public bool movementRotationSwitch = false;
+    private KeyCode movementRotationSwitchKey = KeyCode.Tab;
+
+    [SerializeField]
+    private TextMeshProUGUI movementRotationSwitchText;
 
     private void Awake()
     {
@@ -35,11 +44,25 @@ public class CameraPosition : MonoBehaviour
     }
     private void Start()
     {
-
+        UpdateMovementRotationSwitch(movementRotationSwitch);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(movementRotationSwitchKey))
+        {
+            UpdateMovementRotationSwitch();
+        }
     }
 
     public Vector4 position = new Vector4(0,0,0,0);
     public Rotation4 rotation = new Rotation4(0,0,0,0,0,0);
+
+    public void UpdateMovementRotationSwitch(bool? newValue = null)
+    {
+        newValue = newValue ?? !movementRotationSwitch;
+        movementRotationSwitch = newValue.Value;
+        movementRotationSwitchText.text = $"Movement/Rotation switched: {movementRotationSwitch}";
+    }
 
     private void OnPositionOrRotationUpdate()
     {
