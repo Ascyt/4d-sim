@@ -6,6 +6,10 @@ using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(CameraMovement))]
+[RequireComponent(typeof(CameraRotation))]
+[RequireComponent(typeof(CameraPosition))]
+[RequireComponent(typeof(Rendering))]
 public class Hyperscene : MonoBehaviour
 {
     public static Hyperscene instance { get; private set; }
@@ -16,31 +20,27 @@ public class Hyperscene : MonoBehaviour
     public readonly List<Hyperobject> objects = new();
     public Hyperobject fixedAxes;
 
-    private List<GameObject> instantiatedObjects = new();
-    private List<Object> instantiatedObjectsResources = new();
-
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
     private CameraPosition cameraPosition;
+    private Rendering rendering;
 
     private readonly float fov = Mathf.PI / 4f;
     private readonly Vector4 from = new Vector4(0, 0, 0, 0);
     private readonly Vector4 to = new Vector4(0, 0, 0, -1);
     private readonly Vector4 up = new Vector4(0, 1, 0, 0);
     private readonly Vector4 over = new Vector4(0, 0, 1, 0);
-    private Vector4 wa;
-    private Vector4 wb;
-    private Vector4 wc;
-    private Vector4 wd;
 
     private void Awake()
     {
         instance = this;
+
+        rendering = GetComponent<Rendering>();
+        rendering.Initialize(from, to, up, over, fov);
+
         cameraMovement = GetComponent<CameraMovement>();
         cameraRotation = GetComponent<CameraRotation>();
         cameraPosition = GetComponent<CameraPosition>();
-
-        Helpers.GetViewingTransformMatrix(from, to, up, over, out wa, out wb, out wc, out wd);
 
         cameraMovement.onPositionUpdate += RenderObjectsCameraPositionChange;
         cameraRotation.onRotationUpdate += RenderObjectsCameraRotationChange;
@@ -68,7 +68,7 @@ public class Hyperscene : MonoBehaviour
 
     public void RenderObjectsCameraPositionChange(Vector4 positionDelta)
     {
-        ClearRenderedObjects();
+        rendering.ClearAllRenderedObjects();
 
         foreach (Hyperobject obj in objects)
         {
@@ -78,13 +78,13 @@ public class Hyperscene : MonoBehaviour
                     .Select(v => v - positionDelta)
                     .ToArray();
 
-                ProjectVertices(connectedVertices, connectedVertices.transformedVertices);
+                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
     }
     public void RenderObjectsCameraRotationChange(Rotation4 rotationDelta)
     {
-        ClearRenderedObjects();
+        rendering.ClearAllRenderedObjects();
 
         foreach (Hyperobject obj in objects)
         {
@@ -94,7 +94,7 @@ public class Hyperscene : MonoBehaviour
                     .Select(v => v.RotateNeg(rotationDelta))
                     .ToArray();
 
-                ProjectVertices(connectedVertices, connectedVertices.transformedVertices);
+                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
     }
@@ -117,63 +117,11 @@ public class Hyperscene : MonoBehaviour
 
                 connectedVertices.transformedVertices = verticesRelativeToCamera;
 
-                ProjectVertices(connectedVertices, verticesRelativeToCamera);
+                rendering.ProjectVertices(connectedVertices, obj, verticesRelativeToCamera);
             }
         }
 
         RenderFixedAxes();
-    }
-
-    private void ClearRenderedObjects()
-    {
-        foreach (GameObject obj in instantiatedObjects)
-        {
-            Destroy(obj);
-        }
-        instantiatedObjects.Clear();
-
-        foreach (Object resource in instantiatedObjectsResources)
-        {
-            Destroy(resource);
-        }
-        instantiatedObjectsResources.Clear();
-    }
-
-    private void ProjectVertices(ConnectedVertices connectedVertices, Vector4[] verticesRelativeToCamera)
-    {
-        Vector4?[] verticesRelativeToCameraNullable = new Vector4?[verticesRelativeToCamera.Length];
-        for (int i = 0; i < verticesRelativeToCamera.Length; i++)
-        {
-            verticesRelativeToCameraNullable[i] = verticesRelativeToCamera[i].w > 0 ? verticesRelativeToCamera[i] : null;
-        }
-
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
-        {
-            return;
-        }
-
-        // Project the vertices to 3D
-        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCameraNullable, fov);
-
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
-        {
-            return;
-        }
-
-        Vector3 averagePos = new Vector3(
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.x).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.y).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
-
-        transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
-        (GameObject, List<Object>)? instance = ObjectInstantiator.instance
-          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
-
-        if (instance != null)
-        {
-            instantiatedObjects.Add(instance.Value.Item1);
-            instantiatedObjectsResources.AddRange(instance.Value.Item2);
-        }
     }
 
     private void RenderFixedAxes()

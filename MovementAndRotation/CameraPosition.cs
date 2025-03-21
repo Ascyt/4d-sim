@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(CameraMovement))]
+[RequireComponent(typeof(CameraRotation))]
 public class CameraPosition : MonoBehaviour
 {
     public CameraPosition instance { get; private set; }
