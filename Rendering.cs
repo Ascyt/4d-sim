@@ -29,16 +29,20 @@ public class Rendering : MonoBehaviour
     private Vector4 from;
     private float fov;
 
-    private static readonly Dictionary<Hyperobject, InstantiatedObject> instantiatedObjects = new();
+    private static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
 
     public void ClearAllRenderedObjects()
     {
-        foreach (InstantiatedObject instantiatedObject in instantiatedObjects.Values)
+        foreach (List<InstantiatedObject> instantiatedObjectValues in instantiatedObjects.Values)
         {
-            Destroy(instantiatedObject.gameObj);
-            foreach (Object resource in instantiatedObject.resources)
-                Destroy(resource);
+            foreach (InstantiatedObject instantiatedObject in instantiatedObjectValues) 
+            {
+                Destroy(instantiatedObject.gameObj);
+                foreach (Object resource in instantiatedObject.resources)
+                    Destroy(resource); 
+            }
         }
+        instantiatedObjects.Clear();
     }
 
     public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
@@ -75,7 +79,10 @@ public class Rendering : MonoBehaviour
         {
             InstantiatedObject instantiatedObject = new InstantiatedObject(instance.Value.Item1, instance.Value.Item2);
 
-            instantiatedObjects.Add(obj, instantiatedObject);
+            if (instantiatedObjects.ContainsKey(obj))
+                instantiatedObjects[obj].Add(instantiatedObject);
+            else
+                instantiatedObjects.Add(obj, new List<InstantiatedObject> { instantiatedObject });
         }
     }
 }

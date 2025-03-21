@@ -16,9 +16,6 @@ public class Hyperscene : MonoBehaviour
     public readonly List<Hyperobject> objects = new();
     public Hyperobject fixedAxes;
 
-    private List<GameObject> instantiatedObjects = new();
-    private List<Object> instantiatedObjectsResources = new();
-
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
     private CameraPosition cameraPosition;
@@ -94,7 +91,7 @@ public class Hyperscene : MonoBehaviour
                     .Select(v => v.RotateNeg(rotationDelta))
                     .ToArray();
 
-                ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
+                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
     }
@@ -117,7 +114,7 @@ public class Hyperscene : MonoBehaviour
 
                 connectedVertices.transformedVertices = verticesRelativeToCamera;
 
-                ProjectVertices(connectedVertices, verticesRelativeToCamera);
+                rendering.ProjectVertices(connectedVertices, obj, verticesRelativeToCamera);
             }
         }
 
