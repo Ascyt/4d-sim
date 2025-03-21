@@ -6,6 +6,10 @@ using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(CameraMovement))]
+[RequireComponent(typeof(CameraRotation))]
+[RequireComponent(typeof(CameraPosition))]
+[RequireComponent(typeof(Rendering))]
 public class Hyperscene : MonoBehaviour
 {
     public static Hyperscene instance { get; private set; }
@@ -19,14 +23,13 @@ public class Hyperscene : MonoBehaviour
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
     private CameraPosition cameraPosition;
+    private Rendering rendering;
 
     private readonly float fov = Mathf.PI / 4f;
     private readonly Vector4 from = new Vector4(0, 0, 0, 0);
     private readonly Vector4 to = new Vector4(0, 0, 0, -1);
     private readonly Vector4 up = new Vector4(0, 1, 0, 0);
     private readonly Vector4 over = new Vector4(0, 0, 1, 0);
-
-    private Rendering rendering;
 
     private void Awake()
     {
