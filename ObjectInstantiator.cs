@@ -119,10 +119,12 @@ public class ObjectInstantiator : MonoBehaviour
         MeshRenderer mr = obj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
 
-        mr.material = new Material(solidMaterial);
-        mr.material.color = color;
+        Material mat = new Material(solidMaterial);
+        mat.color = color;
 
-        resources.Add(mr.material);
+        mr.material = mat;
+
+        resources.Add(mat);
 
         return (obj, resources);
     }
@@ -135,6 +137,9 @@ public class ObjectInstantiator : MonoBehaviour
 
         GameObject parent = new GameObject("VertexObject");
         parent.transform.position = position;
+
+        Material mat = new Material(wireframeVertexMaterial);
+        mat.color = color;
 
         foreach (Vector3? pt in points)
         {
@@ -151,11 +156,11 @@ public class ObjectInstantiator : MonoBehaviour
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
 
-            mr.material = new Material(wireframeVertexMaterial);
-            mr.material.color = color;
+            mr.material = mat;
 
             resources.Add(mr.material);
         }
+        resources.Add(mat);
 
         return (parent, resources);
     }
@@ -183,6 +188,9 @@ public class ObjectInstantiator : MonoBehaviour
             Debug.LogError("Connected vertices must be matrix of [n, 2]");
             return null;
         }
+
+        Material mat = new Material(wireframeLineMaterial);
+        mat.color = color;
 
         // For each connection, create a child GameObject with a LineRenderer.
         for (int i = 0; i < connectedVertices.GetLength(0); i++)
@@ -213,11 +221,10 @@ public class ObjectInstantiator : MonoBehaviour
             // Set width and material.
             lr.startWidth = 0.01f;
             lr.endWidth = 0.01f;
-            lr.material = new Material(wireframeLineMaterial);
-            lr.material.color = color;
-
-            resources.Add(lr.material);
+            lr.material = mat;
         }
+
+        resources.Add(mat);
 
         return (wireframeParent, resources);
     }
