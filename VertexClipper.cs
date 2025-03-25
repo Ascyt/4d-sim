@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class VertexClipper
@@ -37,6 +38,8 @@ public static class VertexClipper
 
         // If ALL points are inside the cube then nothing is clipped.
         bool needsClip = false;
+        // If ALL points are outside the cube, the output array should be empty.
+        bool allPointsOutside = true;
         foreach (Vector3 pt in worldPoints)
         {
             if (pt.x < -5 - EPS || pt.x > 5 + EPS ||
@@ -44,11 +47,22 @@ public static class VertexClipper
                 pt.z < -5 - EPS || pt.z > 5 + EPS)
             {
                 needsClip = true;
-                break;
+
+                if (!allPointsOutside)
+                    break;
+            }
+            else
+            {
+                allPointsOutside = false;
+
+                if (needsClip)
+                    break;
             }
         }
         if (!needsClip)
             return points; // No clipping needed.
+        if (allPointsOutside)
+            return new Vector3[0]; // Entire object is outside of clipping region.
 
         // Gather half-spaces for cube. Our convention: the half-space is defined
         // by n · x + d <= 0.
