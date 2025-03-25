@@ -1,4 +1,4 @@
-using MIConvexHull;
+Ôªøusing MIConvexHull;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +37,8 @@ public class ObjectInstantiator : MonoBehaviour
 
         Vector3[] pointsValues = points.Where(p => p.HasValue).Select(p => p.Value).ToArray();
 
+        pointsValues = VertexClipper.ClipVertices(pointsValues, position);
+
         if (pointsValues.Length < 4)
         {
             return null;
@@ -65,7 +67,7 @@ public class ObjectInstantiator : MonoBehaviour
         Dictionary<MIVertex, int> vertexToIndex = new Dictionary<MIVertex, int>();
 
         // Process each face in the convex hull. Each face is a polygon,
-        // but if the hull is truly ìconvexî in 3D, the faces will be triangles.
+        // but if the hull is truly ‚Äúconvex‚Äù in 3D, the faces will be triangles.
         foreach (var face in result.Faces)
         {
             // The face provides its vertices in an array.
