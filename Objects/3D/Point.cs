@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Point : Hyperobject
 {
-    public Point(Vector4 position, Color color, Material material) : base(new ConnectedVertices[]
+    public Point(Vector4 position, Color color) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Vertices,
@@ -13,9 +13,7 @@ public class Point : Hyperobject
                 new Vector4(0, 0, 0, 0)
             },
 
-            color,
-
-            material
+            color
         )
     }, position)
     {

@@ -14,9 +14,6 @@ public class Hyperscene : MonoBehaviour
 {
     public static Hyperscene instance { get; private set; }
 
-    [SerializeField]
-    private Material material;
-
     public readonly List<Hyperobject> objects = new();
     public Hyperobject fixedAxes;
 
@@ -47,21 +44,21 @@ public class Hyperscene : MonoBehaviour
     }
     private void Start()
     {
-        objects.Add(new Axes(new Material(material)));
+        objects.Add(new Axes());
         
-        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white, new Material(material)));
+        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
 
-        objects.Add(new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan, new Material(material), 1f));
-        objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow, new Material(material)));
+        objects.Add(new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan, 1f));
+        objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow));
         
-        objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta, new Material(material), 1f));
+        objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta, 1f));
         
-        objects.Add(new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green, new Material(material)));
+        objects.Add(new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green));
         
-        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, new Material(material), 3f));
-        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, new Material(material), .5f));
+        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, 3f));
+        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, .5f));
 
-        //fixedAxes = new Axes(new Material(material));
+        //fixedAxes = new Axes();
 
         RenderObjectsInitially();
     }
