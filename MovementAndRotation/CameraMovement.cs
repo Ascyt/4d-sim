@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(CameraPosition))]
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField]

@@ -3930,6 +3930,7 @@ GameObject:
   - component: {fileID: 963194232}
   - component: {fileID: 963194234}
   - component: {fileID: 963194233}
+  - component: {fileID: 963194236}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4024,6 +4025,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f08b83ac2ec9b4d9130bfd48eba5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  solidMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  wireframeLineMaterial: {fileID: 2100000, guid: b19bc2af45073e1419631fe16ec3bb2e, type: 2}
+  wireframeVertexMaterial: {fileID: 2100000, guid: b19bc2af45073e1419631fe16ec3bb2e, type: 2}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4074,7 +4078,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94680dfba1e37fb4fb4cb79a277cb455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: c7c5ec499c726f44f8ea35c2ad6dc5a4, type: 2}
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4127,6 +4130,18 @@ MonoBehaviour:
   xzSlider: {fileID: 1305533206}
   yzSlider: {fileID: 474804061}
   rotationSpeed: 1
+--- !u!114 &963194236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85dceb617d077ab4fb14ce946f947c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &976932914
 GameObject:
   m_ObjectHideFlags: 0

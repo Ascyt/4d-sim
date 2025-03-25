@@ -7,13 +7,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StandardMaterial
-  m_Shader: {fileID: 4800000, guid: 27477a026a6a0794ab53a46e1db5267a, type: 3}
+  m_Name: ClippingMaterial
+  m_Shader: {fileID: 4800000, guid: c2bc7e06b2834974ba4577b5094a98f4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _USEWORLDSPACE_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -77,18 +76,10 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _UseWorldSpace: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MaxBounds: {r: 5, g: 5, b: 5, a: 1}
     - _MinBounds: {r: -5, g: -5, b: -5, a: 1}
-    - _PlaneVector: {r: 1, g: 0, b: 0, a: 0}
-    - _PlaneVector1: {r: -1, g: 0, b: 0, a: 5}
-    - _PlaneVector2: {r: 1, g: 0, b: 0, a: 5}
-    - _PlaneVector3: {r: 0, g: -1, b: 0, a: 5}
-    - _PlaneVector4: {r: 0, g: 1, b: 0, a: 5}
-    - _PlaneVector5: {r: 0, g: 0, b: -1, a: 5}
-    - _PlaneVector6: {r: 0, g: 0, b: 1, a: 5}
   m_BuildTextureStacks: []
