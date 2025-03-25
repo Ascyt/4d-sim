@@ -73,7 +73,7 @@ public class Rendering : MonoBehaviour
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
         (GameObject, List<Object>)? instance = ObjectInstantiator.instance
-          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
+          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 
         if (instance != null)
         {

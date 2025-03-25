@@ -9,29 +9,35 @@ using static UnityEditor.PlayerSettings;
 public class ObjectInstantiator : MonoBehaviour
 {
     public static ObjectInstantiator instance { get; private set; }
+    [SerializeField]
+    private Material solidMaterial;
+    [SerializeField]
+    private Material wireframeLineMaterial;
+    [SerializeField]
+    private Material wireframeVertexMaterial;
 
     private void Awake()
     {
         instance = this;
     }
 
-    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Material material, int[,] connections=null, float? vertexScale=null)
+    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
     {
         switch (connectionMethod)
         {
             case ConnectedVertices.ConnectionMethod.Solid:
-                return InstantiateObjectSolid(points, position, color, material);
+                return InstantiateObjectSolid(points, position, color);
             case ConnectedVertices.ConnectionMethod.Wireframe:
-                return InstantiateObjectWireframe(points, position, color, material, connections, vertexScale);
+                return InstantiateObjectWireframe(points, position, color, connections, vertexScale);
             case ConnectedVertices.ConnectionMethod.Vertices:
-                return InstantiateObjectVertices(points, position, color, material, vertexScale);
+                return InstantiateObjectVertices(points, position, color, vertexScale);
         }
 
         Debug.LogError("Unknown ConnectionMethod");
         return null;
     }
 
-    private (GameObject, List<Object>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color, Material material)
+    private (GameObject, List<Object>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
     {
         List<Object> resources = new();
 
@@ -113,7 +119,7 @@ public class ObjectInstantiator : MonoBehaviour
         MeshRenderer mr = obj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
 
-        mr.material = material;
+        mr.material = new Material(solidMaterial);
         mr.material.color = color;
 
         resources.Add(mr.material);
@@ -123,7 +129,7 @@ public class ObjectInstantiator : MonoBehaviour
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private (GameObject, List<Object>) InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, Material material, float? vertexScale)
+    private (GameObject, List<Object>) InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
     {
         List<Object> resources = new();
 
@@ -145,7 +151,7 @@ public class ObjectInstantiator : MonoBehaviour
 
             MeshRenderer mr = vertexSphere.GetComponent<MeshRenderer>();
 
-            mr.material = material;
+            mr.material = new Material(wireframeVertexMaterial);
             mr.material.color = color;
 
             resources.Add(mr.material);
@@ -158,12 +164,12 @@ public class ObjectInstantiator : MonoBehaviour
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, Material material, int[,] connectedVertices, float? vertexScale)
+    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
     {
         List<Object> resources = new();
 
         // Create the basic vertex GameObjects.
-        (GameObject wireframeParent, List<Object> wireframeParentResources) = InstantiateObjectVertices(points, position, color, material, vertexScale);
+        (GameObject wireframeParent, List<Object> wireframeParentResources) = InstantiateObjectVertices(points, position, color, vertexScale);
 
         resources.AddRange(wireframeParentResources);
 
@@ -207,7 +213,7 @@ public class ObjectInstantiator : MonoBehaviour
             // Set width and material.
             lr.startWidth = 0.01f;
             lr.endWidth = 0.01f;
-            lr.material = material;
+            lr.material = new Material(wireframeLineMaterial);
             lr.material.color = color;
 
             resources.Add(lr.material);

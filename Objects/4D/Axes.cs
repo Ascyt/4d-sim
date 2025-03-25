@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Axes : Hyperobject
 {
-    public Axes(Material material) : base(new ConnectedVertices[]
+    public Axes() : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
@@ -15,7 +15,6 @@ public class Axes : Hyperobject
             },
 
             Color.red,
-            material,
 
             connections: new int[,]
                 { { 0, 1 } },
@@ -31,7 +30,6 @@ public class Axes : Hyperobject
             },
 
             Color.green,
-            material,
 
             connections: new int[,]
                 { { 0, 1 } },
@@ -47,7 +45,6 @@ public class Axes : Hyperobject
             },
 
             new Color(0f, 0.5f, 1f),
-            material,
 
             connections: new int[,]
                 { { 0, 1 } },
@@ -63,7 +60,6 @@ public class Axes : Hyperobject
             },
 
             Color.yellow,
-            material,
 
             connections: new int[,]
                 { { 0, 1 } },
@@ -79,7 +75,6 @@ public class Axes : Hyperobject
             },
 
             Color.black,
-            material,
 
             vertexScale: 2f
         ),

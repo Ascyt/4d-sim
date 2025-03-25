@@ -19,15 +19,13 @@ public class ConnectedVertices
     public float? vertexScale;
 
     public Color color;
-    public Material material;
 
-    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, Material material, int[,] connections=null, float? vertexScale=null)
+    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[,] connections=null, float? vertexScale=null)
     {
         this.connectionMethod = connectionMethod;
         this.vertices = vertices;
         this.color = color;
         this.connections = connections;
         this.vertexScale = vertexScale;
-        this.material = material;
     }
 }
