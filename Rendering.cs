@@ -72,6 +72,27 @@ public class Rendering : MonoBehaviour
             transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
+
+        DisplayObject(connectedVertices, obj, transformedVertices, averagePos);
+    }
+
+    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
+    {
+        Vector3[] transformedVertices = verticesRelativeToCamera
+            .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
+            .ToArray();
+
+        Vector3?[] transformedVerticesNullable = new Vector3?[transformedVertices.Length];
+        for (int i = 0; i < transformedVertices.Length; i++)
+        {
+            transformedVerticesNullable[i] = transformedVertices[i];
+        }
+
+        DisplayObject(connectedVertices, obj, transformedVerticesNullable, Vector3.zero);
+    }
+
+    private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos)
+    {
         (GameObject, List<Object>)? instance = ObjectInstantiator.instance
           .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
 

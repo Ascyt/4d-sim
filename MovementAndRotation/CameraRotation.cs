@@ -27,7 +27,7 @@ public class CameraRotation : MonoBehaviour
     [SerializeField]
     private float rotationSpeed;
 
-    private const bool USE_DVORAK = false;
+    private const bool USE_DVORAK = true;
     public static readonly KeyCode RotateXWPos = USE_DVORAK ? KeyCode.N : KeyCode.L;
     public static readonly KeyCode RotateXWNeg = USE_DVORAK ? KeyCode.H : KeyCode.J;
     public static readonly KeyCode RotateYWPos = USE_DVORAK ? KeyCode.R : KeyCode.O;
