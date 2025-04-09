@@ -9,15 +9,14 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     public float movementSpeed;
 
-    private const bool USE_DVORAK = true;
-    public static readonly KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
-    public static readonly KeyCode MoveLeft         = USE_DVORAK ? KeyCode.A : KeyCode.A;
-    public static readonly KeyCode MoveUp           = USE_DVORAK ? KeyCode.Period : KeyCode.E;
-    public static readonly KeyCode MoveDown         = USE_DVORAK ? KeyCode.Quote : KeyCode.Q; 
-    public static readonly KeyCode MoveForwards     = USE_DVORAK ? KeyCode.Comma : KeyCode.W;
-    public static readonly KeyCode MoveBackwards    = USE_DVORAK ? KeyCode.O : KeyCode.S;   
-    public static readonly KeyCode MoveAna          = KeyCode.Space;   
-    public static readonly KeyCode MoveKata         = KeyCode.LeftShift;
+    public KeyCode MoveRight;
+    public KeyCode MoveLeft;
+    public KeyCode MoveUp;
+    public KeyCode MoveDown;
+    public KeyCode MoveForwards;
+    public KeyCode MoveBackwards;
+    public KeyCode MoveAna;
+    public KeyCode MoveKata;     
 
     private CameraPosition cameraPos;
 
@@ -27,6 +26,15 @@ public class CameraMovement : MonoBehaviour
     private void Awake()
     {
         cameraPos = GetComponent<CameraPosition>();
+
+        MoveRight       = cameraPos.useDvorak ? KeyCode.E       : KeyCode.D;
+        MoveLeft        = cameraPos.useDvorak ? KeyCode.A       : KeyCode.A;
+        MoveUp          = cameraPos.useDvorak ? KeyCode.Period  : KeyCode.E;
+        MoveDown        = cameraPos.useDvorak ? KeyCode.Quote   : KeyCode.Q;
+        MoveForwards    = cameraPos.useDvorak ? KeyCode.Comma   : KeyCode.W;
+        MoveBackwards   = cameraPos.useDvorak ? KeyCode.O       : KeyCode.S;
+        MoveAna         = KeyCode.Space;
+        MoveKata        = KeyCode.LeftShift;
     }
 
     private void Update()
@@ -36,34 +44,34 @@ public class CameraMovement : MonoBehaviour
 
         Vector4 delta = Vector4.zero;
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveRight : CameraRotation.RotateXWPos))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveRight : cameraPos.cameraRotation.RotateXWPos))
         {
             delta += new Vector4(speed, 0, 0, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveLeft : CameraRotation.RotateXWNeg))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveLeft : cameraPos.cameraRotation.RotateXWNeg))
         {
             delta += new Vector4(-speed, 0, 0, 0);
             positionUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveUp : CameraRotation.RotateYWPos))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveUp : cameraPos.cameraRotation.RotateYWPos))
         {
             delta += new Vector4(0, speed, 0, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveDown : CameraRotation.RotateYWNeg))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveDown : cameraPos.cameraRotation.RotateYWNeg))
         {
             delta += new Vector4(0, -speed, 0, 0);
             positionUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveForwards : CameraRotation.RotateZWPos))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveForwards : cameraPos.cameraRotation.RotateZWPos))
         {
             delta += new Vector4(0, 0, speed, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveBackwards : CameraRotation.RotateZWNeg))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveBackwards : cameraPos.cameraRotation.RotateZWNeg))
         {
             delta += new Vector4(0, 0, -speed, 0);
             positionUpdated = true;
