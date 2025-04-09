@@ -51,4 +51,9 @@ public struct Rotation4
         newRotation.ModuloPlanes();
         return newRotation;
     }
+
+    public override string ToString()
+    {
+        return $"({xw}, {yw}, {zw}, {xy}, {xz}, {yz})";
+    }
 }

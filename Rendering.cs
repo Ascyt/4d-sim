@@ -16,17 +16,10 @@ public class Rendering : MonoBehaviour
         }
     }
 
-    public void Initialize(Vector4 from, Vector4 to, Vector4 up, Vector4 over, float fov)
+    public void Initialize(float fov)
     {
-        Helpers.GetViewingTransformMatrix(from, to, up, over, out wa, out wb, out wc, out wd);
-        this.from = from;
         this.fov = fov;
     }
-    private Vector4 wa;
-    private Vector4 wb;
-    private Vector4 wc;
-    private Vector4 wd;
-    private Vector4 from;
     private float fov;
 
     private static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
@@ -45,40 +38,41 @@ public class Rendering : MonoBehaviour
         instantiatedObjects.Clear();
     }
 
-    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
+    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4 from, Vector4 to, Vector4 up, Vector4 over, Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd)
     {
-        Vector4?[] verticesRelativeToCameraNullable = new Vector4?[verticesRelativeToCamera.Length];
-        for (int i = 0; i < verticesRelativeToCamera.Length; i++)
+        Vector4?[] movedVertices = new Vector4?[connectedVertices.vertices.Length];
+        for (int i = 0; i < connectedVertices.vertices.Length; i++)
         {
-            verticesRelativeToCameraNullable[i] = verticesRelativeToCamera[i].w > 0 ? verticesRelativeToCamera[i] : null;
-        }
-
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
-        {
-            return;
+            movedVertices[i] = obj.position + connectedVertices.vertices[i];
+            if (Helpers.IsPointBehindHyperplane(from, to - from, movedVertices[i].Value))
+                movedVertices[i] = null;
         }
 
         // Project the vertices to 3D
-        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCameraNullable, fov);
+        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(from, wa, wb, wc, wd, movedVertices, fov);
 
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
+        if (transformedVertices.All(v => !v.HasValue))
         {
             return;
         }
 
+        transformedVertices = transformedVertices
+            .Where(v => v.HasValue)
+            .ToArray();
+
         Vector3 averagePos = new Vector3(
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.x).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.y).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
+            transformedVertices.Select(v => v.Value.x).Average(),
+            transformedVertices.Select(v => v.Value.y).Average(),
+            transformedVertices.Select(v => v.Value.z).Average());
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
-        DisplayObject(connectedVertices, obj, transformedVertices, averagePos);
+        DisplayObject(connectedVertices, obj, transformedVertices, averagePos); 
     }
 
-    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
+    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj)
     {
-        Vector3[] transformedVertices = verticesRelativeToCamera
+        Vector3[] transformedVertices = connectedVertices.vertices
             .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
             .ToArray();
 

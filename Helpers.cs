@@ -62,20 +62,20 @@ public static class Helpers
     }
 
     // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
-    public static Vector3?[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4?[] vertices, float angle)
+    public static Vector3?[] ProjectVerticesTo3d(Vector4 from, Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4?[] vertices, float angle)
     {
         float t = 1f / Mathf.Tan(angle / 2f);
         Vector3?[] results = new Vector3?[vertices.Length];
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            if (vertices[i] is null)
+            if (vertices[i] == null)
             {
                 results[i] = null;
                 continue;
             }
 
-            Vector4 v = vertices[i].Value - camera;
+            Vector4 v = vertices[i].Value - from;
 
             float s = t / Vector4.Dot(v, wd);
 
@@ -95,4 +95,9 @@ public static class Helpers
     public static bool IsVector3NaNOrInfinity(Vector3 vector)
             => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
                float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
+
+    public static bool IsPointBehindHyperplane(Vector4 hyperplanePoint, Vector4 hyperplaneNormal, Vector4 point)
+    {
+        return Vector4.Dot(point - hyperplanePoint, hyperplaneNormal) > 0;
+    }
 }

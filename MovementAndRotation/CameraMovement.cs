@@ -9,7 +9,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     public float movementSpeed;
 
-    private const bool USE_DVORAK = true;
+    private const bool USE_DVORAK = false;
     public static readonly KeyCode MoveRight        = USE_DVORAK ? KeyCode.E : KeyCode.D;
     public static readonly KeyCode MoveLeft         = USE_DVORAK ? KeyCode.A : KeyCode.A;
     public static readonly KeyCode MoveUp           = USE_DVORAK ? KeyCode.Period : KeyCode.E;
@@ -87,6 +87,8 @@ public class CameraMovement : MonoBehaviour
 
         if (positionUpdated)
         {
+            delta = (delta.x * cameraPos.right) + (delta.y * cameraPos.up) + (delta.z * cameraPos.forward) + (delta.w * cameraPos.ana);
+
             onPositionUpdate(delta);
         }
     }

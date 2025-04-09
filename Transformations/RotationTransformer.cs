@@ -15,9 +15,9 @@ public static class RotationTransformer
         YZ
     }
 
-    public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
+    public static Vector4 Rotate(this Vector4 v, Rotation4 rotation)
     {
-        return point
+        return v
             .Rotate(RotationPlane.XW, rotation.xw)
             .Rotate(RotationPlane.YW, rotation.yw)
             .Rotate(RotationPlane.ZW, rotation.zw)
@@ -25,11 +25,15 @@ public static class RotationTransformer
             .Rotate(RotationPlane.XZ, rotation.xz)
             .Rotate(RotationPlane.XY, rotation.xy);
     }
-    public static Vector4 RotateNeg(this Vector4 point, Rotation4 rotation)
+    public static Vector4 RotateAroundPoint(this Vector4 v, Vector4 point, Rotation4 rotation)
+    {
+        return (v - point).Rotate(rotation) + point;
+    }
+    public static Vector4 RotateNeg(this Vector4 v, Rotation4 rotation)
     {
         rotation = -rotation;
 
-        return point
+        return v
             .Rotate(RotationPlane.XY, rotation.xy)
             .Rotate(RotationPlane.XZ, rotation.xz)
             .Rotate(RotationPlane.YZ, rotation.yz)

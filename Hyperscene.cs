@@ -23,17 +23,17 @@ public class Hyperscene : MonoBehaviour
     private Rendering rendering;
 
     private readonly float fov = Mathf.PI / 4f;
-    private readonly Vector4 from = new Vector4(0, 0, 0, 0);
-    private readonly Vector4 to = new Vector4(0, 0, 0, -1);
-    private readonly Vector4 up = new Vector4(0, 1, 0, 0);
-    private readonly Vector4 over = new Vector4(0, 0, 1, 0);
+    private Vector4 from = new Vector4(0, 0, 0, 0);
+    private Vector4 to = new Vector4(0, 0, 0, -1);
+    private Vector4 up = new Vector4(0, 1, 0, 0);
+    private Vector4 over = new Vector4(0, 0, 1, 0);
 
     private void Awake()
     {
         instance = this;
 
         rendering = GetComponent<Rendering>();
-        rendering.Initialize(from, to, up, over, fov);
+        rendering.Initialize(fov);
 
         cameraMovement = GetComponent<CameraMovement>();
         cameraRotation = GetComponent<CameraRotation>();
@@ -42,6 +42,7 @@ public class Hyperscene : MonoBehaviour
         cameraMovement.onPositionUpdate += RenderObjectsCameraPositionChange;
         cameraRotation.onRotationUpdate += RenderObjectsCameraRotationChange;
     }
+
     private void Start()
     {
         objects.Add(new Axes());
@@ -67,17 +68,12 @@ public class Hyperscene : MonoBehaviour
     {
         rendering.ClearAllRenderedObjects();
 
-        foreach (Hyperobject obj in objects)
-        {
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
-            {
-                connectedVertices.transformedVertices = connectedVertices.transformedVertices
-                    .Select(v => v - positionDelta)
-                    .ToArray();
+        from += positionDelta;
+        to += positionDelta;
+        //up += positionDelta;
+        //over += positionDelta;
 
-                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
-            }
-        }
+        DrawObjects();
 
         UpdateFixedAxes(Rotation4.zero);
     }
@@ -85,19 +81,26 @@ public class Hyperscene : MonoBehaviour
     {
         rendering.ClearAllRenderedObjects();
 
+        to = to.RotateAroundPoint(from, rotationDelta);
+        up = up.Rotate(rotationDelta);
+        over = over.Rotate(rotationDelta);
+
+        DrawObjects();
+
+        UpdateFixedAxes(rotationDelta);
+    }
+
+    private void DrawObjects()
+    {
+        Helpers.GetViewingTransformMatrix(from, to, up, over, out Vector4 wa, out Vector4 wb, out Vector4 wc, out Vector4 wd);
+
         foreach (Hyperobject obj in objects)
         {
             foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
-                connectedVertices.transformedVertices = connectedVertices.transformedVertices
-                    .Select(v => v.RotateNeg(rotationDelta))
-                    .ToArray();
-
-                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
+                rendering.ProjectVertices(connectedVertices, obj, from, to, up, over, wa, wb, wc, wd);
             }
         }
-
-        UpdateFixedAxes(rotationDelta);
     }
 
     public void RenderObjectsInitially()
@@ -105,30 +108,21 @@ public class Hyperscene : MonoBehaviour
         Vector4 origin = cameraPosition.position;
         Rotation4 rotation = cameraPosition.rotation;
 
-        foreach (Hyperobject obj in objects) 
-        {
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
-            {
-                Vector4 pos = obj.position - origin;
+        to = to.Rotate(rotation);
+        up = up.Rotate(rotation);
+        over = over.Rotate(rotation);
 
-                // Transform vertices so camera rotation and position is 0
-                Vector4[] verticesRelativeToCamera = connectedVertices.vertices
-                    .Select(v => (v + pos).RotateNeg(rotation))
-                    .ToArray();
+        from = origin;
+        to += origin;
+        up += origin;
+        over += origin;
 
-                connectedVertices.transformedVertices = verticesRelativeToCamera;
-
-                rendering.ProjectVertices(connectedVertices, obj, verticesRelativeToCamera);
-            }
-        }
+        DrawObjects();
 
         // Project the fixed axes
         foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
         {
-            connectedVertices.transformedVertices = connectedVertices.vertices
-                .Select(v => v.RotateNeg(rotation))
-                .ToArray();
-            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
+            rendering.ProjectFixedObject(connectedVertices, fixedAxes);
         }
     }
 
@@ -136,11 +130,7 @@ public class Hyperscene : MonoBehaviour
     {
         foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
         {
-            connectedVertices.transformedVertices = connectedVertices.transformedVertices
-                .Select(v => v.RotateNeg(rotationDelta))
-                .ToArray();
-
-            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
+            rendering.ProjectFixedObject(connectedVertices, fixedAxes);
         }
     }
 }

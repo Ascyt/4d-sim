@@ -30,10 +30,10 @@ public class CameraPosition : MonoBehaviour
     public Vector4 position = new Vector4(0, 0, 0, 0);
     public Rotation4 rotation = new Rotation4(0, 0, 0, 0, 0, 0);
 
-    private Vector4 right = new Vector4(1, 0, 0, 0);
-    private Vector4 up = new Vector4(0, 1, 0, 0);
-    private Vector4 forward = new Vector4(0, 0, 1, 0);
-    private Vector4 ana = new Vector4(0, 0, 0, 1);
+    public Vector4 right = new Vector4(1, 0, 0, 0);
+    public Vector4 up = new Vector4(0, 1, 0, 0);
+    public Vector4 forward = new Vector4(0, 0, 1, 0);
+    public Vector4 ana = new Vector4(0, 0, 0, 1);
 
     private void Awake()
     {
@@ -66,7 +66,7 @@ public class CameraPosition : MonoBehaviour
 
     private void OnPositionUpdate(Vector4 positionDelta)
     {
-        position += (positionDelta.x * right) + (positionDelta.y * up) + (positionDelta.z * forward) + (positionDelta.w * ana);
+        position += positionDelta;
         OnValuesUpdateSelf();
     }
     private void OnRotationUpdate(Rotation4 rotationDelta)
