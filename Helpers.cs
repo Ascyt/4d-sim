@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -62,20 +63,14 @@ public static class Helpers
     }
 
     // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
-    public static Vector3?[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4?[] vertices, float angle)
+    public static Vector3?[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4[] vertices, float angle)
     {
         float t = 1f / Mathf.Tan(angle / 2f);
         Vector3?[] results = new Vector3?[vertices.Length];
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            if (vertices[i] is null)
-            {
-                results[i] = null;
-                continue;
-            }
-
-            Vector4 v = vertices[i].Value - camera;
+            Vector4 v = vertices[i] - camera;
 
             float s = t / Vector4.Dot(v, wd);
 
@@ -95,4 +90,126 @@ public static class Helpers
     public static bool IsVector3NaNOrInfinity(Vector3 vector)
             => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
                float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
+
+    // Finds the point on the line between A and B where w=wPlane.
+    // Assumes that A.w and B.w are on opposite sides of wPlane.
+    private static Vector4 FindIntersectionOnPlane(Vector4 A, Vector4 B, float wPlane)
+    {
+        // Calculate how far along the segment the plane occurs
+        float t = (wPlane - A.w) / (B.w - A.w);
+        return A + t * (B - A);
+    }
+
+    /// <summary>
+    /// Clip connections (edges) so that any connections that cross from behind to in front of the camera are replaced by an intersection on a z-plane.
+    /// The camera is at z==0 (with vertices in front having positive z); vertices behind (z<=0) are clipped.
+    /// </summary>
+    /// <param name="vertices">Array of vertices relative to the camera</param>
+    /// <param name="connections">Each connection is an int[2] pair of indices into the vertices array</param>
+    public static void ApplyIntersectioning(ref Vector4[] vertices, ref int[][] connections)
+    {
+        // The new vertices and connections that will be produced.
+        List<Vector4> newVertices = new List<Vector4>();
+        List<int[]> newConnections = new List<int[]>();
+
+        // Map from original vertex index (with vertex in front) to new vertex index (so we add each only once).
+        Dictionary<int, int> frontVertexMap = new Dictionary<int, int>();
+
+        // For each edge that requires clipping, we store the computed intersection vertex 
+        // keyed by the pair {behindIndex, frontIndex} (ordered) so that we don’t compute intersections twice.
+        Dictionary<Tuple<int, int>, int> intersectionVertexMap = new Dictionary<Tuple<int, int>, int>();
+
+        const float NEAR_PLANE = 1f / 4096f;
+
+        // Process each connection (edge) exactly once.
+        for (int edgeIndex = 0; edgeIndex < connections.Length; edgeIndex++)
+        {
+            int[] connection = connections[edgeIndex];
+            if (connection.Length != 2)
+            {
+                continue; // ignore badly formed connections.
+            }
+
+            int indexA = connection[0];
+            int indexB = connection[1];
+            Vector4 pointA = vertices[indexA];
+            Vector4 pointB = vertices[indexB];
+
+            bool aInFront = (pointA.w > 0);
+            bool bInFront = (pointB.w > 0);
+
+            // Case 1: Both endpoints are in front of the camera.
+            if (aInFront && bInFront)
+            {
+                // Add point A if not already added.
+                if (!frontVertexMap.ContainsKey(indexA))
+                {
+                    frontVertexMap[indexA] = newVertices.Count;
+                    newVertices.Add(pointA);
+                }
+                // Likewise, add point B.
+                if (!frontVertexMap.ContainsKey(indexB))
+                {
+                    frontVertexMap[indexB] = newVertices.Count;
+                    newVertices.Add(pointB);
+                }
+                // Create an edge using the new indices.
+                newConnections.Add(new int[] { frontVertexMap[indexA], frontVertexMap[indexB] });
+            }
+            // Case 2: One vertex is in front and the other is behind.
+            // (Edges from behind to in front are “clipped”.)
+            else if (aInFront ^ bInFront) // exclusive or: exactly one must be true.
+            {
+                int frontIndex;    // original index of the vertex that is in front
+                int behindIndex;   // original index of the vertex behind (or on the camera)
+                Vector4 frontVertex;   // actual position (in front)
+                Vector4 behindVertex;  // actual position (behind)
+
+                if (aInFront)
+                {
+                    frontIndex = indexA;
+                    behindIndex = indexB;
+                    frontVertex = pointA;
+                    behindVertex = pointB;
+                }
+                else
+                {
+                    frontIndex = indexB;
+                    behindIndex = indexA;
+                    frontVertex = pointB;
+                    behindVertex = pointA;
+                }
+                // Compute the intersection point along the edge.
+                Vector4 intersection = FindIntersectionOnPlane(behindVertex, frontVertex, NEAR_PLANE);
+
+                // Add the front vertex to the new vertices (if not already added).
+                if (!frontVertexMap.ContainsKey(frontIndex))
+                {
+                    frontVertexMap[frontIndex] = newVertices.Count;
+                    newVertices.Add(frontVertex);
+                }
+                // Create an ordered key to look-up/store the intersection vertex.
+                Tuple<int, int> edgeKey = (behindIndex < frontIndex) ?
+                                          new Tuple<int, int>(behindIndex, frontIndex) :
+                                          new Tuple<int, int>(frontIndex, behindIndex);
+                int newIntersectionIndex;
+                if (!intersectionVertexMap.TryGetValue(edgeKey, out newIntersectionIndex))
+                {
+                    newIntersectionIndex = newVertices.Count;
+                    newVertices.Add(intersection);
+                    intersectionVertexMap[edgeKey] = newIntersectionIndex;
+                }
+
+                // Build an edge from the intersection point to the front vertex.
+                newConnections.Add(new int[] { newIntersectionIndex, frontVertexMap[frontIndex] });
+            }
+            // Case 3: Both vertices are behind (or exactly on) the camera.
+            // In this case we do not render the edge.
+            // (You might add more handling if desired, e.g. for edges on the plane.)
+        }
+
+        // Replace original arrays with our new clipped versions.
+        vertices = newVertices.ToArray();
+        connections = newConnections.ToArray();
+    }
 }

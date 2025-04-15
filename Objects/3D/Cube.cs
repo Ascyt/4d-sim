@@ -22,11 +22,11 @@ public class Cube : Hyperobject
             
             color,
 
-            connections: new int[,]
+            connections: new int[][]
             {
-                { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 }, // First square
-                { 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 4 }, // Second square
-                { 0, 7 }, { 1, 6 }, { 2, 5 }, { 3, 4 }, // Connecting first and second square to form a cube
+                new[] { 0, 1 }, new[] { 1, 2 }, new[] { 2, 3 }, new[] { 3, 0 }, // First square
+                new[] { 4, 5 }, new[] { 5, 6 }, new[] { 6, 7 }, new[] { 7, 4 }, // Second square
+                new[] { 0, 7 }, new[] { 1, 6 }, new[] { 2, 5 }, new[] { 3, 4 }, // Connecting first and second square to form a cube
             }
         )
     }, position)

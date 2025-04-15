@@ -2,12 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class ObjectInstantiator : MonoBehaviour
 {
+    public struct InstantiatedObject
+    {
+        public GameObject gameObj;
+        public List<Object> resources;
+        public InstantiatedObject(GameObject gameObj, List<Object> resources)
+        {
+            this.gameObj = gameObj; this.resources = resources;
+        }
+    }
+
     public static ObjectInstantiator instance { get; private set; }
     [SerializeField]
     private Material solidMaterial;
@@ -21,7 +29,7 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
+    public InstantiatedObject? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[][] connections=null, float? vertexScale=null)
     {
         switch (connectionMethod)
         {
@@ -37,7 +45,7 @@ public class ObjectInstantiator : MonoBehaviour
         return null;
     }
 
-    private (GameObject, List<Object>)? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
+    private InstantiatedObject? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
     {
         List<Object> resources = new();
 
@@ -126,13 +134,18 @@ public class ObjectInstantiator : MonoBehaviour
 
         resources.Add(mat);
 
-        return (obj, resources);
+        return new InstantiatedObject(obj, resources);
     }
 
 
     // Creates a parent GameObject with sphere children placed at the given vertex positions.
-    private (GameObject, List<Object>) InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
+    private InstantiatedObject? InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
     {
+        if (points.Length == 0 || points.All(points => !points.HasValue))
+        {
+            return null;
+        }
+
         List<Object> resources = new();
 
         GameObject parent = new GameObject("VertexObject");
@@ -162,44 +175,38 @@ public class ObjectInstantiator : MonoBehaviour
         }
         resources.Add(mat);
 
-        return (parent, resources);
+        return new InstantiatedObject(parent, resources);
     }
 
     // Creates the wireframe object that connects every vertex to every other vertex.
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
+    private InstantiatedObject? InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[][] connectedVertices, float? vertexScale)
     {
         List<Object> resources = new();
 
         // Create the basic vertex GameObjects.
-        (GameObject wireframeParent, List<Object> wireframeParentResources) = InstantiateObjectVertices(points, position, color, vertexScale);
+        InstantiatedObject? verticesObject = InstantiateObjectVertices(points, position, color, vertexScale);
 
-        resources.AddRange(wireframeParentResources);
+        resources.AddRange(verticesObject.Value.resources);
 
-        if (wireframeParent is null)
+        if (verticesObject is null)
             return null;
 
-        wireframeParent.name = "WireframeObject";
-
-        if (connectedVertices.GetLength(1) != 2)
-        {
-            Debug.LogError("Connected vertices must be matrix of [n, 2]");
-            return null;
-        }
+        verticesObject.Value.gameObj.name = "WireframeObject";
 
         Material mat = new Material(wireframeLineMaterial);
         mat.color = color;
 
         // For each connection, create a child GameObject with a LineRenderer.
-        for (int i = 0; i < connectedVertices.GetLength(0); i++)
+        for (int i = 0; i < connectedVertices.Length; i++)
         {
-            if (connectedVertices[i, 0] >= points.Length || connectedVertices[i, 1] >= points.Length)
+            if (connectedVertices[i][0] >= points.Length || connectedVertices[i][1] >= points.Length)
             {
                 continue;
             }
-            if (!points[connectedVertices[i, 0]].HasValue || !points[connectedVertices[i, 1]].HasValue)
+            if (!points[connectedVertices[i][0]].HasValue || !points[connectedVertices[i][1]].HasValue)
             {
                 continue;
             }
@@ -208,15 +215,15 @@ public class ObjectInstantiator : MonoBehaviour
             GameObject lineObject = new GameObject("WireframeLine_" + i);
             // Set as child of the parent,
             // so that the line positions can be specified in local space.
-            lineObject.transform.parent = wireframeParent.transform;
+            lineObject.transform.parent = verticesObject.Value.gameObj.transform;
             lineObject.transform.localPosition = Vector3.zero;
 
             // Add and configure the LineRenderer.
             LineRenderer lr = lineObject.AddComponent<LineRenderer>();
             lr.useWorldSpace = false; // use local positions to match the spheres.
             lr.positionCount = 2; // Each connection is just 2 points.
-            lr.SetPosition(0, points[connectedVertices[i, 0]].Value);
-            lr.SetPosition(1, points[connectedVertices[i, 1]].Value);
+            lr.SetPosition(0, points[connectedVertices[i][0]].Value);
+            lr.SetPosition(1, points[connectedVertices[i][1]].Value);
 
             // Set width and material.
             lr.startWidth = 0.01f;
@@ -226,6 +233,6 @@ public class ObjectInstantiator : MonoBehaviour
 
         resources.Add(mat);
 
-        return (wireframeParent, resources);
+        return new InstantiatedObject(verticesObject.Value.gameObj, resources);
     }
 }

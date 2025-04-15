@@ -15,12 +15,12 @@ public class ConnectedVertices
     /// Vertices transformed so camera position and rotation is at 0 (no projection)
     /// </summary>
     public Vector4[] transformedVertices;
-    public int[,] connections;
+    public readonly int[][] connections;
     public float? vertexScale;
 
     public Color color;
 
-    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[,] connections=null, float? vertexScale=null)
+    public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[][] connections=null, float? vertexScale=null)
     {
         this.connectionMethod = connectionMethod;
         this.vertices = vertices;
