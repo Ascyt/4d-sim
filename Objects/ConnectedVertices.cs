@@ -16,7 +16,6 @@ public class ConnectedVertices
     /// </summary>
     public Vector4[] transformedVertices;
     public readonly int[][] connections;
-    public int[][] editedConnections;
     public float? vertexScale;
 
     public Color color;

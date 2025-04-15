@@ -56,10 +56,10 @@ public class Rendering : MonoBehaviour
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
                 .Contains(connectedVertices.connectionMethod);
 
-        connectedVertices.editedConnections = connectedVertices.connections;
+        int[][] connections = connectedVertices.connections;
         if (applyIntersectioning)
         {
-            Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connectedVertices.editedConnections);
+            Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connections);
         }
 
         // Project the vertices to 3D
@@ -77,7 +77,7 @@ public class Rendering : MonoBehaviour
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
-        DisplayObject(connectedVertices, obj, transformedVertices, averagePos);
+        DisplayObject(connectedVertices, obj, transformedVertices, averagePos, connections);
     }
 
     public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
@@ -91,15 +91,14 @@ public class Rendering : MonoBehaviour
         {
             transformedVerticesNullable[i] = transformedVertices[i];
         }
-        connectedVertices.editedConnections = connectedVertices.connections;
 
-        DisplayObject(connectedVertices, obj, transformedVerticesNullable, Vector3.zero);
+        DisplayObject(connectedVertices, obj, transformedVerticesNullable, Vector3.zero, connectedVertices.connections);
     }
 
-    private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos)
+    private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos, int[][] connections)
     {
         (GameObject, List<Object>)? instance = ObjectInstantiator.instance
-          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.editedConnections, connectedVertices.vertexScale);
+          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connections, connectedVertices.vertexScale);
 
         if (instance != null)
         {

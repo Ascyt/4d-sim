@@ -119,8 +119,7 @@ public static class Helpers
         // keyed by the pair {behindIndex, frontIndex} (ordered) so that we don’t compute intersections twice.
         Dictionary<Tuple<int, int>, int> intersectionVertexMap = new Dictionary<Tuple<int, int>, int>();
 
-        // The near-plane. (If you wish, adjust this small positive value.)
-        float nearPlane = 0.1f;
+        const float NEAR_PLANE = 1f / 4096f;
 
         // Process each connection (edge) exactly once.
         for (int edgeIndex = 0; edgeIndex < connections.Length; edgeIndex++)
@@ -181,7 +180,7 @@ public static class Helpers
                     behindVertex = pointA;
                 }
                 // Compute the intersection point along the edge.
-                Vector4 intersection = FindIntersectionOnPlane(behindVertex, frontVertex, nearPlane);
+                Vector4 intersection = FindIntersectionOnPlane(behindVertex, frontVertex, NEAR_PLANE);
 
                 // Add the front vertex to the new vertices (if not already added).
                 if (!frontVertexMap.ContainsKey(frontIndex))
