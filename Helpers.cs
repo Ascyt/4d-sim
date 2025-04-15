@@ -90,69 +90,59 @@ public static class Helpers
     public static bool IsVector3NaNOrInfinity(Vector3 vector)
             => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
                float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
+
     private static Vector4 FindIntersectionOnPlane(Vector4 A, Vector4 B, float wPlane)
     {
-        float denominator = B.w - A.w;
-        if (Math.Abs(denominator) < 1e-6)
-        {
-            // Handle the case where the line is parallel to the plane
-            return A; // or some other logic
-        }
-        float t = (wPlane - A.w) / denominator;
+        float t = (wPlane - A.w) / (B.w - A.w);
         return A + t * (B - A);
     }
 
+    /// <summary>
+    /// Fix vertices that are behind the camera not connecting to vertices that are not.
+    /// </summary>
     public static void ApplyIntersectioning(ref Vector4[] vertices, ref int[][] connections)
     {
-        Vector4[] originalVertices = vertices.ToArray();
-        int[][] originalConnections = connections.ToArray();
+        Vector4[] verticesVar = vertices.ToArray();
+        int[][] connectionsVar = connections.ToArray();
 
-        List<Vector4> updatedVertices = new();
-        List<int[]> updatedConnections = new();
-        HashSet<(int, int)> addedConnections = new();
-
-        for (int i = 0; i < originalVertices.Length; i++)
+        List<Vector4> newVerticesVar = new();
+        List<int[]> newConnectionsVar = new();
+        for (int i = 0; i < verticesVar.Length; i++)
         {
-            if (originalVertices[i].w <= 0)
+            if (verticesVar[i].w <= 0)
             {
-                IEnumerable<int[]> connectionPairs = originalConnections
-                    .Where(arr => (arr[0] == i || arr[1] == i) &&
-                                  (originalVertices[arr[0]].w > 0 || originalVertices[arr[1]].w > 0));
+                // if the vertex is behind the camera, we need to find the intersection with the plane
+                IEnumerable<int[]> connectionPairs = connectionsVar
+                    .Where((arr, ii) => (arr[0] == i || arr[1] == i) && // only those connected to the current vertex
+                        (verticesVar[arr[0]].w > 0 || verticesVar[arr[1]].w > 0) && // at least one has to be in front of the camera
+                        !CurrentConnectionAlreadyAdded(ii));
 
+                // get the other vertex of the connection
                 IEnumerable<Vector4> vectorsConnectedToThis = connectionPairs
-                    .Select(arr => originalVertices[arr[0] == i ? arr[1] : arr[0]])
+                    .Select(arr => verticesVar[arr[0] == i ? arr[1] : arr[0]])
                     .ToList();
 
+                // find the intersection of the line between the two vertices and the plane
                 IEnumerable<Vector4> intersectedVectors = vectorsConnectedToThis
-                    .Select(v => FindIntersectionOnPlane(originalVertices[i], v, 0.1f));
+                    .Select(v => FindIntersectionOnPlane(verticesVar[i], v, 0.1f));
 
-                updatedVertices.AddRange(intersectedVectors);
+                newVerticesVar.AddRange(intersectedVectors);
 
-                foreach (int[] pair in connectionPairs)
-                {
-                    int a = pair[0], b = pair[1];
-                    if (!addedConnections.Contains((a, b)) && !addedConnections.Contains((b, a)))
-                    {
-                        updatedConnections.Add(pair);
-                        addedConnections.Add((a, b));
-                    }
-                }
+                newConnectionsVar
+                    .AddRange(connectionPairs);
                 continue;
             }
 
-            updatedVertices.Add(originalVertices[i]);
-            foreach (int[] connection in originalConnections.Where(c => c[0] == i || c[1] == i))
-            {
-                int a = connection[0], b = connection[1];
-                if (!addedConnections.Contains((a, b)) && !addedConnections.Contains((b, a)))
-                {
-                    updatedConnections.Add(connection);
-                    addedConnections.Add((a, b));
-                }
-            }
+            newVerticesVar.Add(verticesVar[i]);
+            newConnectionsVar.AddRange(connectionsVar
+                .Where((c, ii) => (c[0] == i || c[1] == i) &&
+                    !CurrentConnectionAlreadyAdded(ii)));
+
+            bool CurrentConnectionAlreadyAdded(int ii)
+                => newConnectionsVar.Any(nc => (nc[0] == i && nc[1] == ii) || (nc[1] == i && nc[0] == ii)); // ignores order
         }
 
-        vertices = updatedVertices.ToArray();
-        connections = updatedConnections.ToArray();
+        vertices = newVerticesVar.ToArray();
+        connections = newConnectionsVar.ToArray();
     }
 }
