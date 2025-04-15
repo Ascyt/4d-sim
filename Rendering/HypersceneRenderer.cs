@@ -10,9 +10,23 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(CameraRotation))]
 [RequireComponent(typeof(CameraPosition))]
 [RequireComponent(typeof(Rendering))]
-public class Hyperscene : MonoBehaviour
+public class HypersceneRenderer : MonoBehaviour
 {
-    public static Hyperscene instance { get; private set; }
+    [System.Serializable]
+    public enum HypersceneOption
+    {
+        Default
+    }
+
+    public static HypersceneRenderer instance { get; private set; }
+
+    [SerializeField]
+    public HypersceneOption hypersceneOption = HypersceneOption.Default;
+    private readonly Dictionary<HypersceneOption, Hyperscene> hyperscenes = new()
+    {
+        { HypersceneOption.Default, new DefaultHyperscene() }
+    };
+    public Hyperscene Hyperscene => hyperscenes[hypersceneOption];
 
     public readonly List<Hyperobject> objects = new();
     public Hyperobject fixedAxes;
@@ -44,21 +58,12 @@ public class Hyperscene : MonoBehaviour
     }
     private void Start()
     {
-        objects.Add(new Axes());
-        
-        objects.Add(new Point(new Vector4(0, 0, 0, 0), Color.white));
+        objects.AddRange(Hyperscene.Objects);
 
-        objects.Add(new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan, 1f));
-        objects.Add(new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow));
-        
-        objects.Add(new Tesseract(new Vector4(3, 0, -2, 3), ConnectedVertices.ConnectionMethod.Wireframe, Color.magenta, 1f));
-        
-        objects.Add(new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green));
-        
-        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, 3f));
-        objects.Add(new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, .5f));
-
-        fixedAxes = new Axes();
+        if (Hyperscene.ShowFixedAxes)
+        {
+            fixedAxes = new Axes();
+        }
 
         RenderObjectsInitially();
     }
