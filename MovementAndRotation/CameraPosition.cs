@@ -15,10 +15,14 @@ public class CameraPosition : MonoBehaviour
     private TextMeshProUGUI rotationText;
 
     [SerializeField]
+    public bool useDvorak = true;
+    [SerializeField]
     public bool platformerMode;
 
-    private CameraMovement cameraMovement;
-    private CameraRotation cameraRotation;
+    [HideInInspector]
+    public CameraMovement cameraMovement;
+    [HideInInspector]
+    public CameraRotation cameraRotation;
 
     [SerializeField]
     public bool movementRotationSwitch = false;

@@ -58,7 +58,7 @@ public class Hyperscene : MonoBehaviour
         objects.Add(new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, 3f));
         objects.Add(new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, .5f));
 
-        //fixedAxes = new Axes();
+        fixedAxes = new Axes();
 
         RenderObjectsInitially();
     }
@@ -78,6 +78,8 @@ public class Hyperscene : MonoBehaviour
                 rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
+
+        UpdateFixedAxes(Rotation4.zero);
     }
     public void RenderObjectsCameraRotationChange(Rotation4 rotationDelta)
     {
@@ -94,6 +96,8 @@ public class Hyperscene : MonoBehaviour
                 rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
+
+        UpdateFixedAxes(rotationDelta);
     }
 
     public void RenderObjectsInitially()
@@ -118,37 +122,25 @@ public class Hyperscene : MonoBehaviour
             }
         }
 
-        RenderFixedAxes();
-    }
-
-    private void RenderFixedAxes()
-    {
-        return;
-        Rotation4 rotation = cameraPosition.rotation;
-
+        // Project the fixed axes
         foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
         {
-            Vector4[] rotatedVertices = connectedVertices.vertices
+            connectedVertices.transformedVertices = connectedVertices.vertices
                 .Select(v => v.RotateNeg(rotation))
                 .ToArray();
+            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
+        }
+    }
 
-            Vector3[] transformedVertices = rotatedVertices
-                .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
+    private void UpdateFixedAxes(Rotation4 rotationDelta)
+    {
+        foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
+        {
+            connectedVertices.transformedVertices = connectedVertices.transformedVertices
+                .Select(v => v.RotateNeg(rotationDelta))
                 .ToArray();
 
-            Vector3?[] transformedVerticesNullable = new Vector3?[transformedVertices.Length];
-            for (int i = 0; i < transformedVertices.Length; i++)
-            {
-                transformedVerticesNullable[i] = transformedVertices[i];
-            }
-
-            //GameObject instance = ObjectInstantiator.instance
-             //   .InstantiateObject(transformedVerticesNullable, Vector3.zero, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.material, connectedVertices.connections, connectedVertices.vertexScale);
-
-            if (instance != null)
-            {
-               // instantiatedObjects.Add(instance);
-            }
+            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
         }
     }
 }

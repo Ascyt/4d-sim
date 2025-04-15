@@ -27,17 +27,23 @@ public class CameraRotation : MonoBehaviour
     [SerializeField]
     private float rotationSpeed;
 
-    private const bool USE_DVORAK = false;
-    public static readonly KeyCode RotateXWPos = USE_DVORAK ? KeyCode.N : KeyCode.L;
-    public static readonly KeyCode RotateXWNeg = USE_DVORAK ? KeyCode.H : KeyCode.J;
-    public static readonly KeyCode RotateYWPos = USE_DVORAK ? KeyCode.R : KeyCode.O;
-    public static readonly KeyCode RotateYWNeg = USE_DVORAK ? KeyCode.G : KeyCode.U;
-    public static readonly KeyCode RotateZWPos = USE_DVORAK ? KeyCode.C : KeyCode.I;
-    public static readonly KeyCode RotateZWNeg = USE_DVORAK ? KeyCode.T : KeyCode.K;
+    public KeyCode RotateXWPos;
+    public KeyCode RotateXWNeg;
+    public KeyCode RotateYWPos;
+    public KeyCode RotateYWNeg;
+    public KeyCode RotateZWPos;
+    public KeyCode RotateZWNeg;
 
     private void Awake()
     {
         cameraPos = GetComponent<CameraPosition>();
+
+        RotateXWPos = cameraPos.useDvorak ? KeyCode.N : KeyCode.L;
+        RotateXWNeg = cameraPos.useDvorak ? KeyCode.H : KeyCode.J;
+        RotateYWPos = cameraPos.useDvorak ? KeyCode.R : KeyCode.O;
+        RotateYWNeg = cameraPos.useDvorak ? KeyCode.G : KeyCode.U;
+        RotateZWPos = cameraPos.useDvorak ? KeyCode.C : KeyCode.I;
+        RotateZWNeg = cameraPos.useDvorak ? KeyCode.T : KeyCode.K;
     }
 
     private void Update()
@@ -46,34 +52,34 @@ public class CameraRotation : MonoBehaviour
         bool rotationUpdated = false;
         Rotation4 rotationDelta = new Rotation4(0, 0, 0, 0, 0, 0);
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWPos : CameraMovement.MoveRight))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWPos : cameraPos.cameraMovement.MoveRight))
         {
             rotationDelta.xw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWNeg : CameraMovement.MoveLeft))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWNeg : cameraPos.cameraMovement.MoveLeft))
         {
             rotationDelta.xw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWPos : CameraMovement.MoveUp))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWPos : cameraPos.cameraMovement.MoveUp))
         {
             rotationDelta.yw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWNeg : CameraMovement.MoveDown))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWNeg : cameraPos.cameraMovement.MoveDown))
         {
             rotationDelta.yw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWPos : CameraMovement.MoveForwards))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWPos : cameraPos.cameraMovement.MoveForwards))
         {
             rotationDelta.zw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWNeg : CameraMovement.MoveBackwards))
+        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWNeg : cameraPos.cameraMovement.MoveBackwards))
         {
             rotationDelta.zw -= speed;
             rotationUpdated = true;

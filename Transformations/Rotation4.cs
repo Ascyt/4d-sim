@@ -10,6 +10,8 @@ public struct Rotation4
     public float xz;
     public float yz;
 
+    public static Rotation4 zero => new Rotation4(0, 0, 0, 0, 0, 0);
+
     public Rotation4(float xw, float yw, float zw, float xy, float xz, float yz)
     {
         this.xw = xw; this.yw = yw; this.zw = zw; this.xy = xy; this.xz = xz; this.yz = yz; 
