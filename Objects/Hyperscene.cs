@@ -5,5 +5,5 @@ using UnityEngine;
 public abstract class Hyperscene
 {
     public abstract List<Hyperobject> Objects { get; }
-    public abstract bool ShowFixedAxes { get; }
+    public abstract List<Hyperobject> FixedObjects { get; }
 }

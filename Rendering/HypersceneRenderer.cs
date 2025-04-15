@@ -29,7 +29,7 @@ public class HypersceneRenderer : MonoBehaviour
     public Hyperscene Hyperscene => hyperscenes[hypersceneOption];
 
     public readonly List<Hyperobject> objects = new();
-    public Hyperobject fixedAxes;
+    public readonly List<Hyperobject> fixedObjects = new();
 
     private CameraMovement cameraMovement;
     private CameraRotation cameraRotation;
@@ -59,11 +59,7 @@ public class HypersceneRenderer : MonoBehaviour
     private void Start()
     {
         objects.AddRange(Hyperscene.Objects);
-
-        if (Hyperscene.ShowFixedAxes)
-        {
-            fixedAxes = new Axes();
-        }
+        fixedObjects.AddRange(Hyperscene.FixedObjects);
 
         RenderObjectsInitially();
     }
@@ -84,7 +80,7 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        UpdateFixedAxes(Rotation4.zero);
+        UpdateFixedObjects(Rotation4.zero);
     }
     public void RenderObjectsCameraRotationChange(Rotation4 rotationDelta)
     {
@@ -102,7 +98,7 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        UpdateFixedAxes(rotationDelta);
+        UpdateFixedObjects(rotationDelta);
     }
 
     public void RenderObjectsInitially()
@@ -127,25 +123,31 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        // Project the fixed axes
-        foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
+        // Project the fixed objects
+        foreach (Hyperobject fixedObject in fixedObjects)
         {
-            connectedVertices.transformedVertices = connectedVertices.vertices
-                .Select(v => v.RotateNeg(rotation))
-                .ToArray();
-            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
+            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
+            {
+                connectedVertices.transformedVertices = connectedVertices.vertices
+                    .Select(v => v.RotateNeg(rotation))
+                    .ToArray();
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices);
+            }
         }
     }
 
-    private void UpdateFixedAxes(Rotation4 rotationDelta)
+    private void UpdateFixedObjects(Rotation4 rotationDelta)
     {
-        foreach (ConnectedVertices connectedVertices in fixedAxes.vertices)
+        foreach (Hyperobject fixedObject in fixedObjects)
         {
-            connectedVertices.transformedVertices = connectedVertices.transformedVertices
-                .Select(v => v.RotateNeg(rotationDelta))
-                .ToArray();
+            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
+            {
+                connectedVertices.transformedVertices = connectedVertices.transformedVertices
+                    .Select(v => v.RotateNeg(rotationDelta))
+                    .ToArray();
 
-            rendering.ProjectFixedObject(connectedVertices, fixedAxes, connectedVertices.transformedVertices);
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices);
+            }
         }
     }
 }

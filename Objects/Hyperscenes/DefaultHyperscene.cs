@@ -22,5 +22,9 @@ public class DefaultHyperscene : Hyperscene
     };
     public override List<Hyperobject> Objects => _objects;
 
-    public override bool ShowFixedAxes => true;
+    private List<Hyperobject> _fixedObjects = new()
+    {
+        new Axes()
+    };
+    public override List<Hyperobject> FixedObjects => _fixedObjects;
 }
