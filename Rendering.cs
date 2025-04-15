@@ -56,9 +56,10 @@ public class Rendering : MonoBehaviour
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
                 .Contains(connectedVertices.connectionMethod);
 
+        connectedVertices.editedConnections = connectedVertices.connections;
         if (applyIntersectioning)
         {
-            Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connectedVertices.connections);
+            Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connectedVertices.editedConnections);
         }
 
         // Project the vertices to 3D
@@ -90,6 +91,7 @@ public class Rendering : MonoBehaviour
         {
             transformedVerticesNullable[i] = transformedVertices[i];
         }
+        connectedVertices.editedConnections = connectedVertices.connections;
 
         DisplayObject(connectedVertices, obj, transformedVerticesNullable, Vector3.zero);
     }
@@ -97,7 +99,7 @@ public class Rendering : MonoBehaviour
     private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos)
     {
         (GameObject, List<Object>)? instance = ObjectInstantiator.instance
-          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.connections, connectedVertices.vertexScale);
+          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connectedVertices.editedConnections, connectedVertices.vertexScale);
 
         if (instance != null)
         {

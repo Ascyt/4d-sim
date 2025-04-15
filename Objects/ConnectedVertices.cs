@@ -15,7 +15,8 @@ public class ConnectedVertices
     /// Vertices transformed so camera position and rotation is at 0 (no projection)
     /// </summary>
     public Vector4[] transformedVertices;
-    public int[][] connections;
+    public readonly int[][] connections;
+    public int[][] editedConnections;
     public float? vertexScale;
 
     public Color color;
