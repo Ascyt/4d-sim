@@ -15,18 +15,15 @@ public class HypersceneRenderer : MonoBehaviour
     [System.Serializable]
     public enum HypersceneOption
     {
-        Default
+        Default,
+        FixedTesseract
     }
 
     public static HypersceneRenderer instance { get; private set; }
 
     [SerializeField]
     public HypersceneOption hypersceneOption = HypersceneOption.Default;
-    private readonly Dictionary<HypersceneOption, Hyperscene> hyperscenes = new()
-    {
-        { HypersceneOption.Default, new DefaultHyperscene() }
-    };
-    public Hyperscene Hyperscene => hyperscenes[hypersceneOption];
+    public Hyperscene hyperscene;
 
     public readonly List<Hyperobject> objects = new();
     public readonly List<Hyperobject> fixedObjects = new();
@@ -36,7 +33,7 @@ public class HypersceneRenderer : MonoBehaviour
     private CameraPosition cameraPosition;
     private Rendering rendering;
 
-    private readonly float fov = Mathf.PI / 4f;
+    private readonly float fov = Mathf.PI / 8f;
     private readonly Vector4 from = new Vector4(0, 0, 0, 0);
     private readonly Vector4 to = new Vector4(0, 0, 0, -1);
     private readonly Vector4 up = new Vector4(0, 1, 0, 0);
@@ -58,8 +55,31 @@ public class HypersceneRenderer : MonoBehaviour
     }
     private void Start()
     {
-        objects.AddRange(Hyperscene.Objects);
-        fixedObjects.AddRange(Hyperscene.FixedObjects);
+        InitializeHyperscene();
+    }
+
+    public void InitializeHyperscene()
+    {
+        switch (hypersceneOption)
+        {
+            case HypersceneOption.Default:
+                hyperscene = new DefaultHyperscene();
+                break;
+            case HypersceneOption.FixedTesseract:
+                hyperscene = new FixedTesseractHyperscene();
+                break;
+            default:
+                Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
+                break;
+        }
+
+        objects.AddRange(hyperscene.Objects);
+        fixedObjects.AddRange(hyperscene.FixedObjects);
+
+        if (hyperscene.IsFixed && objects.Count > 0)
+        {
+            Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any objects.");
+        }
 
         RenderObjectsInitially();
     }
@@ -131,7 +151,8 @@ public class HypersceneRenderer : MonoBehaviour
                 connectedVertices.transformedVertices = connectedVertices.vertices
                     .Select(v => v.RotateNeg(rotation))
                     .ToArray();
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices);
+
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed);
             }
         }
     }
@@ -143,10 +164,10 @@ public class HypersceneRenderer : MonoBehaviour
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {
                 connectedVertices.transformedVertices = connectedVertices.transformedVertices
-                    .Select(v => v.RotateNeg(rotationDelta))
+                    .Select(v => hyperscene.IsFixed ? v.Rotate(rotationDelta) : v.RotateNeg(rotationDelta))
                     .ToArray();
 
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices);
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed);
             }
         }
     }

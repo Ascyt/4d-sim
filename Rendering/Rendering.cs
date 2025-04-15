@@ -74,19 +74,27 @@ public class Rendering : MonoBehaviour
         DisplayObject(connectedVertices, obj, transformedVertices, averagePos, connections);
     }
 
-    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
+    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] vertices, bool orthographic)
     {
-        Vector3[] transformedVertices = verticesRelativeToCamera
-            .Select(v => new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
-            .ToArray();
-
-        Vector3?[] transformedVerticesNullable = new Vector3?[transformedVertices.Length];
-        for (int i = 0; i < transformedVertices.Length; i++)
+        Vector3?[] transformedVertices;
+        if (orthographic)
         {
-            transformedVerticesNullable[i] = transformedVertices[i];
+            transformedVertices = vertices
+                .Select(v => (Vector3?)new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
+                .ToArray();
+        }
+        else
+        {
+            Vector4 fixedFrom = new(0, 0, 0, 2);
+            Vector4 fixedTo = new(0, 0, 0, -1);
+            Vector4 fixedUp = new(0, 1, 0, 0);
+            Vector4 fixedOver = new(0, 0, 1, 0);
+            Helpers.GetViewingTransformMatrix(fixedFrom, fixedTo, fixedUp, fixedOver, out Vector4 fixedWa, out Vector4 fixedWb, out Vector4 fixedWc, out Vector4 fixedWd);
+
+            transformedVertices = Helpers.ProjectVerticesTo3d(fixedWa, fixedWb, fixedWc, fixedWd, fixedFrom, vertices, fov);
         }
 
-        DisplayObject(connectedVertices, obj, transformedVerticesNullable, Vector3.zero, connectedVertices.connections);
+        DisplayObject(connectedVertices, obj, transformedVertices, Vector3.zero, connectedVertices.connections);
     }
 
     private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos, int[][] connections)

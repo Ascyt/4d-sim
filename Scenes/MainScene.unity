@@ -3912,10 +3912,10 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194232}
   - component: {fileID: 963194231}
   - component: {fileID: 963194230}
   - component: {fileID: 963194235}
-  - component: {fileID: 963194232}
   - component: {fileID: 963194234}
   - component: {fileID: 963194233}
   - component: {fileID: 963194236}
@@ -4069,6 +4069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94680dfba1e37fb4fb4cb79a277cb455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hypersceneOption: 0
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0

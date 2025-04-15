@@ -6,4 +6,5 @@ public abstract class Hyperscene
 {
     public abstract List<Hyperobject> Objects { get; }
     public abstract List<Hyperobject> FixedObjects { get; }
+    public virtual bool IsFixed => false;
 }
