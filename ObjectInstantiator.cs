@@ -21,7 +21,7 @@ public class ObjectInstantiator : MonoBehaviour
         instance = this;
     }
 
-    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[,] connections=null, float? vertexScale=null)
+    public (GameObject, List<Object>)? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[][] connections=null, float? vertexScale=null)
     {
         switch (connectionMethod)
         {
@@ -169,7 +169,7 @@ public class ObjectInstantiator : MonoBehaviour
 
     // This method creates a wireframe by instantiating vertices and connecting specific vertices
     // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
-    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[,] connectedVertices, float? vertexScale)
+    private (GameObject, List<Object>)?InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[][] connectedVertices, float? vertexScale)
     {
         List<Object> resources = new();
 
@@ -183,23 +183,17 @@ public class ObjectInstantiator : MonoBehaviour
 
         wireframeParent.name = "WireframeObject";
 
-        if (connectedVertices.GetLength(1) != 2)
-        {
-            Debug.LogError("Connected vertices must be matrix of [n, 2]");
-            return null;
-        }
-
         Material mat = new Material(wireframeLineMaterial);
         mat.color = color;
 
         // For each connection, create a child GameObject with a LineRenderer.
-        for (int i = 0; i < connectedVertices.GetLength(0); i++)
+        for (int i = 0; i < connectedVertices.Length; i++)
         {
-            if (connectedVertices[i, 0] >= points.Length || connectedVertices[i, 1] >= points.Length)
+            if (connectedVertices[i][0] >= points.Length || connectedVertices[i][1] >= points.Length)
             {
                 continue;
             }
-            if (!points[connectedVertices[i, 0]].HasValue || !points[connectedVertices[i, 1]].HasValue)
+            if (!points[connectedVertices[i][0]].HasValue || !points[connectedVertices[i][1]].HasValue)
             {
                 continue;
             }
@@ -215,8 +209,8 @@ public class ObjectInstantiator : MonoBehaviour
             LineRenderer lr = lineObject.AddComponent<LineRenderer>();
             lr.useWorldSpace = false; // use local positions to match the spheres.
             lr.positionCount = 2; // Each connection is just 2 points.
-            lr.SetPosition(0, points[connectedVertices[i, 0]].Value);
-            lr.SetPosition(1, points[connectedVertices[i, 1]].Value);
+            lr.SetPosition(0, points[connectedVertices[i][0]].Value);
+            lr.SetPosition(1, points[connectedVertices[i][1]].Value);
 
             // Set width and material.
             lr.startWidth = 0.01f;

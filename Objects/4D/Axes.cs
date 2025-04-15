@@ -16,8 +16,8 @@ public class Axes : Hyperobject
 
             Color.red,
 
-            connections: new int[,]
-                { { 0, 1 } },
+            connections: new int[][]
+                { new[] { 0, 1 } },
 
             vertexScale: 1f
         ),
@@ -31,8 +31,8 @@ public class Axes : Hyperobject
 
             Color.green,
 
-            connections: new int[,]
-                { { 0, 1 } },
+            connections: new int[][]
+                { new[] { 0, 1 } },
 
             vertexScale: 1f
         ),
@@ -46,8 +46,8 @@ public class Axes : Hyperobject
 
             new Color(0f, 0.5f, 1f),
 
-            connections: new int[,]
-                { { 0, 1 } },
+            connections: new int[][]
+                { new[] { 0, 1 } },
 
             vertexScale: 1f
         ),
@@ -61,8 +61,8 @@ public class Axes : Hyperobject
 
             Color.yellow,
 
-            connections: new int[,]
-                { { 0, 1 } },
+            connections: new int[][]
+                { new[] { 0, 1 } },
 
             vertexScale: 1f
         ),

@@ -31,18 +31,16 @@ public class Tesseract : Hyperobject
 
             color,
 
-            connections: new int[,]
+            connections: new int[][]
             {
-                { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 }, // First square
-                { 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 4 }, // Second square
-                { 0, 7 }, { 1, 6 }, { 2, 5 }, { 3, 4 }, // Connecting first and second square to form a cube
-
-                { 8, 9 }, { 9, 10 }, { 10, 11 }, { 11, 8 }, // First square
-                { 12, 13 }, { 13, 14 }, { 14, 15 }, { 15, 12 }, // Second Square
-                { 8, 15 }, { 9, 14 }, { 10, 13 }, { 11, 12 }, // Connecting first and second square to form a cube
-
-                { 0, 8 }, { 1, 9 }, { 2, 10 }, { 3, 11 }, // Connecting the two cubes
-                { 4, 12 }, { 5, 13 }, { 6, 14 }, { 7, 15 } // Connecting the two cubes
+                new[] { 0, 1 },   new[] { 1, 2 },   new[] { 2, 3 },   new[] { 3, 0 },   // First square
+                new[] { 4, 5 },   new[] { 5, 6 },   new[] { 6, 7 },   new[] { 7, 4 },   // Second square
+                new[] { 0, 7 },   new[] { 1, 6 },   new[] { 2, 5 },   new[] { 3, 4 },   // Connecting first and second square to form a cube
+                new[] { 8, 9 },   new[] { 9, 10 },  new[] { 10, 11 }, new[] { 11, 8 },  // First square
+                new[] { 12, 13 }, new[] { 13, 14 }, new[] { 14, 15 }, new[] { 15, 12 }, // Second Square
+                new[] { 8, 15 },  new[] { 9, 14 },  new[] { 10, 13 }, new[] { 11, 12 }, // Connecting first and second square to form a cube
+                new[] { 0, 8 },   new[] { 1, 9 },   new[] { 2, 10 },  new[] { 3, 11 },  // Connecting the two cubes
+                new[] { 4, 12 },  new[] { 5, 13 },  new[] { 6, 14 },  new[] { 7, 15 }   // Connecting the two cubes
             }
         )
     }, position)

@@ -47,21 +47,24 @@ public class Rendering : MonoBehaviour
 
     public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
     {
-        Vector4?[] verticesRelativeToCameraNullable = new Vector4?[verticesRelativeToCamera.Length];
-        for (int i = 0; i < verticesRelativeToCamera.Length; i++)
-        {
-            verticesRelativeToCameraNullable[i] = verticesRelativeToCamera[i].w > 0 ? verticesRelativeToCamera[i] : null;
-        }
-
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
+        if (verticesRelativeToCamera.All(v => v.w <= 0))
         {
             return;
         }
 
-        // Project the vertices to 3D
-        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCameraNullable, fov);
+        bool applyIntersectioning = connectedVertices.connections is not null &&
+                (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
+                .Contains(connectedVertices.connectionMethod);
 
-        if (verticesRelativeToCameraNullable.All(v => !v.HasValue))
+        if (applyIntersectioning)
+        {
+            Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connectedVertices.connections);
+        }
+
+        // Project the vertices to 3D
+        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, fov);
+
+        if (transformedVertices.All(v => !v.HasValue))
         {
             return;
         }
