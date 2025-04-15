@@ -81,6 +81,8 @@ public class HypersceneRenderer : MonoBehaviour
             Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any objects.");
         }
 
+        cameraMovement.enabled = !hyperscene.IsFixed;
+
         RenderObjectsInitially();
     }
 
@@ -149,7 +151,7 @@ public class HypersceneRenderer : MonoBehaviour
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {
                 connectedVertices.transformedVertices = connectedVertices.vertices
-                    .Select(v => v.RotateNeg(rotation))
+                    .Select(v => (v + fixedObject.position).RotateNeg(rotation))
                     .ToArray();
 
                 rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed);

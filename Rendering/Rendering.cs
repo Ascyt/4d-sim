@@ -36,9 +36,10 @@ public class Rendering : MonoBehaviour
         instantiatedObjects.Clear();
     }
 
-    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
+    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera, bool allowIntersectioning = true,
+        Vector4? wa = null, Vector4? wb = null, Vector4? wc = null, Vector4? wd = null, Vector4? from=null)
     {
-        bool applyIntersectioning = connectedVertices.connections is not null &&
+        bool applyIntersectioning = allowIntersectioning && connectedVertices.connections is not null &&
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
                 .Contains(connectedVertices.connectionMethod);
 
@@ -49,7 +50,7 @@ public class Rendering : MonoBehaviour
         }
 
         // Project the vertices to 3D
-        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, fov);
+        Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa ?? this.wa, wb ?? this.wb, wc ?? this.wc, wd ?? this.wd, from ?? this.from, verticesRelativeToCamera, fov);
 
         Vector3 averagePos = Vector3.zero;
         int valueCount = 0;
@@ -76,25 +77,23 @@ public class Rendering : MonoBehaviour
 
     public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] vertices, bool orthographic)
     {
-        Vector3?[] transformedVertices;
         if (orthographic)
         {
-            transformedVertices = vertices
+            Vector3?[] transformedVertices = vertices
                 .Select(v => (Vector3?)new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
                 .ToArray();
-        }
-        else
-        {
-            Vector4 fixedFrom = new(0, 0, 0, 2);
-            Vector4 fixedTo = new(0, 0, 0, -1);
-            Vector4 fixedUp = new(0, 1, 0, 0);
-            Vector4 fixedOver = new(0, 0, 1, 0);
-            Helpers.GetViewingTransformMatrix(fixedFrom, fixedTo, fixedUp, fixedOver, out Vector4 fixedWa, out Vector4 fixedWb, out Vector4 fixedWc, out Vector4 fixedWd);
 
-            transformedVertices = Helpers.ProjectVerticesTo3d(fixedWa, fixedWb, fixedWc, fixedWd, fixedFrom, vertices, fov);
+            DisplayObject(connectedVertices, obj, transformedVertices, Vector3.zero, connectedVertices.connections);
+            return;
         }
 
-        DisplayObject(connectedVertices, obj, transformedVertices, Vector3.zero, connectedVertices.connections);
+        Vector4 fixedFrom = new(0, 0, 0, 2);
+        Vector4 fixedTo = new(0, 0, 0, -1);
+        Vector4 fixedUp = new(0, 1, 0, 0);
+        Vector4 fixedOver = new(0, 0, 1, 0);
+        Helpers.GetViewingTransformMatrix(fixedFrom, fixedTo, fixedUp, fixedOver, out Vector4 fixedWa, out Vector4 fixedWb, out Vector4 fixedWc, out Vector4 fixedWd);
+
+        ProjectVertices(connectedVertices, obj, vertices, false, fixedWa, fixedWb, fixedWc, fixedWd, fixedFrom);
     }
 
     private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos, int[][] connections)
