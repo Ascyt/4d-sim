@@ -4069,7 +4069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94680dfba1e37fb4fb4cb79a277cb455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hypersceneOption: 1
+  hypersceneOption: 2
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0

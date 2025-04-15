@@ -4,30 +4,12 @@ using UnityEngine;
 
 public class Tesseract : Hyperobject
 {
-    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, float scale) : base(new ConnectedVertices[]
+    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale=null) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
 
-             new Vector4[] {
-                new Vector4(-1, -1, -1, -1) * (scale / 2f), // 0
-                new Vector4(1, -1, -1, -1)  * (scale / 2f), // 1
-                new Vector4(1, 1, -1, -1)   * (scale / 2f), // 2
-                new Vector4(-1, 1, -1, -1)  * (scale / 2f), // 3
-                new Vector4(-1, 1, 1, -1)   * (scale / 2f), // 4
-                new Vector4(1, 1, 1, -1)    * (scale / 2f), // 5
-                new Vector4(1, -1, 1, -1)   * (scale / 2f), // 6
-                new Vector4(-1, -1, 1, -1)  * (scale / 2f), // 7
-    
-                new Vector4(-1, -1, -1, 1)  * (scale / 2f), // 8
-                new Vector4(1, -1, -1, 1)   * (scale / 2f), // 9
-                new Vector4(1, 1, -1, 1)    * (scale / 2f), // 10
-                new Vector4(-1, 1, -1, 1)   * (scale / 2f), // 11
-                new Vector4(-1, 1, 1, 1)    * (scale / 2f), // 12
-                new Vector4(1, 1, 1, 1)     * (scale / 2f), // 13
-                new Vector4(1, -1, 1, 1)    * (scale / 2f), // 14
-                new Vector4(-1, -1, 1, 1)   * (scale / 2f)  // 15
-            },
+            GetVertices(scale ?? Vector4.one),
 
             color,
 
@@ -47,4 +29,28 @@ public class Tesseract : Hyperobject
     {
 
     }
+
+    private static Vector4[] GetVertices(Vector4 scale)
+    {
+        Vector4 s = scale / 2f;
+        return
+             new Vector4[] {
+                new(-s.x, -s.y, -s.z, -s.w), // 0
+                new( s.x, -s.y, -s.z, -s.w), // 1
+                new( s.x,  s.y, -s.z, -s.w), // 2
+                new(-s.x,  s.y, -s.z, -s.w), // 3
+                new(-s.x,  s.y,  s.z, -s.w), // 4
+                new( s.x,  s.y,  s.z, -s.w), // 5
+                new( s.x, -s.y,  s.z, -s.w), // 6
+                new(-s.x, -s.y,  s.z, -s.w), // 7
+                new(-s.x, -s.y, -s.z,  s.w), // 8
+                new( s.x, -s.y, -s.z,  s.w), // 9
+                new( s.x,  s.y, -s.z,  s.w), // 10
+                new(-s.x,  s.y, -s.z,  s.w), // 11
+                new(-s.x,  s.y,  s.z,  s.w), // 12
+                new( s.x,  s.y,  s.z,  s.w), // 13
+                new( s.x, -s.y,  s.z,  s.w), // 14
+                new(-s.x, -s.y,  s.z,  s.w)  // 15
+             };
+    } 
 }

@@ -16,7 +16,8 @@ public class HypersceneRenderer : MonoBehaviour
     public enum HypersceneOption
     {
         Default,
-        FixedTesseract
+        FixedTesseract,
+        Ground
     }
 
     public static HypersceneRenderer instance { get; private set; }
@@ -67,6 +68,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.FixedTesseract:
                 hyperscene = new FixedTesseractHyperscene();
+                break;
+            case HypersceneOption.Ground:
+                hyperscene = new GroundHyperscene();
                 break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");

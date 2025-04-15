@@ -119,7 +119,7 @@ public static class Helpers
         // keyed by the pair {behindIndex, frontIndex} (ordered) so that we don’t compute intersections twice.
         Dictionary<Tuple<int, int>, int> intersectionVertexMap = new Dictionary<Tuple<int, int>, int>();
 
-        const float NEAR_PLANE = 1f / 4096f;
+        const float NEAR_PLANE = 1f / 16f;
 
         // Process each connection (edge) exactly once.
         for (int edgeIndex = 0; edgeIndex < connections.Length; edgeIndex++)
