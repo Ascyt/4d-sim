@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static ObjectInstantiator;
 
 public class Rendering : MonoBehaviour
 {
-    public struct InstantiatedObject
-    {
-        public GameObject gameObj;
-        public List<Object> resources;
-        public InstantiatedObject(GameObject gameObj, List<Object> resources)
-        {
-            this.gameObj = gameObj; this.resources = resources; 
-        }
-    }
-
     public void Initialize(Vector4 from, Vector4 to, Vector4 up, Vector4 over, float fov)
     {
         Helpers.GetViewingTransformMatrix(from, to, up, over, out wa, out wb, out wc, out wd);
@@ -47,11 +38,6 @@ public class Rendering : MonoBehaviour
 
     public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera)
     {
-        if (verticesRelativeToCamera.All(v => v.w <= 0))
-        {
-            return;
-        }
-
         bool applyIntersectioning = connectedVertices.connections is not null &&
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
                 .Contains(connectedVertices.connectionMethod);
@@ -65,15 +51,23 @@ public class Rendering : MonoBehaviour
         // Project the vertices to 3D
         Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, fov);
 
-        if (transformedVertices.All(v => !v.HasValue))
+        Vector3 averagePos = Vector3.zero;
+        int valueCount = 0;
+        for (int i = 0; i < transformedVertices.Length; i++)
         {
+            if (transformedVertices[i].HasValue)
+            {
+                valueCount++;
+                averagePos += transformedVertices[i].Value;
+            }
+        }
+        if (valueCount == 0)
+        {
+            // No vertices are in front of the camera, so we don't need to display anything.
             return;
         }
 
-        Vector3 averagePos = new Vector3(
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.x).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.y).Average(),
-            transformedVertices.Where(v => v.HasValue).Select(v => v.Value.z).Average());
+        averagePos /= valueCount; // average position of all vertices in front of the camera
 
         transformedVertices = transformedVertices.Select(v => v - averagePos).ToArray();
 
@@ -97,17 +91,15 @@ public class Rendering : MonoBehaviour
 
     private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos, int[][] connections)
     {
-        (GameObject, List<Object>)? instance = ObjectInstantiator.instance
+        InstantiatedObject? instance = ObjectInstantiator.instance
           .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connections, connectedVertices.vertexScale);
 
         if (instance != null)
         {
-            InstantiatedObject instantiatedObject = new InstantiatedObject(instance.Value.Item1, instance.Value.Item2);
-
             if (instantiatedObjects.ContainsKey(obj))
-                instantiatedObjects[obj].Add(instantiatedObject);
+                instantiatedObjects[obj].Add(instance.Value);
             else
-                instantiatedObjects.Add(obj, new List<InstantiatedObject> { instantiatedObject });
+                instantiatedObjects.Add(obj, new List<InstantiatedObject> { instance.Value });
         }
     }
 }
