@@ -10,14 +10,14 @@ public class Cube : Hyperobject
             connectionMethod,
 
             new Vector4[] {
-                new Vector4(-.5f, -.5f, -.5f, -.5f), // 0
-                new Vector4(.5f, -.5f, -.5f, -.5f), // 1
-                new Vector4(.5f, .5f, -.5f, -.5f), // 2
-                new Vector4(-.5f, .5f, -.5f, -.5f), // 3
-                new Vector4(-.5f, .5f, .5f, -.5f), // 4
-                new Vector4(.5f, .5f, .5f, -.5f), // 5
-                new Vector4(.5f, -.5f, .5f, -.5f), // 6
-                new Vector4(-.5f, -.5f, .5f, -.5f),  // 7
+                new Vector4(-.5f, -.5f, -.5f, 0), // 0
+                new Vector4(.5f, -.5f, -.5f, 0), // 1
+                new Vector4(.5f, .5f, -.5f, 0), // 2
+                new Vector4(-.5f, .5f, -.5f, 0), // 3
+                new Vector4(-.5f, .5f, .5f, 0), // 4
+                new Vector4(.5f, .5f, .5f, 0), // 5
+                new Vector4(.5f, -.5f, .5f, 0), // 6
+                new Vector4(-.5f, -.5f, .5f, 0),  // 7
             },
             
             color,

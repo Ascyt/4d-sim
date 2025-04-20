@@ -16,8 +16,9 @@ public class HypersceneRenderer : MonoBehaviour
     public enum HypersceneOption
     {
         Default,
+        Ground,
         FixedTesseract,
-        Ground
+        FixedCubes
     }
 
     public static HypersceneRenderer instance { get; private set; }
@@ -66,11 +67,14 @@ public class HypersceneRenderer : MonoBehaviour
             case HypersceneOption.Default:
                 hyperscene = new DefaultHyperscene();
                 break;
+            case HypersceneOption.Ground:
+                hyperscene = new GroundHyperscene();
+                break;
             case HypersceneOption.FixedTesseract:
                 hyperscene = new FixedTesseractHyperscene();
                 break;
-            case HypersceneOption.Ground:
-                hyperscene = new GroundHyperscene();
+            case HypersceneOption.FixedCubes:
+                hyperscene = new FixedCubesHyperscene();
                 break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
@@ -158,7 +162,7 @@ public class HypersceneRenderer : MonoBehaviour
                     .Select(v => (v + fixedObject.position).RotateNeg(rotation))
                     .ToArray();
 
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed);
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }
@@ -173,7 +177,7 @@ public class HypersceneRenderer : MonoBehaviour
                     .Select(v => hyperscene.IsFixed ? v.Rotate(rotationDelta) : v.RotateNeg(rotationDelta))
                     .ToArray();
 
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed);
+                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }

@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Axes : Hyperobject
 {
-    public Axes() : base(new ConnectedVertices[]
+    public Axes(float scale=1f) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
 
             new Vector4[] {
                 Vector4.zero,
-                new Vector4(1, 0, 0, 0),
+                new Vector4(scale, 0, 0, 0),
             },
 
             Color.red,
@@ -19,14 +19,14 @@ public class Axes : Hyperobject
             connections: new int[][]
                 { new[] { 0, 1 } },
 
-            vertexScale: 1f
+            vertexScale: scale
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
 
             new Vector4[] {
                 Vector4.zero,
-                new Vector4(0, 1, 0, 0),
+                new Vector4(0, scale, 0, 0),
             },
 
             Color.green,
@@ -34,14 +34,14 @@ public class Axes : Hyperobject
             connections: new int[][]
                 { new[] { 0, 1 } },
 
-            vertexScale: 1f
+            vertexScale: scale
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
 
             new Vector4[] {
                 Vector4.zero,
-                new Vector4(0, 0, 1, 0),
+                new Vector4(0, 0, scale, 0),
             },
 
             new Color(0f, 0.5f, 1f),
@@ -49,14 +49,14 @@ public class Axes : Hyperobject
             connections: new int[][]
                 { new[] { 0, 1 } },
 
-            vertexScale: 1f
+            vertexScale: scale
         ),
         new ConnectedVertices(
             ConnectedVertices.ConnectionMethod.Wireframe,
 
             new Vector4[] {
                 Vector4.zero,
-                new Vector4(0, 0, 0, 1),
+                new Vector4(0, 0, 0, scale),
             },
 
             Color.yellow,
@@ -64,7 +64,7 @@ public class Axes : Hyperobject
             connections: new int[][]
                 { new[] { 0, 1 } },
 
-            vertexScale: 1f
+            vertexScale: scale
         ),
 
         new ConnectedVertices(
@@ -76,7 +76,7 @@ public class Axes : Hyperobject
 
             Color.black,
 
-            vertexScale: 2f
+            vertexScale: scale * 2f
         ),
     }, Vector4.zero)
     {
