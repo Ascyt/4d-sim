@@ -17,7 +17,7 @@ public class DefaultHyperscene : Hyperscene
         
         new Cube(new Vector4(0, -1, 2, -4), ConnectedVertices.ConnectionMethod.Wireframe, Color.green),
         
-        new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red),
+        new Tesseract(new Vector4(-10, 5, 6, -3), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, scale: new Vector4(1f, 2f, 3f, 4f)),
         new Tesseract(new Vector4(-10, 5, 6, -7), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow),
     };
     public override List<Hyperobject> Objects => _objects;

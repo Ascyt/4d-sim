@@ -14,19 +14,21 @@ public class CameraPosition : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI rotationText;
 
-    [SerializeField]
     public bool useDvorak = true;
-    [SerializeField]
-    public bool platformerMode;
+    // TODO: This should make part of the rotation relative to world space, not the camera's forward direction.
+    // In 3D, while the YZ rotation and the XY camera tilt are relative to the camera's forward direction, the XZ rotation should be relative to the world space.
+    // For 4D, I could do a similar thing, make YW and camera tilt relative to the camera's forward direction and XW relative to world space,
+    // but the issue is that I'm not sure what to do with ZW. And should it be uncapped like the XZ rotation in 3D, or also stopped like when looking straight up or down in 3D?
+    // public bool platformerMode; 
 
     [HideInInspector]
     public CameraMovement cameraMovement;
     [HideInInspector]
     public CameraRotation cameraRotation;
 
-    [SerializeField]
-    public bool movementRotationSwitch = false;
-    private KeyCode movementRotationSwitchKey = KeyCode.Tab;
+    public bool RotationMovementSwitch { get; private set; } = false;
+
+    private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
 
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
@@ -51,7 +53,8 @@ public class CameraPosition : MonoBehaviour
     }
     private void Start()
     {
-        UpdateMovementRotationSwitch(movementRotationSwitch);
+        UpdateMovementRotationSwitch(RotationMovementSwitch);
+        OnValuesUpdateSelf();
     }
     private void Update()
     {
@@ -63,9 +66,9 @@ public class CameraPosition : MonoBehaviour
 
     public void UpdateMovementRotationSwitch(bool? newValue = null)
     {
-        newValue = newValue ?? !movementRotationSwitch;
-        movementRotationSwitch = newValue.Value;
-        movementRotationSwitchText.text = $"Movement/Rotation switched: {movementRotationSwitch}";
+        newValue = newValue ?? !RotationMovementSwitch;
+        RotationMovementSwitch = newValue.Value;
+        movementRotationSwitchText.text = $"Rotation/Movement switched: {RotationMovementSwitch}";
     }
 
     private void OnPositionUpdate(Vector4 positionDelta)

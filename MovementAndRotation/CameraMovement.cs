@@ -9,13 +9,21 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     public float movementSpeed;
 
+    [HideInInspector]
     public KeyCode MoveRight;
+    [HideInInspector]
     public KeyCode MoveLeft;
+    [HideInInspector]
     public KeyCode MoveUp;
+    [HideInInspector]
     public KeyCode MoveDown;
+    [HideInInspector]
     public KeyCode MoveForwards;
+    [HideInInspector]
     public KeyCode MoveBackwards;
+    [HideInInspector]
     public KeyCode MoveAna;
+    [HideInInspector]
     public KeyCode MoveKata;     
 
     private CameraPosition cameraPos;
@@ -44,34 +52,34 @@ public class CameraMovement : MonoBehaviour
 
         Vector4 delta = Vector4.zero;
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveRight : cameraPos.cameraRotation.RotateXWPos))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveRight : cameraPos.cameraRotation.RotateXWPos))
         {
             delta += new Vector4(speed, 0, 0, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveLeft : cameraPos.cameraRotation.RotateXWNeg))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveLeft : cameraPos.cameraRotation.RotateXWNeg))
         {
             delta += new Vector4(-speed, 0, 0, 0);
             positionUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveUp : cameraPos.cameraRotation.RotateYWPos))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveUp : cameraPos.cameraRotation.RotateYWPos))
         {
             delta += new Vector4(0, speed, 0, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveDown : cameraPos.cameraRotation.RotateYWNeg))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveDown : cameraPos.cameraRotation.RotateYWNeg))
         {
             delta += new Vector4(0, -speed, 0, 0);
             positionUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveForwards : cameraPos.cameraRotation.RotateZWPos))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveForwards : cameraPos.cameraRotation.RotateZWPos))
         {
             delta += new Vector4(0, 0, speed, 0);
             positionUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? MoveBackwards : cameraPos.cameraRotation.RotateZWNeg))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? MoveBackwards : cameraPos.cameraRotation.RotateZWNeg))
         {
             delta += new Vector4(0, 0, -speed, 0);
             positionUpdated = true;
@@ -88,10 +96,10 @@ public class CameraMovement : MonoBehaviour
             positionUpdated = true;
         }
 
-        if (cameraPos.platformerMode)
+        /*if (cameraPos.platformerMode)
         {
             //rotatedDelta = new Vector4(rotatedDelta.x, rotatedDelta.y, rotatedDelta.z, rotatedDelta.w);
-        }
+        }*/
 
         if (positionUpdated)
         {

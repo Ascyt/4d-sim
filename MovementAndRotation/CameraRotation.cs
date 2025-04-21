@@ -27,11 +27,17 @@ public class CameraRotation : MonoBehaviour
     [SerializeField]
     private float rotationSpeed;
 
+    [HideInInspector]
     public KeyCode RotateXWPos;
+    [HideInInspector]
     public KeyCode RotateXWNeg;
+    [HideInInspector]
     public KeyCode RotateYWPos;
+    [HideInInspector]
     public KeyCode RotateYWNeg;
+    [HideInInspector]
     public KeyCode RotateZWPos;
+    [HideInInspector]
     public KeyCode RotateZWNeg;
 
     private void Awake()
@@ -52,34 +58,34 @@ public class CameraRotation : MonoBehaviour
         bool rotationUpdated = false;
         Rotation4 rotationDelta = new Rotation4(0, 0, 0, 0, 0, 0);
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWPos : cameraPos.cameraMovement.MoveRight))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateXWPos : cameraPos.cameraMovement.MoveRight))
         {
             rotationDelta.xw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateXWNeg : cameraPos.cameraMovement.MoveLeft))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateXWNeg : cameraPos.cameraMovement.MoveLeft))
         {
             rotationDelta.xw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWPos : cameraPos.cameraMovement.MoveUp))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateYWPos : cameraPos.cameraMovement.MoveUp))
         {
             rotationDelta.yw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateYWNeg : cameraPos.cameraMovement.MoveDown))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateYWNeg : cameraPos.cameraMovement.MoveDown))
         {
             rotationDelta.yw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWPos : cameraPos.cameraMovement.MoveForwards))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateZWPos : cameraPos.cameraMovement.MoveForwards))
         {
             rotationDelta.zw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(!cameraPos.movementRotationSwitch ? RotateZWNeg : cameraPos.cameraMovement.MoveBackwards))
+        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateZWNeg : cameraPos.cameraMovement.MoveBackwards))
         {
             rotationDelta.zw -= speed;
             rotationUpdated = true;

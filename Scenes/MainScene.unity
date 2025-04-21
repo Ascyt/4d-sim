@@ -2526,7 +2526,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Movement/rotation switch: /'
+  m_text: Rotation/movement switch
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4044,10 +4044,8 @@ MonoBehaviour:
   positionText: {fileID: 1281007518}
   rotationText: {fileID: 1655795038}
   useDvorak: 1
-  platformerMode: 0
   cameraMovement: {fileID: 0}
   cameraRotation: {fileID: 0}
-  movementRotationSwitch: 0
   movementRotationSwitchText: {fileID: 582894827}
   position: {x: 0, y: 0, z: 0, w: 0}
   rotation:
@@ -4069,7 +4067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94680dfba1e37fb4fb4cb79a277cb455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hypersceneOption: 3
+  hypersceneOption: 2
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0
