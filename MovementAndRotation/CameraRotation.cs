@@ -117,11 +117,13 @@ public class CameraRotation : MonoBehaviour
         onRotationUpdate(rotationDelta);
     }
 
+
+    // Entry-point for reset button in the UI
     public void ResetRotation()
     {
         HypersceneRenderer hypersceneRenderer = GetComponent<HypersceneRenderer>();
 
-        cameraPos.rotation = Rotation4.zero;
+        cameraPos.ResetRotationValues();
 
         hypersceneRenderer.ResetRotation();
 

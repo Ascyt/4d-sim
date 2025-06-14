@@ -140,12 +140,12 @@ public class HypersceneRenderer : MonoBehaviour
         Vector4 origin = cameraPosition.position;
         Rotation4 rotation = cameraPosition.rotation;
 
-        foreach (Hyperobject obj in objects) 
+        foreach (Hyperobject obj in objects)
         {
+            Vector4 pos = obj.position - origin;
+
             foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
-                Vector4 pos = obj.position - origin;
-
                 // Transform vertices so camera rotation and position is 0
                 Vector4[] verticesRelativeToCamera = connectedVertices.vertices
                     .Select(v => (v + pos).RotateNeg(rotation))
@@ -170,29 +170,23 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
     }
-
-    public void ResetRotation()
+    public void RerenderObjects()
     {
+        rendering.ClearAllRenderedObjects();
+
         foreach (Hyperobject obj in objects)
         {
             foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
-                connectedVertices.transformedVertices = connectedVertices.vertices
-                    .Select(v => v - cameraPosition.position)
-                    .ToArray();
+                rendering.ProjectVertices(connectedVertices, obj, connectedVertices.transformedVertices);
             }
         }
 
-        foreach (Hyperobject fixedObject in fixedObjects)
-        {
-            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
-            {
-                connectedVertices.transformedVertices = connectedVertices.vertices
-                    .Select(v => v - cameraPosition.position)
-                    .ToArray();
-            }
-        }
+        UpdateFixedObjects(Rotation4.zero);
+    }
 
+    public void ResetRotation()
+    {
         rendering.ClearAllRenderedObjects();
         RenderObjectsInitially();
     }

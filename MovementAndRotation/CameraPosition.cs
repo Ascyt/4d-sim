@@ -71,6 +71,18 @@ public class CameraPosition : MonoBehaviour
         movementRotationSwitchText.text = $"Rotation/Movement switched: {RotationMovementSwitch}";
     }
 
+    public void ResetRotationValues()
+    {
+        rotation = Rotation4.zero;
+
+        right = new Vector4(1, 0, 0, 0);
+        up = new Vector4(0, 1, 0, 0);
+        forward = new Vector4(0, 0, 1, 0);
+        ana = new Vector4(0, 0, 0, 1);
+
+        OnValuesUpdateSelf();
+    }
+
     private void OnPositionUpdate(Vector4 positionDelta)
     {
         position += (positionDelta.x * right) + (positionDelta.y * up) + (positionDelta.z * forward) + (positionDelta.w * ana);
