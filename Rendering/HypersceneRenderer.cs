@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
+using static UnityEngine.UI.Image;
 
 [RequireComponent(typeof(CameraMovement))]
 [RequireComponent(typeof(CameraRotation))]
@@ -18,7 +19,8 @@ public class HypersceneRenderer : MonoBehaviour
         Default,
         Ground,
         FixedTesseract,
-        FixedCubes
+        FixedCubes,
+        FixedSingleCube
     }
 
     public static HypersceneRenderer instance { get; private set; }
@@ -75,6 +77,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.FixedCubes:
                 hyperscene = new FixedCubesHyperscene();
+                break;
+            case HypersceneOption.FixedSingleCube:
+                hyperscene = new FixedSingleCubeHyperscene();
                 break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
@@ -164,6 +169,32 @@ public class HypersceneRenderer : MonoBehaviour
                 rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
         }
+    }
+
+    public void ResetRotation()
+    {
+        foreach (Hyperobject obj in objects)
+        {
+            foreach (ConnectedVertices connectedVertices in obj.vertices)
+            {
+                connectedVertices.transformedVertices = connectedVertices.vertices
+                    .Select(v => v - cameraPosition.position)
+                    .ToArray();
+            }
+        }
+
+        foreach (Hyperobject fixedObject in fixedObjects)
+        {
+            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
+            {
+                connectedVertices.transformedVertices = connectedVertices.vertices
+                    .Select(v => v - cameraPosition.position)
+                    .ToArray();
+            }
+        }
+
+        rendering.ClearAllRenderedObjects();
+        RenderObjectsInitially();
     }
 
     private void UpdateFixedObjects(Rotation4 rotationDelta)

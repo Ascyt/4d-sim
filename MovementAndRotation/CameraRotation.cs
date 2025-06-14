@@ -116,4 +116,15 @@ public class CameraRotation : MonoBehaviour
 
         onRotationUpdate(rotationDelta);
     }
+
+    public void ResetRotation()
+    {
+        HypersceneRenderer hypersceneRenderer = GetComponent<HypersceneRenderer>();
+
+        cameraPos.rotation = Rotation4.zero;
+
+        hypersceneRenderer.ResetRotation();
+
+        UpdateSliderValues();
+    }
 }
