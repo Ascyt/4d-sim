@@ -214,9 +214,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -356,7 +356,7 @@ RectTransform:
   - {fileID: 1655329443}
   - {fileID: 1646626988}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -395,7 +395,7 @@ RectTransform:
   - {fileID: 96298213}
   - {fileID: 1839514496}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1125,9 +1125,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1304,7 +1304,7 @@ RectTransform:
   - {fileID: 1721464254}
   - {fileID: 415565359}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1379,12 +1379,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 949644630}
-  - {fileID: 58349997}
-  - {fileID: 530008604}
   - {fileID: 255422741}
   - {fileID: 81296997}
   - {fileID: 1098917764}
+  - {fileID: 949644630}
+  - {fileID: 58349997}
+  - {fileID: 530008604}
   - {fileID: 1335308967}
   m_Father: {fileID: 511142987}
   m_RootOrder: 0
@@ -2142,9 +2142,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2462,7 +2462,7 @@ RectTransform:
   - {fileID: 237758982}
   - {fileID: 381312792}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2518,7 +2518,7 @@ GameObject:
   - component: {fileID: 582894828}
   - component: {fileID: 582894827}
   m_Layer: 5
-  m_Name: Movement/rotation switch
+  m_Name: Movement/rotation switch text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3416,9 +3416,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3683,7 +3683,7 @@ RectTransform:
   - {fileID: 1764960573}
   - {fileID: 1002728149}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4079,12 +4079,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14dab7977ce0b342aa020b71435824f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionText: {fileID: 1281007518}
-  rotationText: {fileID: 1655795038}
   useDvorak: 1
   cameraMovement: {fileID: 0}
   cameraRotation: {fileID: 0}
-  movementRotationSwitchText: {fileID: 582894827}
+  sceneUiHandler: {fileID: 1236289825}
   position: {x: 0, y: 0, z: 0, w: 0}
   rotation:
     xw: 0
@@ -4151,12 +4149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9315ed4f104b1c947b199035d6a0007b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xwSlider: {fileID: 35592701}
-  ywSlider: {fileID: 1583830527}
-  zwSlider: {fileID: 866461806}
-  xySlider: {fileID: 213183848}
-  xzSlider: {fileID: 1305533206}
-  yzSlider: {fileID: 474804061}
   rotationSpeed: 1
   RotateXWPos: 0
   RotateXWNeg: 0
@@ -4801,7 +4793,7 @@ RectTransform:
   - {fileID: 1109347709}
   - {fileID: 657779066}
   m_Father: {fileID: 293504528}
-  m_RootOrder: 5
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5217,6 +5209,7 @@ GameObject:
   - component: {fileID: 1236289823}
   - component: {fileID: 1236289822}
   - component: {fileID: 1236289821}
+  - component: {fileID: 1236289825}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -5308,6 +5301,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1236289825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236289820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1c5943290d06bc42982fc80584e0efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraState: {fileID: 0}
+  positionText: {fileID: 1281007518}
+  rotationText: {fileID: 1655795038}
+  movementRotationSwitchText: {fileID: 582894827}
+  xwSlider: {fileID: 35592701}
+  ywSlider: {fileID: 1583830527}
+  zwSlider: {fileID: 866461806}
+  xySlider: {fileID: 213183848}
+  xzSlider: {fileID: 1305533206}
+  yzSlider: {fileID: 474804061}
 --- !u!1 &1281007516
 GameObject:
   m_ObjectHideFlags: 0
@@ -5671,9 +5686,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5767,8 +5782,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
         m_MethodName: ResetRotation
         m_Mode: 1
         m_Arguments:
@@ -6328,9 +6343,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 963194235}
-        m_TargetAssemblyTypeName: CameraRotation, Assembly-CSharp
-        m_MethodName: OnSliderChange
+      - m_Target: {fileID: 1236289825}
+        m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+        m_MethodName: OnRotationSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

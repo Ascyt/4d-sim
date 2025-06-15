@@ -4,6 +4,9 @@ using UnityEngine;
 // ... Somehow (they're already confusing me enough as is for 3D, yet alone for the planar rotational mess that is 4D...)
 // Currently, rotation order issues are avoided by using continuously applying rotation deltas, instead of re-applying the entire rotation every frame.
 // More advanced features like interpolating between rotations or a physics engine will require Quaternions or some other more advanced rotation representation.
+// Idea:
+//      Maybe use a Quaternion for XW, YW and ZW as 3D-rotations and a separate one for XY, XZ and YZ as 3D-rotations?
+//      Though this might only make sense for the camera, as here there's a clear distinction between those (XW, YW, ZW for 4D rotation, XY, XZ, YZ for camera tilt).
 [System.Serializable]
 public struct Rotation4
 {

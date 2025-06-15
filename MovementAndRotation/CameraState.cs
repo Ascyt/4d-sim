@@ -5,14 +5,10 @@ using UnityEngine;
 
 [RequireComponent(typeof(CameraPosition))]
 [RequireComponent(typeof(CameraRotation))]
+[RequireComponent(typeof(HypersceneRenderer))]
 public class CameraState : MonoBehaviour
 {
     public CameraState instance { get; private set; }
-
-    [SerializeField]
-    private TextMeshProUGUI positionText;
-    [SerializeField]
-    private TextMeshProUGUI rotationText;
 
     public bool useDvorak = true;
     // TODO: This should make part of the rotation relative to world space, not the camera's forward direction.
@@ -25,14 +21,15 @@ public class CameraState : MonoBehaviour
     public CameraPosition cameraMovement;
     [HideInInspector]
     public CameraRotation cameraRotation;
-    private HypersceneRenderer hypersceneRenderer;
+    [HideInInspector]
+    public HypersceneRenderer hypersceneRenderer;
+
+    [SerializeField]
+    private SceneUiHandler sceneUiHandler;
 
     public bool RotationMovementSwitch { get; private set; } = false;
 
     private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
-
-    [SerializeField]
-    private TextMeshProUGUI movementRotationSwitchText;
 
     public Vector4 position = Vector4.zero;
     public Rotation4 rotation = Rotation4.zero;
@@ -49,11 +46,14 @@ public class CameraState : MonoBehaviour
         cameraMovement = GetComponent<CameraPosition>();
         cameraRotation = GetComponent<CameraRotation>();
         hypersceneRenderer = GetComponent<HypersceneRenderer>();
+
+        sceneUiHandler.cameraState = this;
     }
     private void Start()
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
-        UpdateUiText();
+        sceneUiHandler.UpdatePositionText(position);
+        sceneUiHandler.UpdateRotationText(rotation);
     }
     private void Update()
     {
@@ -67,7 +67,8 @@ public class CameraState : MonoBehaviour
     {
         newValue = newValue ?? !RotationMovementSwitch;
         RotationMovementSwitch = newValue.Value;
-        movementRotationSwitchText.text = $"Rotation/Movement switched: {RotationMovementSwitch}";
+
+        sceneUiHandler.UpdateMovementRotationSwitchText(RotationMovementSwitch);
     }
 
     public void ResetRotationValues()
@@ -79,7 +80,8 @@ public class CameraState : MonoBehaviour
         forward = new Vector4(0, 0, 1, 0);
         ana = new Vector4(0, 0, 0, 1);
 
-        UpdateUiText();
+        sceneUiHandler.UpdateRotationText(rotation);
+        sceneUiHandler.UpdateRotationSliderValues(rotation);
     }
 
     public void UpdatePosition(Vector4 positionDelta)
@@ -88,7 +90,7 @@ public class CameraState : MonoBehaviour
 
         hypersceneRenderer.RenderObjectsCameraPositionChange(positionDelta);
 
-        UpdateUiText();
+        sceneUiHandler.UpdatePositionText(position);
     }
     public void UpdateRotation(Rotation4 rotationDelta)
     {
@@ -101,22 +103,7 @@ public class CameraState : MonoBehaviour
 
         hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
 
-        UpdateUiText();
-    }
-
-    private void UpdateUiText()
-    {
-        positionText.text = 
-            $"x: {position.x}\n" +
-            $"y: {position.y}\n" +
-            $"z: {position.z}\n" +
-            $"w: {position.w}";
-        rotationText.text =
-            $"xw: {rotation.xw * Mathf.Rad2Deg}°\n" +
-            $"yw: {rotation.yw * Mathf.Rad2Deg}°\n" +
-            $"zw: {rotation.zw * Mathf.Rad2Deg}°\n" +
-            $"xy: {rotation.xy * Mathf.Rad2Deg}°\n" +
-            $"xz: {rotation.xz * Mathf.Rad2Deg}°\n" +
-            $"yz: {rotation.yz * Mathf.Rad2Deg}°";
+        sceneUiHandler.UpdateRotationText(rotation);
+        sceneUiHandler.UpdateRotationSliderValues(rotation);
     }
 }
