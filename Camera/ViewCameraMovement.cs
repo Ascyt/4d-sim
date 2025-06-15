@@ -27,10 +27,11 @@ public class ViewCameraMovement : MonoBehaviour
 
         precision = Input.GetKey(KeyCode.LeftAlt) ? precisionChange : 1;
 
+
         if (Input.GetMouseButtonDown(0))
-            isRotating = true;
+            isPanning = true;
         if (!Input.GetMouseButton(0))
-            isRotating = false;
+            isPanning = false;
 
         if (Input.GetMouseButtonDown(1))
             isRotatingAround = true;
@@ -38,9 +39,9 @@ public class ViewCameraMovement : MonoBehaviour
             isRotatingAround = false;
 
         if (Input.GetMouseButtonDown(2))
-            isPanning = true;
+            isRotating = true;
         if (!Input.GetMouseButton(2))
-            isPanning = false;
+            isRotating = false;
 
         MoveControls();
         RotationControls();
