@@ -1,5 +1,9 @@
 using UnityEngine;
 
+// TODO: Use Quaternions instead of this struct for rotations
+// ... Somehow (they're already confusing me enough as is for 3D, yet alone for the planar rotational mess that is 4D...)
+// Currently, rotation order issues are avoided by using continuously applying rotation deltas, instead of re-applying the entire rotation every frame.
+// More advanced features like interpolating between rotations or a physics engine will require Quaternions or some other more advanced rotation representation.
 [System.Serializable]
 public struct Rotation4
 {

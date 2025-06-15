@@ -34,8 +34,8 @@ public class CameraState : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
 
-    public Vector4 position = new Vector4(0, 0, 0, 0);
-    public Rotation4 rotation = new Rotation4(0, 0, 0, 0, 0, 0);
+    public Vector4 position = Vector4.zero;
+    public Rotation4 rotation = Rotation4.zero;
 
     private Vector4 right = new Vector4(1, 0, 0, 0);
     private Vector4 up = new Vector4(0, 1, 0, 0);
