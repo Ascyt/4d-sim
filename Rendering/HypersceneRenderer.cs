@@ -7,9 +7,9 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.Image;
 
-[RequireComponent(typeof(CameraMovement))]
-[RequireComponent(typeof(CameraRotation))]
 [RequireComponent(typeof(CameraPosition))]
+[RequireComponent(typeof(CameraRotation))]
+[RequireComponent(typeof(CameraState))]
 [RequireComponent(typeof(Rendering))]
 public class HypersceneRenderer : MonoBehaviour
 {
@@ -32,9 +32,9 @@ public class HypersceneRenderer : MonoBehaviour
     public readonly List<Hyperobject> objects = new();
     public readonly List<Hyperobject> fixedObjects = new();
 
-    private CameraMovement cameraMovement;
-    private CameraRotation cameraRotation;
     private CameraPosition cameraPosition;
+    private CameraRotation cameraRotation;
+    private CameraState cameraState;
     private Rendering rendering;
 
     private readonly float fov = Mathf.PI / 8f;
@@ -50,11 +50,11 @@ public class HypersceneRenderer : MonoBehaviour
         rendering = GetComponent<Rendering>();
         rendering.Initialize(from, to, up, over, fov);
 
-        cameraMovement = GetComponent<CameraMovement>();
-        cameraRotation = GetComponent<CameraRotation>();
         cameraPosition = GetComponent<CameraPosition>();
+        cameraRotation = GetComponent<CameraRotation>();
+        cameraState = GetComponent<CameraState>();
 
-        cameraMovement.onPositionUpdate += RenderObjectsCameraPositionChange;
+        cameraPosition.onPositionUpdate += RenderObjectsCameraPositionChange;
         cameraRotation.onRotationUpdate += RenderObjectsCameraRotationChange;
     }
     private void Start()
@@ -94,7 +94,7 @@ public class HypersceneRenderer : MonoBehaviour
             Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any objects.");
         }
 
-        cameraMovement.enabled = !hyperscene.IsFixed;
+        cameraPosition.enabled = !hyperscene.IsFixed;
         RenderObjectsInitially();
     }
 
@@ -137,8 +137,8 @@ public class HypersceneRenderer : MonoBehaviour
 
     public void RenderObjectsInitially()
     {
-        Vector4 origin = cameraPosition.position;
-        Rotation4 rotation = cameraPosition.rotation;
+        Vector4 origin = cameraState.position;
+        Rotation4 rotation = cameraState.rotation;
 
         foreach (Hyperobject obj in objects)
         {

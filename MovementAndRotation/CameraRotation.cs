@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(CameraPosition))]
+[RequireComponent(typeof(CameraState))]
 public class CameraRotation : MonoBehaviour
 {
-    private CameraPosition cameraPos;
+    private CameraState cameraState;
 
     public delegate void OnRotationUpdate(Rotation4 rotationDelta);
     public OnRotationUpdate onRotationUpdate;
@@ -42,14 +42,14 @@ public class CameraRotation : MonoBehaviour
 
     private void Awake()
     {
-        cameraPos = GetComponent<CameraPosition>();
+        cameraState = GetComponent<CameraState>();
 
-        RotateXWPos = cameraPos.useDvorak ? KeyCode.N : KeyCode.L;
-        RotateXWNeg = cameraPos.useDvorak ? KeyCode.H : KeyCode.J;
-        RotateYWPos = cameraPos.useDvorak ? KeyCode.R : KeyCode.O;
-        RotateYWNeg = cameraPos.useDvorak ? KeyCode.G : KeyCode.U;
-        RotateZWPos = cameraPos.useDvorak ? KeyCode.C : KeyCode.I;
-        RotateZWNeg = cameraPos.useDvorak ? KeyCode.T : KeyCode.K;
+        RotateXWPos = cameraState.useDvorak ? KeyCode.N : KeyCode.L;
+        RotateXWNeg = cameraState.useDvorak ? KeyCode.H : KeyCode.J;
+        RotateYWPos = cameraState.useDvorak ? KeyCode.R : KeyCode.O;
+        RotateYWNeg = cameraState.useDvorak ? KeyCode.G : KeyCode.U;
+        RotateZWPos = cameraState.useDvorak ? KeyCode.C : KeyCode.I;
+        RotateZWNeg = cameraState.useDvorak ? KeyCode.T : KeyCode.K;
     }
 
     private void Update()
@@ -58,34 +58,34 @@ public class CameraRotation : MonoBehaviour
         bool rotationUpdated = false;
         Rotation4 rotationDelta = new Rotation4(0, 0, 0, 0, 0, 0);
 
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateXWPos : cameraPos.cameraMovement.MoveRight))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateXWPos : cameraState.cameraMovement.MoveRight))
         {
             rotationDelta.xw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateXWNeg : cameraPos.cameraMovement.MoveLeft))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateXWNeg : cameraState.cameraMovement.MoveLeft))
         {
             rotationDelta.xw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateYWPos : cameraPos.cameraMovement.MoveUp))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateYWPos : cameraState.cameraMovement.MoveUp))
         {
             rotationDelta.yw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateYWNeg : cameraPos.cameraMovement.MoveDown))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateYWNeg : cameraState.cameraMovement.MoveDown))
         {
             rotationDelta.yw -= speed;
             rotationUpdated = true;
         }
 
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateZWPos : cameraPos.cameraMovement.MoveForwards))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateZWPos : cameraState.cameraMovement.MoveForwards))
         {
             rotationDelta.zw += speed;
             rotationUpdated = true;
         }
-        if (Input.GetKey(cameraPos.RotationMovementSwitch ? RotateZWNeg : cameraPos.cameraMovement.MoveBackwards))
+        if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateZWNeg : cameraState.cameraMovement.MoveBackwards))
         {
             rotationDelta.zw -= speed;
             rotationUpdated = true;
@@ -101,18 +101,18 @@ public class CameraRotation : MonoBehaviour
 
     private void UpdateSliderValues()
     {
-        xwSlider.SetValueWithoutNotify(cameraPos.rotation.xw);
-        ywSlider.SetValueWithoutNotify(cameraPos.rotation.yw);
-        zwSlider.SetValueWithoutNotify(cameraPos.rotation.zw);
-        xySlider.SetValueWithoutNotify(cameraPos.rotation.xy);
-        xzSlider.SetValueWithoutNotify(cameraPos.rotation.xz);
-        yzSlider.SetValueWithoutNotify(cameraPos.rotation.yz);
+        xwSlider.SetValueWithoutNotify(cameraState.rotation.xw);
+        ywSlider.SetValueWithoutNotify(cameraState.rotation.yw);
+        zwSlider.SetValueWithoutNotify(cameraState.rotation.zw);
+        xySlider.SetValueWithoutNotify(cameraState.rotation.xy);
+        xzSlider.SetValueWithoutNotify(cameraState.rotation.xz);
+        yzSlider.SetValueWithoutNotify(cameraState.rotation.yz);
     }
 
     public void OnSliderChange()
     {
         Rotation4 sliderRotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-        Rotation4 rotationDelta = sliderRotation - cameraPos.rotation;
+        Rotation4 rotationDelta = sliderRotation - cameraState.rotation;
 
         onRotationUpdate(rotationDelta);
     }
@@ -123,7 +123,7 @@ public class CameraRotation : MonoBehaviour
     {
         HypersceneRenderer hypersceneRenderer = GetComponent<HypersceneRenderer>();
 
-        cameraPos.ResetRotationValues();
+        cameraState.ResetRotationValues();
 
         hypersceneRenderer.ResetRotation();
 
