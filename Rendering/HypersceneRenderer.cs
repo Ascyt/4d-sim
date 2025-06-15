@@ -64,7 +64,6 @@ public class HypersceneRenderer : MonoBehaviour
         rendering.ClearAllRenderedObjects();
         objects.Clear();
         fixedObjects.Clear();
-        cameraState.ResetAll();
 
         this.hypersceneOption = hypersceneOption;
 
@@ -94,6 +93,9 @@ public class HypersceneRenderer : MonoBehaviour
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
                 break;
         }
+
+        cameraState.SetPosition(hyperscene.StartingPosition);
+        cameraState.SetRotation(hyperscene.StartingRotation);
 
         objects.AddRange(hyperscene.Objects);
         fixedObjects.AddRange(hyperscene.FixedObjects);

@@ -98,7 +98,7 @@ public class SceneUiHandler : MonoBehaviour
 
     public void ResetRotation()
     {
-        cameraState.ResetRotation();
+        cameraState.SetRotation(Rotation4.zero);
 
         cameraState.hypersceneRenderer.ResetRotation();
     }

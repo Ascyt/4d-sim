@@ -71,27 +71,27 @@ public class CameraState : MonoBehaviour
         sceneUiHandler.UpdateMovementRotationSwitchText(RotationMovementSwitch);
     }
 
-    public void ResetAll()
+    /// <summary>
+    /// Does not cause view refresh
+    /// </summary>
+    public void SetRotation(Rotation4 rotation)
     {
-        ResetPosition();
-        ResetRotation();
-    }
+        this.rotation = rotation;
 
-    public void ResetRotation()
-    {
-        rotation = Rotation4.zero;
-
-        right = new Vector4(1, 0, 0, 0);
-        up = new Vector4(0, 1, 0, 0);
-        forward = new Vector4(0, 0, 1, 0);
-        ana = new Vector4(0, 0, 0, 1);
+        right = new Vector4(1, 0, 0, 0).Rotate(rotation);
+        up = new Vector4(0, 1, 0, 0).Rotate(rotation);
+        forward = new Vector4(0, 0, 1, 0).Rotate(rotation);
+        ana = new Vector4(0, 0, 0, 1).Rotate(rotation);
 
         sceneUiHandler.UpdateRotationText(rotation);
         sceneUiHandler.UpdateRotationSliderValues(rotation);
     }
-    public void ResetPosition()
+    /// <summary>
+    /// Does not cause view refresh
+    /// </summary>
+    public void SetPosition(Vector4 position)
     {
-        position = Vector4.zero;
+        this.position = position;
         sceneUiHandler.UpdatePositionText(position);
     }
 

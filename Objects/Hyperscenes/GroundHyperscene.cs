@@ -6,7 +6,7 @@ public class GroundHyperscene : Hyperscene
 {
     private List<Hyperobject> _objects = new()
     {
-        new Tesseract(new Vector4(0, -2f, 0, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0.5f, 0.5f, 0.5f), new Vector4(25, 3, 25, 25)),
+        new Tesseract(new Vector4(0, -2f, 0, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0.5f, 0.5f, 0.5f), new Vector4(10, 3, 10, 10 )),
 
         new Tesseract(new Vector4(0, 0, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.cyan, Vector4.one / 4f),
 
@@ -22,4 +22,5 @@ public class GroundHyperscene : Hyperscene
         new Axes()
     };
     public override List<Hyperobject> FixedObjects => _fixedObjects;
+    public override Vector4 StartingPosition => new Vector4(0, 0, 0, -1.5f);
 }
