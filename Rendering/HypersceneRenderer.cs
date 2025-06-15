@@ -26,8 +26,8 @@ public class HypersceneRenderer : MonoBehaviour
     public static HypersceneRenderer instance { get; private set; }
 
     [SerializeField]
-    public HypersceneOption hypersceneOption = HypersceneOption.Default;
-    public Hyperscene hyperscene;
+    public HypersceneOption hypersceneOption { get; private set; } = HypersceneOption.Default;
+    public Hyperscene hyperscene { get; private set; } = null;
 
     public readonly List<Hyperobject> objects = new();
     public readonly List<Hyperobject> fixedObjects = new();
@@ -59,7 +59,19 @@ public class HypersceneRenderer : MonoBehaviour
         InitializeHyperscene();
     }
 
-    public void InitializeHyperscene()
+    public void LoadHyperscene(HypersceneOption hypersceneOption)
+    {
+        rendering.ClearAllRenderedObjects();
+        objects.Clear();
+        fixedObjects.Clear();
+        cameraState.ResetAll();
+
+        this.hypersceneOption = hypersceneOption;
+
+        InitializeHyperscene();
+    }
+
+    private void InitializeHyperscene()
     {
         switch (hypersceneOption)
         {

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,9 +35,22 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private Slider yzSlider;
 
+    [Space]
+    [SerializeField]
+    private TMP_Dropdown hypersceneDropdown;
+
     private void Awake()
     {
         instance = this;
+    }
+    private void Start()
+    {
+        hypersceneDropdown.AddOptions(Enum
+            .GetNames(typeof(HypersceneRenderer.HypersceneOption))
+            .Select(option => new TMP_Dropdown.OptionData(option))
+            .ToList());
+
+        hypersceneDropdown.SetValueWithoutNotify((int)cameraState.hypersceneRenderer.hypersceneOption);
     }
 
     public void UpdateMovementRotationSwitchText(bool newSwitch)
@@ -83,8 +98,16 @@ public class SceneUiHandler : MonoBehaviour
 
     public void ResetRotation()
     {
-        cameraState.ResetRotationValues();
+        cameraState.ResetRotation();
 
         cameraState.hypersceneRenderer.ResetRotation();
+    }
+
+    public void OnDropdownValueChanged(int id)
+    {
+        int value = hypersceneDropdown.value;
+
+        HypersceneRenderer.HypersceneOption selectedOption = (HypersceneRenderer.HypersceneOption)value;
+        cameraState.hypersceneRenderer.LoadHyperscene(selectedOption);
     }
 }

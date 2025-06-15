@@ -71,7 +71,13 @@ public class CameraState : MonoBehaviour
         sceneUiHandler.UpdateMovementRotationSwitchText(RotationMovementSwitch);
     }
 
-    public void ResetRotationValues()
+    public void ResetAll()
+    {
+        ResetPosition();
+        ResetRotation();
+    }
+
+    public void ResetRotation()
     {
         rotation = Rotation4.zero;
 
@@ -82,6 +88,11 @@ public class CameraState : MonoBehaviour
 
         sceneUiHandler.UpdateRotationText(rotation);
         sceneUiHandler.UpdateRotationSliderValues(rotation);
+    }
+    public void ResetPosition()
+    {
+        position = Vector4.zero;
+        sceneUiHandler.UpdatePositionText(position);
     }
 
     public void UpdatePosition(Vector4 positionDelta)
