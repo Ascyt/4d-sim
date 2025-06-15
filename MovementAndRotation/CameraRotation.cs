@@ -8,9 +8,6 @@ public class CameraRotation : MonoBehaviour
 {
     private CameraState cameraState;
 
-    public delegate void OnRotationUpdate(Rotation4 rotationDelta);
-    public OnRotationUpdate onRotationUpdate;
-
     [SerializeField]
     private Slider xwSlider;
     [SerializeField]
@@ -95,7 +92,7 @@ public class CameraRotation : MonoBehaviour
         {
             rotationDelta.ModuloPlanes();
             UpdateSliderValues();
-            onRotationUpdate(rotationDelta);
+            cameraState.UpdateRotation(rotationDelta);
         }
     }
 
@@ -114,7 +111,7 @@ public class CameraRotation : MonoBehaviour
         Rotation4 sliderRotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
         Rotation4 rotationDelta = sliderRotation - cameraState.rotation;
 
-        onRotationUpdate(rotationDelta);
+        cameraState.UpdateRotation(rotationDelta);
     }
 
 

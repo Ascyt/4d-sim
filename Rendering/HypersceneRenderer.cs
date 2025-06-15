@@ -53,9 +53,6 @@ public class HypersceneRenderer : MonoBehaviour
         cameraPosition = GetComponent<CameraPosition>();
         cameraRotation = GetComponent<CameraRotation>();
         cameraState = GetComponent<CameraState>();
-
-        cameraPosition.onPositionUpdate += RenderObjectsCameraPositionChange;
-        cameraRotation.onRotationUpdate += RenderObjectsCameraRotationChange;
     }
     private void Start()
     {

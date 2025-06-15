@@ -28,9 +28,6 @@ public class CameraPosition : MonoBehaviour
 
     private CameraState cameraState;
 
-    public delegate void OnPositionUpdate(Vector4 positionDelta);
-    public OnPositionUpdate onPositionUpdate;
-
     private void Awake()
     {
         cameraState = GetComponent<CameraState>();
@@ -103,7 +100,7 @@ public class CameraPosition : MonoBehaviour
 
         if (positionUpdated)
         {
-            onPositionUpdate(delta);
+            cameraState.UpdatePosition(delta);
         }
     }
 }

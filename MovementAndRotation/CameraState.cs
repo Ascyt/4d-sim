@@ -16,15 +16,16 @@ public class CameraState : MonoBehaviour
 
     public bool useDvorak = true;
     // TODO: This should make part of the rotation relative to world space, not the camera's forward direction.
-    // In 3D, while the YZ rotation and the XY camera tilt are relative to the camera's forward direction, the XZ rotation should be relative to the world space.
+    // In 3D, while the YZ (up/down) rotation and the XY camera tilt are relative to the camera's forward direction, the XZ (left/right) rotation should be relative to the world space.
     // For 4D, I could do a similar thing, make YW and camera tilt relative to the camera's forward direction and XW relative to world space,
-    // but the issue is that I'm not sure what to do with ZW. And should it be uncapped like the XZ rotation in 3D, or also stopped like when looking straight up or down in 3D?
+    // but the issue is that I'm not sure what to do with ZW. I'm also not sure if it should be uncapped like the XZ rotation in 3D, or also stopped like when looking straight up or down in 3D?
     // public bool platformerMode; 
 
     [HideInInspector]
     public CameraPosition cameraMovement;
     [HideInInspector]
     public CameraRotation cameraRotation;
+    private HypersceneRenderer hypersceneRenderer;
 
     public bool RotationMovementSwitch { get; private set; } = false;
 
@@ -47,14 +48,12 @@ public class CameraState : MonoBehaviour
 
         cameraMovement = GetComponent<CameraPosition>();
         cameraRotation = GetComponent<CameraRotation>();
-
-        cameraMovement.onPositionUpdate += OnPositionUpdate;
-        cameraRotation.onRotationUpdate += OnRotationUpdate;
+        hypersceneRenderer = GetComponent<HypersceneRenderer>();
     }
     private void Start()
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
-        OnValuesUpdateSelf();
+        UpdateUiText();
     }
     private void Update()
     {
@@ -80,15 +79,18 @@ public class CameraState : MonoBehaviour
         forward = new Vector4(0, 0, 1, 0);
         ana = new Vector4(0, 0, 0, 1);
 
-        OnValuesUpdateSelf();
+        UpdateUiText();
     }
 
-    private void OnPositionUpdate(Vector4 positionDelta)
+    public void UpdatePosition(Vector4 positionDelta)
     {
         position += (positionDelta.x * right) + (positionDelta.y * up) + (positionDelta.z * forward) + (positionDelta.w * ana);
-        OnValuesUpdateSelf();
+
+        hypersceneRenderer.RenderObjectsCameraPositionChange(positionDelta);
+
+        UpdateUiText();
     }
-    private void OnRotationUpdate(Rotation4 rotationDelta)
+    public void UpdateRotation(Rotation4 rotationDelta)
     {
         rotation += rotationDelta;
 
@@ -97,10 +99,12 @@ public class CameraState : MonoBehaviour
         forward = forward.Rotate(rotationDelta);
         ana = ana.Rotate(rotationDelta);
 
-        OnValuesUpdateSelf();
+        hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
+
+        UpdateUiText();
     }
 
-    private void OnValuesUpdateSelf()
+    private void UpdateUiText()
     {
         positionText.text = 
             $"x: {position.x}\n" +
