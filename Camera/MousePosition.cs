@@ -6,7 +6,6 @@ using UnityEngine;
 /// </summary>
 public class MousePosition : MonoBehaviour
 {
-#if UNITY_STANDALONE_WIN
     [StructLayout(LayoutKind.Sequential)]
     public struct Point
     {
@@ -20,6 +19,7 @@ public class MousePosition : MonoBehaviour
         }
     }
 
+#if UNITY_STANDALONE_WIN
     [DllImport("user32.dll")]
     public static extern bool GetCursorPos(out Point lpPoint);
 
@@ -35,7 +35,7 @@ public class MousePosition : MonoBehaviour
         else
             return new Point(0, 0);
 #else
-            return new POINT(0, 0);
+            return new Point(0, 0);
 #endif
     }
 

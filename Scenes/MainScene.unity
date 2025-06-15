@@ -4730,7 +4730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14dab7977ce0b342aa020b71435824f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useDvorak: 1
+  useDvorak: 0
   cameraMovement: {fileID: 0}
   cameraRotation: {fileID: 0}
   hypersceneRenderer: {fileID: 0}
