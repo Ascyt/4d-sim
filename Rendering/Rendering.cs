@@ -5,6 +5,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static ObjectInstantiator;
 
+/// <summary>
+/// Rendering class for projecting and displaying 4D objects from a camera (incl. from, to, up, over) in a 3D space.
+/// </summary>
 public class Rendering : MonoBehaviour
 {
     public void Initialize(Vector4 from, Vector4 to, Vector4 up, Vector4 over, float fov)
@@ -75,7 +78,7 @@ public class Rendering : MonoBehaviour
         DisplayObject(connectedVertices, obj, transformedVertices, averagePos, connections);
     }
 
-    public void ProjectFixedObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] vertices, bool orthographic)
+    public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] vertices, bool orthographic)
     {
         if (orthographic)
         {

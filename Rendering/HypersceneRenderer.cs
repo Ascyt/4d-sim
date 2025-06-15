@@ -7,6 +7,13 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.Image;
 
+/// <summary>
+/// Manages the rendering of hyperscenes, including camera position, rotation, and state using Rendering.cs.<br /><br />
+/// 
+/// In order to solve the rotation order issue of Euler Angles, the actual camera is kept at the origin (0, 0, 0, 0),<br />
+/// and the hyperscene is moved and rotated relative to it in the opposite direction. <br />
+/// This is to allow the virtual camera to rotate along its own relative planes, rather than world space.
+/// </summary>
 [RequireComponent(typeof(CameraPosition))]
 [RequireComponent(typeof(CameraRotation))]
 [RequireComponent(typeof(CameraState))]
@@ -19,8 +26,7 @@ public class HypersceneRenderer : MonoBehaviour
         Default,
         Ground,
         FixedTesseract,
-        FixedCubes,
-        FixedSingleCube
+        FixedCubes
     }
 
     public static HypersceneRenderer instance { get; private set; }
@@ -86,9 +92,6 @@ public class HypersceneRenderer : MonoBehaviour
             case HypersceneOption.FixedCubes:
                 hyperscene = new FixedCubesHyperscene();
                 break;
-            case HypersceneOption.FixedSingleCube:
-                hyperscene = new FixedSingleCubeHyperscene();
-                break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
                 break;
@@ -102,7 +105,7 @@ public class HypersceneRenderer : MonoBehaviour
 
         if (hyperscene.IsFixed && objects.Count > 0)
         {
-            Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any objects.");
+            Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any non-fixed objects.");
         }
 
         cameraPosition.enabled = !hyperscene.IsFixed;
@@ -177,7 +180,7 @@ public class HypersceneRenderer : MonoBehaviour
                     .Select(v => (v + fixedObject.position).RotateNeg(rotation))
                     .ToArray();
 
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                rendering.ProjectFixedVertices(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }
@@ -212,7 +215,7 @@ public class HypersceneRenderer : MonoBehaviour
                     .Select(v => hyperscene.IsFixed ? v.Rotate(rotationDelta) : v.RotateNeg(rotationDelta))
                     .ToArray();
 
-                rendering.ProjectFixedObject(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                rendering.ProjectFixedVertices(connectedVertices, fixedObject, connectedVertices.transformedVertices, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }

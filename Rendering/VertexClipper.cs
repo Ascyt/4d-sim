@@ -2,6 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Utility class for clipping vertices of a 3D convex polyhedron (convex hull) against a cube (currently fixed 10x10x10 centered at the origin).<br /><br />
+/// 
+/// Note that this was made using an LLM.
+/// </summary>
 public static class VertexClipper
 {
     // A small epsilon to account for floating point error.

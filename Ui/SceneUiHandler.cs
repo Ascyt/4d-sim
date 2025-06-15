@@ -6,6 +6,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// I/O points for the scene UI.
+/// </summary>
 public class SceneUiHandler : MonoBehaviour
 {
     public static SceneUiHandler instance { get; private set; }

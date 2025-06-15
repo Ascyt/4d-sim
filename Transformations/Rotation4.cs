@@ -7,6 +7,9 @@ using UnityEngine;
 // Idea:
 //      Maybe use a Quaternion for XW, YW and ZW as 3D-rotations and a separate one for XY, XZ and YZ as 3D-rotations?
 //      Though this might only make sense for the camera, as here there's a clear distinction between those (XW, YW, ZW for 4D rotation, XY, XZ, YZ for camera tilt).
+/// <summary>
+/// Represents a 4D rotation using 6 planes of rotation (XW, YW, ZW, XY, XZ, YZ). Uses Euler Angles so note the order of rotations.
+/// </summary>
 [System.Serializable]
 public struct Rotation4
 {

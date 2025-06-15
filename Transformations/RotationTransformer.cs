@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Helper class for rotating points in 4D space using Euler Angles from Rotation4.
+/// </summary>
 public static class RotationTransformer
 {
     public enum RotationPlane

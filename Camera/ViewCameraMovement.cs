@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Controls the 3D viewport's camera movement and rotation using mouse input.
+/// </summary>
 public class ViewCameraMovement : MonoBehaviour
 {
     [SerializeField]

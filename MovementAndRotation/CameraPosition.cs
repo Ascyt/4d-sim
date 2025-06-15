@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+/// <summary>
+/// Movement control for the camera using keyboard.
+/// </summary>
 [RequireComponent(typeof(CameraState))]
 public class CameraPosition : MonoBehaviour
 {

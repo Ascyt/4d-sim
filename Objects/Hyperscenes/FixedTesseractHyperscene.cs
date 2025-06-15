@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Includes a tesseract with one cell being highlighted and a smaller tesseract at one fo the vertices.
+/// </summary>
 public class FixedTesseractHyperscene : Hyperscene
 {
     private List<Hyperobject> _objects = new()

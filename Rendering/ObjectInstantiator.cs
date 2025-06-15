@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Instantiates the 3D objects projected from 4D vertices.<br />
+/// </summary>
 public class ObjectInstantiator : MonoBehaviour
 {
     public struct InstantiatedObject
@@ -45,6 +48,9 @@ public class ObjectInstantiator : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Instantiates a solid object using the convex hull of the given points. Utilizes <a href="https://designengrlab.github.io/MIConvexHull/">MIConvexHull</a>.
+    /// </summary>
     private InstantiatedObject? InstantiateObjectSolid(Vector3?[] points, Vector3 position, Color color)
     {
         List<Object> resources = new();
@@ -138,7 +144,9 @@ public class ObjectInstantiator : MonoBehaviour
     }
 
 
-    // Creates a parent GameObject with sphere children placed at the given vertex positions.
+    /// <summary>
+    /// Creates a parent GameObject with sphere children placed at the given vertex positions.
+    /// </summary>
     private InstantiatedObject? InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
     {
         if (points.Length == 0 || points.All(points => !points.HasValue))
@@ -178,10 +186,15 @@ public class ObjectInstantiator : MonoBehaviour
         return new InstantiatedObject(parent, resources);
     }
 
-    // Creates the wireframe object that connects every vertex to every other vertex.
+    /// <summary>
+    /// Creates the wireframe object that connects every vertex to every other vertex. <br /><br />
+    /// 
+    /// This method creates a wireframe by instantiating vertices and connecting specific vertices. <br />
+    /// </summary>
+    /// <param name="connectedVertices">
+    /// Array of int[2], where each pair is the indices of vertices to connect.
+    /// </param>
 
-    // This method creates a wireframe by instantiating vertices and connecting specific vertices
-    // 'connectedVertices' is an array of int[2] where each pair is the indices of vertices to connect.
     private InstantiatedObject? InstantiateObjectWireframe(Vector3?[] points, Vector3 position, Color color, int[][] connectedVertices, float? vertexScale)
     {
         List<Object> resources = new();

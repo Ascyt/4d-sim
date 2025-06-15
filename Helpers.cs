@@ -6,7 +6,10 @@ using UnityEngine;
 
 public static class Helpers
 {
-    // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter2
+    /// <summary>
+    /// Calculates the cross product of three 4D vectors.<br />
+    /// Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html
+    /// </summary>
     public static Vector4 Cross4(Vector4 a, Vector4 b, Vector4 c)
     {
         float A, B, C, D, E, F; // Intermediate Values
@@ -30,7 +33,10 @@ public static class Helpers
         return result;
     }
 
-    // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
+    /// <summary>
+    /// Calculates the viewing transform matrix for a 4D camera.<br />
+    /// Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html
+    /// </summary>
     public static void GetViewingTransformMatrix(Vector4 from, Vector4 to, Vector4 up, Vector4 over, 
         out Vector4 wa, out Vector4 wb, out Vector4 wc, out Vector4 wd)
     {
@@ -61,7 +67,10 @@ public static class Helpers
         wc = Cross4(wd, wa, wb);
     }
 
-    // Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html#chapter4
+    /// <summary>
+    /// Projects 4D vertices to 3D space using the viewing transform matrix defined by wa, wb, wc, wd and camera position.<br />
+    /// Thanks to https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html
+    /// </summary>
     public static Vector3?[] ProjectVerticesTo3d(Vector4 wa, Vector4 wb, Vector4 wc, Vector4 wd, Vector4 camera, Vector4[] vertices, float angle)
     {
         float t = 1f / Mathf.Tan(angle / 2f);
@@ -90,8 +99,10 @@ public static class Helpers
             => float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z) ||
                float.IsInfinity(vector.x) || float.IsInfinity(vector.y) || float.IsInfinity(vector.z);
 
-    // Finds the point on the line between A and B where w=wPlane.
-    // Assumes that A.w and B.w are on opposite sides of wPlane.
+    /// <summary>
+    /// Finds the point on the line between A and B where w=wPlane. <br />
+    /// Assumes that A.w and B.w are on opposite sides of wPlane.
+    /// </summary>
     private static Vector4 FindIntersectionOnPlane(Vector4 A, Vector4 B, float wPlane)
     {
         // Calculate how far along the segment the plane occurs
@@ -100,8 +111,10 @@ public static class Helpers
     }
 
     /// <summary>
-    /// Clip connections (edges) so that any connections that cross from behind to in front of the camera are replaced by an intersection on a z-plane.
-    /// The camera is at z==0 (with vertices in front having positive z); vertices behind (z<=0) are clipped.
+    /// Clip connections (edges) so that any connections that cross from behind to in front of the camera are replaced by an intersection on a w-plane.<br />
+    /// The camera is at w==0 (with vertices in front having positive w); vertices behind (w&lt;=0) are clipped.<br /><br />
+    /// 
+    /// Note that this was made using an LLM.
     /// </summary>
     /// <param name="vertices">Array of vertices relative to the camera</param>
     /// <param name="connections">Each connection is an int[2] pair of indices into the vertices array</param>

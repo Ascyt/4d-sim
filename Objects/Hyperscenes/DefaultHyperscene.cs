@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Includes a bunch of tesseracts, cubes and points.
+/// </summary>
 public class DefaultHyperscene : Hyperscene
 {
     private List<Hyperobject> _objects = new()

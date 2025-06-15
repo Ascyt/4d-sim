@@ -2,11 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents a collection of 4D vertices that can be considered as belonging to the same part of an object.
+/// </summary>
 public class ConnectedVertices 
 {
     public enum ConnectionMethod
     {
-        Solid, Wireframe, Vertices
+        /// <summary>
+        /// Connects vertices with triangles, creating a convex hull object. 
+        /// </summary>
+        Solid,
+        /// <summary>
+        /// Renders vertices as points and connects them with lines, creating a wireframe object.
+        /// </summary>
+        Wireframe,
+        /// <summary>
+        /// Only renders the vertices as points without any connections.
+        /// </summary>
+        Vertices
     }
 
     public ConnectionMethod connectionMethod;

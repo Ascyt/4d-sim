@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Includes a ground hypercube with a few tesseracts in the center.
+/// </summary>
 public class GroundHyperscene : Hyperscene
 {
     private List<Hyperobject> _objects = new()

@@ -1,6 +1,9 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+/// <summary>
+/// Utility class to get and set the mouse cursor position on Windows.
+/// </summary>
 public class MousePosition : MonoBehaviour
 {
 #if UNITY_STANDALONE_WIN
