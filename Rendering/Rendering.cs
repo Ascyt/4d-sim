@@ -25,6 +25,8 @@ public class Rendering : MonoBehaviour
 
     private static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
 
+    private const float ORTHOGRAPHIC_SCALE = 4f;
+
     public void ClearAllRenderedObjects()
     {
         foreach (List<InstantiatedObject> instantiatedObjectValues in instantiatedObjects.Values)
@@ -83,7 +85,7 @@ public class Rendering : MonoBehaviour
         if (orthographic)
         {
             Vector3?[] transformedVertices = vertices
-                .Select(v => (Vector3?)new Vector3(v.x, v.y, v.z)) // orthographic projection by cutting away w coordinate
+                .Select(v => (Vector3?)new Vector3(v.x, v.y, v.z) * ORTHOGRAPHIC_SCALE) // orthographic projection by cutting away w coordinate
                 .ToArray();
 
             DisplayObject(connectedVertices, obj, transformedVertices, Vector3.zero, connectedVertices.connections);

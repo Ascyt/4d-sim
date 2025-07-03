@@ -26,7 +26,8 @@ public class HypersceneRenderer : MonoBehaviour
         Default,
         Ground,
         FixedTesseract,
-        FixedCubes
+        FixedCubes,
+        FixedRotationalPlanes
     }
 
     public static HypersceneRenderer instance { get; private set; }
@@ -92,13 +93,13 @@ public class HypersceneRenderer : MonoBehaviour
             case HypersceneOption.FixedCubes:
                 hyperscene = new FixedCubesHyperscene();
                 break;
+            case HypersceneOption.FixedRotationalPlanes:
+                hyperscene = new FixedRotationalPlanesHyperscene();
+                break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
                 break;
         }
-
-        cameraState.SetPosition(hyperscene.StartingPosition);
-        cameraState.SetRotation(hyperscene.StartingRotation);
 
         objects.AddRange(hyperscene.Objects);
         fixedObjects.AddRange(hyperscene.FixedObjects);
@@ -151,6 +152,9 @@ public class HypersceneRenderer : MonoBehaviour
 
     public void RenderObjectsInitially()
     {
+        cameraState.SetPosition(hyperscene.StartingPosition);
+        cameraState.SetRotation(hyperscene.StartingRotation);
+
         Vector4 origin = cameraState.position;
         Rotation4 rotation = cameraState.rotation;
 

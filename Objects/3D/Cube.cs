@@ -4,22 +4,13 @@ using UnityEngine;
 
 public class Cube : Hyperobject
 {
-    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color) : base(new ConnectedVertices[]
+    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector3? scale = null) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
 
-            new Vector4[] {
-                new Vector4(-.5f, -.5f, -.5f, 0), // 0
-                new Vector4(.5f, -.5f, -.5f, 0), // 1
-                new Vector4(.5f, .5f, -.5f, 0), // 2
-                new Vector4(-.5f, .5f, -.5f, 0), // 3
-                new Vector4(-.5f, .5f, .5f, 0), // 4
-                new Vector4(.5f, .5f, .5f, 0), // 5
-                new Vector4(.5f, -.5f, .5f, 0), // 6
-                new Vector4(-.5f, -.5f, .5f, 0),  // 7
-            },
-            
+            GetVertices(scale ?? Vector3.one),
+
             color,
 
             connections: new int[][]
@@ -32,5 +23,21 @@ public class Cube : Hyperobject
     }, position)
     {
         
+    }
+
+    private static Vector4[] GetVertices(Vector3 scale)
+    {
+        Vector3 s = scale / 2f;
+        return
+             new Vector4[] {
+                new(-s.x, -s.y, -s.z, 0), // 0
+                new( s.x, -s.y, -s.z, 0), // 1
+                new( s.x,  s.y, -s.z, 0), // 2
+                new(-s.x,  s.y, -s.z, 0), // 3
+                new(-s.x,  s.y,  s.z, 0), // 4
+                new( s.x,  s.y,  s.z, 0), // 5
+                new( s.x, -s.y,  s.z, 0), // 6
+                new(-s.x, -s.y,  s.z, 0), // 7
+             };
     }
 }
