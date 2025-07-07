@@ -9,7 +9,7 @@ public abstract class Hyperobject
 {
     public readonly ConnectedVertices[] vertices;
     public Vector4 position;
-    public Rotation4 rotation;
+    public RotationEuler4 rotation;
 
     public Hyperobject(ConnectedVertices[] vertices, Vector4 position)
     {

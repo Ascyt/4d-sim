@@ -39,13 +39,7 @@ public class CameraState : MonoBehaviour
     private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
 
     public Vector4 position = Vector4.zero;
-    public Rotation4 rotation = Rotation4.zero;
-
-    // These vectors rotate with the camera and are used for movement calculations.
-    private Vector4 right = new Vector4(1, 0, 0, 0);
-    private Vector4 up = new Vector4(0, 1, 0, 0);
-    private Vector4 forward = new Vector4(0, 0, 1, 0);
-    private Vector4 ana = new Vector4(0, 0, 0, 1);
+    public Rotation4 rotation = new Rotation4();
 
     private void Awake()
     {
@@ -61,7 +55,7 @@ public class CameraState : MonoBehaviour
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
         sceneUiHandler.UpdatePositionText(position);
-        sceneUiHandler.UpdateRotationText(rotation);
+        sceneUiHandler.UpdateRotationText(new RotationEuler4(rotation));
     }
     private void Update()
     {
@@ -82,14 +76,9 @@ public class CameraState : MonoBehaviour
     /// <summary>
     /// Does not cause view refresh
     /// </summary>
-    public void SetRotation(Rotation4 rotation)
+    public void SetRotation(RotationEuler4 rotation)
     {
-        this.rotation = rotation;
-
-        right = new Vector4(1, 0, 0, 0).Rotate(rotation);
-        up = new Vector4(0, 1, 0, 0).Rotate(rotation);
-        forward = new Vector4(0, 0, 1, 0).Rotate(rotation);
-        ana = new Vector4(0, 0, 0, 1).Rotate(rotation);
+        this.rotation = new Rotation4(rotation);
 
         sceneUiHandler.UpdateRotationText(rotation);
         sceneUiHandler.UpdateRotationSliderValues(rotation);
@@ -105,24 +94,23 @@ public class CameraState : MonoBehaviour
 
     public void UpdatePosition(Vector4 positionDelta)
     {
-        position += (positionDelta.x * right) + (positionDelta.y * up) + (positionDelta.z * forward) + (positionDelta.w * ana);
+        Debug.Log(positionDelta);
+        Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation, false);
+        position += rotatedPositionDelta;
 
         hypersceneRenderer.RenderObjectsCameraPositionChange(positionDelta);
 
         sceneUiHandler.UpdatePositionText(position);
     }
-    public void UpdateRotation(Rotation4 rotationDelta)
+    public void UpdateRotation(RotationEuler4 rotationDelta)
     {
-        rotation += rotationDelta;
-
-        right = right.Rotate(rotationDelta);
-        up = up.Rotate(rotationDelta);
-        forward = forward.Rotate(rotationDelta);
-        ana = ana.Rotate(rotationDelta);
+        rotation = rotation.AddEuler(rotationDelta);
 
         hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
 
-        sceneUiHandler.UpdateRotationText(rotation);
-        sceneUiHandler.UpdateRotationSliderValues(rotation);
+        RotationEuler4 eulerRotation = new RotationEuler4(rotation);
+
+        sceneUiHandler.UpdateRotationText(eulerRotation);
+        sceneUiHandler.UpdateRotationSliderValues(eulerRotation);
     }
 }

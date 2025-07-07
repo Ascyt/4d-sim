@@ -43,7 +43,7 @@ public class CameraRotation : MonoBehaviour
     {
         float speed = rotationSpeed * Time.deltaTime;
         bool rotationUpdated = false;
-        Rotation4 rotationDelta = new Rotation4(0, 0, 0, 0, 0, 0);
+        RotationEuler4 rotationDelta = new RotationEuler4(0, 0, 0, 0, 0, 0);
 
         if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateXWPos : cameraState.cameraMovement.MoveRight))
         {
