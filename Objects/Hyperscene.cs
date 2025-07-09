@@ -29,4 +29,7 @@ public abstract class Hyperscene
 
     public virtual Vector4 StartingPosition => Vector4.zero; 
     public virtual Rotation4 StartingRotation => Rotation4.zero; 
+    public virtual void Start() { }
+    /// <returns>Whether or not to cause a view refresh</returns>
+    public virtual bool Update() { return false; }
 }

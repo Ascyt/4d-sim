@@ -11,7 +11,7 @@ using UnityEngine;
 [RequireComponent(typeof(HypersceneRenderer))]
 public class CameraState : MonoBehaviour
 {
-    public CameraState instance { get; private set; }
+    public static CameraState instance { get; private set; }
 
     /// <summary>
     /// Use the dvorak keyboard layout for movement and rotation controls.
@@ -42,10 +42,10 @@ public class CameraState : MonoBehaviour
     public Rotation4 rotation = Rotation4.zero;
 
     // These vectors rotate with the camera and are used for movement calculations.
-    private Vector4 right = new Vector4(1, 0, 0, 0);
-    private Vector4 up = new Vector4(0, 1, 0, 0);
-    private Vector4 forward = new Vector4(0, 0, 1, 0);
-    private Vector4 ana = new Vector4(0, 0, 0, 1);
+    public Vector4 right = new Vector4(1, 0, 0, 0);
+    public Vector4 up = new Vector4(0, 1, 0, 0);
+    public Vector4 forward = new Vector4(0, 0, 1, 0);
+    public Vector4 ana = new Vector4(0, 0, 0, 1);
 
     private void Awake()
     {

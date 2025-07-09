@@ -66,6 +66,16 @@ public class HypersceneRenderer : MonoBehaviour
         InitializeHyperscene();
     }
 
+    private void Update()
+    {
+        bool viewRefresh = hyperscene.Update();
+
+        if (viewRefresh)
+        {
+            RerenderObjects();
+        }
+    }
+
     public void LoadHyperscene(HypersceneOption hypersceneOption)
     {
         rendering.ClearAllRenderedObjects();
@@ -101,6 +111,8 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
         }
 
+        hyperscene.Start();
+
         objects.AddRange(hyperscene.Objects);
         fixedObjects.AddRange(hyperscene.FixedObjects);
 
@@ -110,6 +122,7 @@ public class HypersceneRenderer : MonoBehaviour
         }
 
         cameraPosition.enabled = !hyperscene.IsFixed;
+
         RenderObjectsInitially();
     }
 
