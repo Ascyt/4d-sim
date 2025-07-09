@@ -33,12 +33,30 @@ public class Rendering : MonoBehaviour
         {
             foreach (InstantiatedObject instantiatedObject in instantiatedObjectValues) 
             {
-                Destroy(instantiatedObject.gameObj);
-                foreach (Object resource in instantiatedObject.resources)
-                    Destroy(resource); 
+                RemoveSingleObject(instantiatedObject);
             }
         }
         instantiatedObjects.Clear();
+    }
+    public void RemoveSingleObject(InstantiatedObject instantiatedObject)
+    {
+        Destroy(instantiatedObject.gameObj);
+        foreach (Object resource in instantiatedObject.resources)
+            Destroy(resource);
+    }
+    public bool RemoveSingleObject(Hyperobject obj)
+    {
+        if (!instantiatedObjects.TryGetValue(obj, out List<InstantiatedObject> iObjs))
+        {
+            return false;
+        }
+
+        foreach (InstantiatedObject iObj in iObjs)
+        {
+            RemoveSingleObject(iObj);
+        }
+
+        return true;
     }
 
     public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Vector4[] verticesRelativeToCamera, bool allowIntersectioning = true,

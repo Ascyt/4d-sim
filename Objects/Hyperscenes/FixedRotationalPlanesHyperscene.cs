@@ -22,32 +22,32 @@ public class FixedRotationalPlanesHyperscene : Hyperscene
         // XY
         new Tesseract(new Vector4(1, 1, 0, 0) * PLANES_SCALE / 2f, 
             ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0.5f, 0f, PLANES_ALPHA), 
-            new Vector4(1, 1, 0, 0) * PLANES_SCALE),
+            new Vector4(1, 1, 1f/256f, 1f/256f) * PLANES_SCALE),
 
         // XZ
         new Tesseract(new Vector4(1, 0, 1, 0) * PLANES_SCALE / 2f, 
             ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0f, 0.5f, PLANES_ALPHA), 
-            new Vector4(1, 0, 1, 0) * PLANES_SCALE),
+            new Vector4(1, 1f / 64f, 1, 1f/256f) * PLANES_SCALE),
 
         // YZ
         new Tesseract(new Vector4(0, 1, 1, 0) * PLANES_SCALE / 2f, 
             ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 0.5f, 0.5f, PLANES_ALPHA), 
-            new Vector4(0, 1, 1, 0) * PLANES_SCALE),
+            new Vector4(1f/256f, 1, 1, 1f/256f) * PLANES_SCALE),
 
         // XW
         new Tesseract(new Vector4(1, 0, 0, 1) * PLANES_SCALE / 2f,
             ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 0.5f, 0.5f, PLANES_ALPHA), 
-            new Vector4(1, 0, 0, 1) * PLANES_SCALE),
+            new Vector4(1, 1f/256f, 1f/256f, 1) * PLANES_SCALE),
 
         // YW
         new Tesseract(new Vector4(0, 1, 0, 1) * PLANES_SCALE / 2f, 
             ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 1f, 0.5f, PLANES_ALPHA), 
-            new Vector4(0, 1, 0, 1) * PLANES_SCALE),
+            new Vector4(1f/256f, 1, 1f/256f, 1) * PLANES_SCALE),
 
         // ZW
         new Tesseract(new Vector4(0, 0, 1, 1) * PLANES_SCALE / 2f,
             ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0.75f, 1f, PLANES_ALPHA), 
-            new Vector4(0, 0, 1, 1) * PLANES_SCALE),
+            new Vector4(1f/256f, 1f/256f, 1, 1) * PLANES_SCALE),
 
         new Cube(new Vector4(0, 0, 0, -0.5f), ConnectedVertices.ConnectionMethod.Wireframe, Color.white, Vector3.one * 0.5f)
     };

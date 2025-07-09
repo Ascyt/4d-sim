@@ -68,11 +68,19 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void Update()
     {
-        bool viewRefresh = hyperscene.Update();
+        List<Hyperobject>? rerenderObjects = hyperscene.Update();
 
-        if (viewRefresh)
+        if (rerenderObjects is not null)
         {
-            RerenderObjects();
+            foreach (Hyperobject rerenderObject in rerenderObjects)
+            {
+                _ = rendering.RemoveSingleObject(rerenderObject);
+
+                foreach (ConnectedVertices connectedVertices in rerenderObject.vertices)
+                {
+                    rendering.ProjectVertices(connectedVertices, rerenderObject, connectedVertices.transformedVertices);
+                }
+            }
         }
     }
 
