@@ -29,8 +29,8 @@ public static class RotationTransformer
 
             GetQuaternionPairForPlane(rotationPlane, angle, out Quaternion a, out Quaternion b);
 
-            rotation.rotationXW_YW_ZW = a * rotation.rotationXW_YW_ZW;
-            rotation.rotationXY_XZ_YZ = b * rotation.rotationXY_XZ_YZ;
+            rotation.rightQuaternion = a * rotation.rightQuaternion;
+            rotation.leftQuaternion = b * rotation.leftQuaternion;
         }
 
         return rotation;
@@ -44,59 +44,52 @@ public static class RotationTransformer
     public static Vector4 ApplyRotation(this Vector4 vector, Rotation4 rotation, bool worldSpace)
     {
         Quaternion v = Vector4ToQuaternion(vector);
-        Quaternion rotated = rotation.rotationXY_XZ_YZ * v * rotation.rotationXW_YW_ZW;
+        Quaternion rotated = rotation.leftQuaternion * v * rotation.rightQuaternion;
         return QuaternionToVector4(rotated);
     }
 
-    public static void GetQuaternionPairForPlane(RotationPlane plane, float angle, out Quaternion a, out Quaternion b)
+    private static void GetQuaternionPairForPlane(RotationPlane plane, float angle, out Quaternion a, out Quaternion b)
     {
+        float sin = Mathf.Sin(angle / 2f);
+        float cos = Mathf.Cos(angle / 2f);
+
         switch (plane)
         {
             case RotationPlane.XW:
-                a = QuaternionFromAxisAngle(new Vector3(1, 0, 0), -angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(1, 0, 0), angle / 2f);
+                a = new Quaternion(sin, 0, 0, cos);
+                b = new Quaternion(sin, 0, 0, cos);
                 break;
             case RotationPlane.YW:
-                a = QuaternionFromAxisAngle(new Vector3(0, 1, 0), -angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(0, 1, 0), angle / 2f);
+                a = new Quaternion(0, sin, 0, cos);
+                b = new Quaternion(0, sin, 0, cos);
                 break;
             case RotationPlane.ZW:
-                a = QuaternionFromAxisAngle(new Vector3(0, 0, 1), -angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(0, 0, 1), angle / 2f);
+                a = new Quaternion(0, 0, sin, cos);
+                b = new Quaternion(0, 0, sin, cos);
                 break;
             case RotationPlane.XY:
-                a = QuaternionFromAxisAngle(new Vector3(0, 0, 1), angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(0, 0, 1), angle / 2f);
+                a = new Quaternion(-sin, 0, 0, cos);
+                b = new Quaternion(sin, 0, 0, cos);
                 break;
             case RotationPlane.XZ:
-                a = QuaternionFromAxisAngle(new Vector3(0, 1, 0), angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(0, 1, 0), angle / 2f);
+                a = new Quaternion(0, -sin, 0, cos);
+                b = new Quaternion(0, sin, 0, cos);
                 break;
             case RotationPlane.YZ:
-                a = QuaternionFromAxisAngle(new Vector3(1, 0, 0), angle / 2f);
-                b = QuaternionFromAxisAngle(new Vector3(1, 0, 0), angle / 2f);
+                a = new Quaternion(0, 0, -sin, cos);
+                b = new Quaternion(0, 0, sin, cos);
                 break;
             default:
                 throw new ArgumentException("Invalid plane");
         }
     }
 
-    private static Quaternion QuaternionFromAxisAngle(Vector3 axis, float angle)
+    private static Quaternion Vector4ToQuaternion(Vector4 vector)
     {
-        axis = axis.normalized;
-        float halfAngle = angle / 2f;
-        float sin = Mathf.Sin(halfAngle);
-        float cos = Mathf.Cos(halfAngle);
-        return new Quaternion(axis.x * sin, axis.y * sin, axis.z * sin, cos);
+        return new Quaternion(vector.x, vector.y, vector.z, vector.w);
     }
-
-    public static Quaternion Vector4ToQuaternion(Vector4 v)
+    private static Vector4 QuaternionToVector4(Quaternion quaternion)
     {
-        return new Quaternion(v.x, v.y, v.z, v.w);
-    }
-
-    public static Vector4 QuaternionToVector4(Quaternion q)
-    {
-        return new Vector4(q.x, q.y, q.z, q.w);
+        return new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
 }

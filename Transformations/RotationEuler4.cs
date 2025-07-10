@@ -35,11 +35,11 @@ public struct RotationEuler4
     }
     public RotationEuler4(Rotation4 rotation)
     {
-        Vector3 eulerXW_YW_ZW = rotation.rotationXW_YW_ZW.eulerAngles;
+        Vector3 eulerXW_YW_ZW = rotation.rightQuaternion.eulerAngles;
         xw = eulerXW_YW_ZW.x * Mathf.Deg2Rad;
         yw = eulerXW_YW_ZW.y * Mathf.Deg2Rad;
         zw = eulerXW_YW_ZW.z * Mathf.Deg2Rad;
-        Vector3 eulerXY_XZ_YZ = rotation.rotationXY_XZ_YZ.eulerAngles;
+        Vector3 eulerXY_XZ_YZ = rotation.leftQuaternion.eulerAngles;
         xy = eulerXY_XZ_YZ.x * Mathf.Deg2Rad;
         xz = eulerXY_XZ_YZ.y * Mathf.Deg2Rad;
         yz = eulerXY_XZ_YZ.z * Mathf.Deg2Rad;
