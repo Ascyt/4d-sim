@@ -9,27 +9,31 @@ public struct Rotation4
     public Quaternion leftQuaternion;
     public Quaternion rightQuaternion;
 
-    public static Rotation4 zero => new Rotation4(0, 0, 0, 0, 0, 0);
+    public static Rotation4 zero => new Rotation4(Quaternion.identity, Quaternion.identity);
 
-    public Rotation4(Quaternion rightQuaternion, Quaternion leftQuaternion)
+    public Rotation4(Quaternion leftQuaternion, Quaternion rightQuaternion)
     {
         this.leftQuaternion = leftQuaternion;
         this.rightQuaternion = rightQuaternion;
     }
+    public Rotation4(RotationEuler4 rotationEuler)
+    {
+        Rotation4 newRot = Rotation4.zero.AddEuler(rotationEuler, true);
+        leftQuaternion = newRot.leftQuaternion;
+        rightQuaternion = newRot.rightQuaternion;
+    }
     public Rotation4(float xw, float yw, float zw, float xy, float xz, float yz)
     {
-        rightQuaternion = Quaternion.Euler(xw * Mathf.Rad2Deg, yw * Mathf.Rad2Deg, zw * Mathf.Rad2Deg);
-        leftQuaternion = Quaternion.Euler(xy * Mathf.Rad2Deg, xz * Mathf.Rad2Deg, yz * Mathf.Rad2Deg);
-    }
-    public Rotation4(RotationEuler4 rotationEuler) : this(rotationEuler.xw, rotationEuler.yw, rotationEuler.zw, rotationEuler.xy, rotationEuler.xz, rotationEuler.yz)
-    {
+        Rotation4 newRot = Rotation4.zero.AddEuler(new RotationEuler4(xw, yw, zw, xy, xz, yz), true);
+        leftQuaternion = newRot.leftQuaternion;
+        rightQuaternion = newRot.rightQuaternion;
     }
 
     public static Rotation4 operator -(Rotation4 a)
     {
         Rotation4 newRotation = new Rotation4(
-            Quaternion.Inverse(a.rightQuaternion),
-            Quaternion.Inverse(a.leftQuaternion)
+            Quaternion.Inverse(a.leftQuaternion),
+            Quaternion.Inverse(a.rightQuaternion)
             );
 
         return newRotation;

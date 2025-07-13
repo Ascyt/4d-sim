@@ -43,7 +43,7 @@ public class Rendering : MonoBehaviour
 
         int[][] connections = connectedVertices.connections;
         Vector4[] verticesRelativeToCamera = connectedVertices.vertices
-            .Select(v => (v + obj.position - cameraPosition).ApplyRotation(-cameraRotation, false))
+            .Select(v => (v + obj.position - cameraPosition).ApplyRotation(-cameraRotation))
             .ToArray();
         if (applyIntersectioning)
         {

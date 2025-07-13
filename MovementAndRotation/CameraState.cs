@@ -95,7 +95,7 @@ public class CameraState : MonoBehaviour
     public void UpdatePosition(Vector4 positionDelta)
     {
         Debug.Log(positionDelta);
-        Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation, false);
+        Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation);
         position += rotatedPositionDelta;
 
         hypersceneRenderer.RenderObjectsCameraPositionChange(positionDelta);
@@ -104,7 +104,7 @@ public class CameraState : MonoBehaviour
     }
     public void UpdateRotation(RotationEuler4 rotationDelta)
     {
-        rotation = rotation.AddEuler(rotationDelta);
+        rotation = rotation.AddEuler(rotationDelta, false);
 
         hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
 
