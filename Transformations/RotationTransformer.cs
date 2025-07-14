@@ -100,7 +100,7 @@ public static class RotationTransformer
                 return new Rotation4
                 (
                     new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t)),
-                new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
+                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
                 );
             default:
                 throw new ArgumentException("Invalid plane");
