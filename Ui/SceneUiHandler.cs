@@ -70,7 +70,7 @@ public class SceneUiHandler : MonoBehaviour
             $"w: {position.w}";
     }
 
-    public void UpdateRotationText(Rotation4 rotation)
+    public void UpdateRotationText(RotationEuler4 rotation)
     {
         rotationText.text =
             $"xw: {rotation.xw * Mathf.Rad2Deg}°\n" +
@@ -81,7 +81,7 @@ public class SceneUiHandler : MonoBehaviour
             $"yz: {rotation.yz * Mathf.Rad2Deg}°";
     }
 
-    public void UpdateRotationSliderValues(Rotation4 rotation)
+    public void UpdateRotationSliderValues(RotationEuler4 rotation)
     {
         xwSlider.SetValueWithoutNotify(rotation.xw);
         ywSlider.SetValueWithoutNotify(rotation.yw);
@@ -93,15 +93,15 @@ public class SceneUiHandler : MonoBehaviour
 
     public void OnRotationSliderChange()
     {
-        Rotation4 sliderRotation = new Rotation4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-        Rotation4 rotationDelta = sliderRotation - cameraState.rotation;
+        RotationEuler4 sliderRotation = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
+        RotationEuler4 rotationDelta = sliderRotation - cameraState.rotationEuler;
 
         cameraState.UpdateRotation(rotationDelta);
     }
 
     public void ResetRotation()
     {
-        cameraState.SetRotation(Rotation4.zero);
+        cameraState.SetRotation(RotationEuler4.zero);
 
         cameraState.hypersceneRenderer.ResetRotation();
     }

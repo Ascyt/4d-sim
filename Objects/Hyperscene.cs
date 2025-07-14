@@ -28,7 +28,7 @@ public abstract class Hyperscene
     public virtual bool IsOrthographic => false;
 
     public virtual Vector4 StartingPosition => Vector4.zero; 
-    public virtual Rotation4 StartingRotation => Rotation4.zero; 
+    public virtual RotationEuler4 StartingRotation => RotationEuler4.zero; 
     public virtual void Start() { }
     /// <returns>Refresh objects</returns>
     public virtual List<Hyperobject>? Update() { return null; }

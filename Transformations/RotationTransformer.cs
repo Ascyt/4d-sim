@@ -18,84 +18,89 @@ public static class RotationTransformer
         YZ
     }
 
-    public static Vector4 Rotate(this Vector4 point, Rotation4 rotation)
+    // Thanks to https://math.stackexchange.com/a/44974
+    public static Rotation4 AddEuler(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
     {
-        return point
-            .Rotate(RotationPlane.XW, rotation.xw)
-            .Rotate(RotationPlane.YW, rotation.yw)
-            .Rotate(RotationPlane.ZW, rotation.zw)
-            .Rotate(RotationPlane.YZ, rotation.yz)
-            .Rotate(RotationPlane.XZ, rotation.xz)
-            .Rotate(RotationPlane.XY, rotation.xy);
-    }
-    public static Vector4 RotateNeg(this Vector4 point, Rotation4 rotation)
-    {
-        rotation = -rotation;
+        // Convert the delta to Quaternion and apply it to the existing rotation
+        foreach (RotationPlane rotationPlane in Enum.GetValues(typeof(RotationPlane)))
+        {
+            float angle = delta[rotationPlane];
+            if (Mathf.Approximately(angle, 0f))
+                continue;
 
-        return point
-            .Rotate(RotationPlane.XY, rotation.xy)
-            .Rotate(RotationPlane.XZ, rotation.xz)
-            .Rotate(RotationPlane.YZ, rotation.yz)
-            .Rotate(RotationPlane.ZW, rotation.zw)
-            .Rotate(RotationPlane.YW, rotation.yw)
-            .Rotate(RotationPlane.XW, rotation.xw);
+            GetQuaternionPairForPlane(rotationPlane, angle, out Quaternion leftDelta, out Quaternion rightDelta);
+
+            if (worldSpace)
+            {
+                rotation.leftQuaternion = leftDelta * rotation.leftQuaternion;
+                rotation.rightQuaternion = rotation.rightQuaternion * rightDelta;
+            }
+            else
+            {
+                rotation.leftQuaternion = rotation.leftQuaternion * leftDelta;
+                rotation.rightQuaternion = rightDelta * rotation.rightQuaternion;
+            }
+        }
+
+        return rotation;
     }
-    public static Vector4 Rotate(this Vector4 point, RotationPlane plane, float angle)
+
+    // Thanks to https://math.stackexchange.com/a/44974
+    public static Vector4 ApplyRotation(this Vector4 vector, Rotation4 rotation, Rotation4? alignment=null)
     {
-        float cos = Mathf.Cos(angle);
-        float sin = Mathf.Sin(angle);
+        if (alignment.HasValue)
+        {
+            // Apply reverse alignment rotation first
+            vector = ApplyRotation(vector, -alignment.Value);
+        }
+
+        Quaternion v = Vector4ToQuaternion(vector);
+        Quaternion rotated = rotation.leftQuaternion * v * rotation.rightQuaternion;
+        return QuaternionToVector4(rotated);
+    }
+
+    // Thanks to https://math.stackexchange.com/a/44974
+    private static void GetQuaternionPairForPlane(RotationPlane plane, float angle, out Quaternion left, out Quaternion right)
+    {
+        float t = angle / 2f;
 
         switch (plane)
         {
-            case RotationPlane.XY:
-                return new Vector4(
-                    cos * point.x + sin * point.y,
-                    -sin * point.x + cos * point.y,
-                    point.z,
-                    point.w
-                );
-
-            case RotationPlane.XZ:
-                return new Vector4(
-                    cos * point.x + sin * point.z,
-                    point.y,
-                    -sin * point.x + cos * point.z,
-                    point.w
-                );
             case RotationPlane.XW:
-                return new Vector4(
-                    cos * point.x + sin * point.w,
-                    point.y,
-                    point.z,
-                    -sin * point.x + cos * point.w
-                );
-
-            case RotationPlane.YZ:
-                return new Vector4(
-                    point.x,
-                    cos * point.y + sin * point.z,
-                    -sin * point.y + cos * point.z,
-                    point.w
-                );
-
+                left = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
+                right = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
+                break;
             case RotationPlane.YW:
-                return new Vector4(
-                    point.x,
-                    cos * point.y + sin * point.w,
-                    point.z,
-                    -sin * point.y + cos * point.w
-                );
-
+                left = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
+                right = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
+                break;
             case RotationPlane.ZW:
-                return new Vector4(
-                    point.x,
-                    point.y,
-                    cos * point.z + sin * point.w,
-                    -sin * point.z + cos * point.w
-                );
-
+                left = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
+                right = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
+                break;
+            case RotationPlane.XY:
+                left = new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t));
+                right = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
+                break;
+            case RotationPlane.XZ:
+                left = new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t));
+                right = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
+                break;
+            case RotationPlane.YZ:
+                left = new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t));
+                right = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
+                break;
             default:
-                throw new ArgumentException("Invalid rotation plane");
+                throw new ArgumentException("Invalid plane");
         }
+    }
+
+    private static Quaternion Vector4ToQuaternion(Vector4 vector)
+    {
+        return new Quaternion(vector.x, vector.y, vector.z, vector.w);
+    }
+    private static Vector4 QuaternionToVector4(Quaternion quaternion)
+    {
+        return new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
 }
