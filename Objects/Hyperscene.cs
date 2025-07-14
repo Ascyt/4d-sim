@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#nullable enable
+
 /// <summary>
 /// Base class for a hyperscene, which contains a collection of hyperobjects.
 /// </summary>

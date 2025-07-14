@@ -7,6 +7,8 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.Image;
 
+#nullable enable
+
 /// <summary>
 /// Manages the rendering of hyperscenes, including camera position, rotation, and state using Rendering.cs.<br /><br />
 /// 
@@ -30,19 +32,19 @@ public class HypersceneRenderer : MonoBehaviour
         FixedRotationalPlanes
     }
 
-    public static HypersceneRenderer instance { get; private set; }
+    public static HypersceneRenderer instance { get; private set; } = null!;
 
     [SerializeField]
     public HypersceneOption hypersceneOption { get; private set; } = HypersceneOption.Default;
-    public Hyperscene hyperscene { get; private set; } = null;
+    public Hyperscene? hyperscene { get; private set; } = null;
 
     public readonly List<Hyperobject> objects = new();
     public readonly List<Hyperobject> fixedObjects = new();
 
-    private CameraPosition cameraPosition;
-    private CameraRotation cameraRotation;
-    private CameraState cameraState;
-    private Rendering rendering;
+    private CameraPosition cameraPosition = null!;
+    private CameraRotation cameraRotation = null!;
+    private CameraState cameraState = null!;
+    private Rendering rendering = null!;
 
     private readonly float fov = Mathf.PI / 8f;
 
@@ -65,7 +67,7 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void Update()
     {
-        List<Hyperobject>? rerenderObjects = hyperscene.Update();
+        List<Hyperobject>? rerenderObjects = hyperscene!.Update();
 
         if (rerenderObjects is not null)
         {
@@ -116,7 +118,7 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
         }
 
-        hyperscene.Start();
+        hyperscene!.Start();
 
         objects.AddRange(hyperscene.Objects);
         fixedObjects.AddRange(hyperscene.FixedObjects);
@@ -131,7 +133,7 @@ public class HypersceneRenderer : MonoBehaviour
         RenderObjectsInitially();
     }
 
-    public void RenderObjectsCameraPositionChange(Vector4 positionDelta)
+    public void RenderObjectsCameraPositionChange()
     {
         rendering.ClearAllRenderedObjects();
 
@@ -143,9 +145,9 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        UpdateFixedObjects(RotationEuler4.zero);
+        UpdateFixedObjects();
     }
-    public void RenderObjectsCameraRotationChange(RotationEuler4 rotationDelta)
+    public void RenderObjectsCameraRotationChange()
     {
         rendering.ClearAllRenderedObjects();
 
@@ -157,13 +159,13 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        UpdateFixedObjects(rotationDelta);
+        UpdateFixedObjects();
     }
 
     public void RenderObjectsInitially()
     {
-        cameraState.SetPosition(hyperscene.StartingPosition);
-        cameraState.SetRotation(hyperscene.StartingRotation);
+        cameraState.SetPosition(hyperscene!.StartingPosition);
+        cameraState.SetRotation(hyperscene!.StartingRotation);
 
         foreach (Hyperobject obj in objects)
         {
@@ -196,7 +198,7 @@ public class HypersceneRenderer : MonoBehaviour
             }
         }
 
-        UpdateFixedObjects(RotationEuler4.zero);
+        UpdateFixedObjects();
     }
 
     public void ResetRotation()
@@ -205,13 +207,13 @@ public class HypersceneRenderer : MonoBehaviour
         RenderObjectsInitially();
     }
 
-    private void UpdateFixedObjects(RotationEuler4 rotationDelta)
+    private void UpdateFixedObjects()
     {
         foreach (Hyperobject fixedObject in fixedObjects)
         {
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {
-                rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene!.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }

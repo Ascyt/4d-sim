@@ -70,7 +70,7 @@ public class Rendering : MonoBehaviour
 
         int[][] connections = connectedVertices.connections;
         Vector4[] verticesRelativeToCamera = connectedVertices.vertices
-            .Select(v => (v + obj.position - cameraPosition).ApplyRotation(-cameraRotation))
+            .Select(v => (v + obj.position - cameraPosition).ApplyRotation(cameraRotation.Inverse()))
             .ToArray();
         if (applyIntersectioning)
         {
@@ -106,7 +106,7 @@ public class Rendering : MonoBehaviour
     public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Rotation4 objectRotation, bool orthographic)
     {
         Vector4[] transformedVertices = connectedVertices.vertices
-            .Select(v => (v + obj.position).ApplyRotation(-objectRotation))
+            .Select(v => (v + obj.position).ApplyRotation(objectRotation.Inverse()))
             .ToArray();
 
         Vector3?[] projectedVertices;

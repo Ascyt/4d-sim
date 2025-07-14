@@ -81,7 +81,7 @@ public class CameraRotation : MonoBehaviour
         if (rotationUpdated)
         {
             rotationDelta.ModuloPlanes();
-            cameraState.UpdateRotation(rotationDelta);
+            cameraState.UpdateRotationDelta(rotationDelta);
         }
     }
 }
