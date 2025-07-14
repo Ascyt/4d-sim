@@ -7,6 +7,8 @@ using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.Image;
 
+#nullable enable
+
 /// <summary>
 /// Manages the rendering of hyperscenes, including camera position, rotation, and state using Rendering.cs.<br /><br />
 /// 
@@ -34,13 +36,13 @@ public class HypersceneRenderer : MonoBehaviour
 
     [SerializeField]
     public HypersceneOption hypersceneOption { get; private set; } = HypersceneOption.Default;
-    public Hyperscene hyperscene { get; private set; } = null;
+    public Hyperscene? hyperscene { get; private set; } = null;
 
     public readonly List<Hyperobject> objects = new();
     public readonly List<Hyperobject> fixedObjects = new();
 
-    private CameraPosition cameraPosition;
-    private CameraRotation cameraRotation;
+    private CameraPosition cameraPosition = null!;
+    private CameraRotation cameraRotation = null!;
     private CameraState cameraState;
     private Rendering rendering;
 
@@ -65,7 +67,7 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void Update()
     {
-        List<Hyperobject>? rerenderObjects = hyperscene.Update();
+        List<Hyperobject>? rerenderObjects = hyperscene!.Update();
 
         if (rerenderObjects is not null)
         {
@@ -116,7 +118,7 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
         }
 
-        hyperscene.Start();
+        hyperscene!.Start();
 
         objects.AddRange(hyperscene.Objects);
         fixedObjects.AddRange(hyperscene.FixedObjects);
@@ -162,8 +164,8 @@ public class HypersceneRenderer : MonoBehaviour
 
     public void RenderObjectsInitially()
     {
-        cameraState.SetPosition(hyperscene.StartingPosition);
-        cameraState.SetRotation(hyperscene.StartingRotation);
+        cameraState.SetPosition(hyperscene!.StartingPosition);
+        cameraState.SetRotation(hyperscene!.StartingRotation);
 
         foreach (Hyperobject obj in objects)
         {
@@ -211,7 +213,7 @@ public class HypersceneRenderer : MonoBehaviour
         {
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {
-                rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene!.IsFixed || hyperscene.IsOrthographic);
             }
         }
     }
