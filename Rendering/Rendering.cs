@@ -14,7 +14,6 @@ public class Rendering : MonoBehaviour
     private readonly Vector4 to = new Vector4(0, 0, 0, -1);
     private readonly Vector4 up = new Vector4(0, 1, 0, 0);
     private readonly Vector4 over = new Vector4(0, 0, 1, 0);
-
     private Vector4 wa;
     private Vector4 wb;
     private Vector4 wc;
@@ -86,25 +85,32 @@ public class Rendering : MonoBehaviour
         DisplayObject(connectedVertices, obj, transformedVertices, averagePos, connections);
     }
 
-    public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Rotation4 cameraRotation, bool orthographic)
+    public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Rotation4 objectRotation, bool orthographic)
     {
+        Vector4[] transformedVertices = connectedVertices.vertices
+            .Select(v => (v + obj.position).ApplyRotation(-objectRotation))
+            .ToArray();
+
+        Vector3?[] projectedVertices;
         if (orthographic)
         {
-            Vector3?[] transformedVertices = connectedVertices.vertices
-                .Select(v => (Vector3?)(new Vector3(v.x, v.y, v.z) * ORTHOGRAPHIC_SCALE)) // orthographic projection by cutting away w coordinate
+            // Orthographic projection by cutting away w coordinate
+            projectedVertices = transformedVertices
+                .Select(v => (Vector3?)(new Vector3(v.x, v.y, v.z) * ORTHOGRAPHIC_SCALE))
                 .ToArray();
-
-            DisplayObject(connectedVertices, obj, transformedVertices, Vector3.zero, connectedVertices.connections);
-            return;
+        }
+        else
+        {
+            projectedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, new Vector4(0, 0, 0, -2), transformedVertices, fov);
         }
 
-        ProjectVertices(connectedVertices, obj, cameraRotation, new Vector4(0, 0, 0, -1), false);
+        DisplayObject(connectedVertices, obj, projectedVertices, Vector3.zero, connectedVertices.connections);
     }
 
-    private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] transformedVertices, Vector3 averagePos, int[][] connections)
+    private void DisplayObject(ConnectedVertices connectedVertices, Hyperobject obj, Vector3?[] projectedVertices, Vector3 averagePos, int[][] connections)
     {
         InstantiatedObject? instance = ObjectInstantiator.instance
-          .InstantiateObject(transformedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connections, connectedVertices.vertexScale);
+          .InstantiateObject(projectedVertices, averagePos, connectedVertices.connectionMethod, connectedVertices.color, connections, connectedVertices.vertexScale);
 
         if (instance != null)
         {
