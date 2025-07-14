@@ -75,7 +75,7 @@ public class HypersceneRenderer : MonoBehaviour
 
                 foreach (ConnectedVertices connectedVertices in rerenderObject.vertices)
                 {
-                    rendering.ProjectVertices(connectedVertices, rerenderObject, connectedVertices.transformedVertices);
+                    rendering.ProjectVertices(connectedVertices, rerenderObject, cameraState.rotation, cameraState.position);
                 }
             }
         }

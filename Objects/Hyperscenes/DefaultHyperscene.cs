@@ -13,9 +13,12 @@ public class DefaultHyperscene : Hyperscene
     private static readonly Vector4 transformingTesseractPosition = new Vector4(-3, 1, -3, 2);
     private Tesseract transformingTesseract = new Tesseract(transformingTesseractPosition, ConnectedVertices.ConnectionMethod.Wireframe, Color.white);
     private Cube transformingTesseractFace = new Cube(transformingTesseractPosition + new Vector4(0, 0, 0, 0.5f), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 1f, 0f, 0.75f));
-    private float lastUpdateTime = 0;
 
     private static readonly Vector4 coloredTesseractPosition = new Vector4(-3, 3, -3, 3);
+
+    private float lastUpdateTime = 0f;
+
+    private const float UPDATE_INTERVAL = 1f / 24f; 
 
     private List<Hyperobject> _objects = new()
     {
@@ -58,52 +61,21 @@ public class DefaultHyperscene : Hyperscene
 
         lastUpdateTime = Time.time;
 
-        Vector4 averagePosition = Vector4.zero;
-        int count = 0;
-        bool anyInView = false;
-        foreach (ConnectedVertices connectedVertices in transformingTesseract.vertices)
-        {
-            averagePosition += connectedVertices.transformedVertices
-                .Aggregate((a, b) => a + b);
+        TransformConnectedVertices(transformingTesseract.vertices, Vector4.zero);
+        TransformConnectedVertices(transformingTesseractFace.vertices, transformingTesseractFace.position - transformingTesseract.position);
 
-            if (connectedVertices.transformedVertices.Any(v => v.w > 0f))
-                anyInView = true;
-
-            count += connectedVertices.transformedVertices.Length;
-        }
-        averagePosition /= count;
-
-        _ = TransformConnectedVertices(transformingTesseract.vertices, averagePosition);
-        prevTranslationValue = TransformConnectedVertices(transformingTesseractFace.vertices, averagePosition);
-
-        return anyInView ? new List<Hyperobject>() { transformingTesseract, transformingTesseractFace } : null;
+        return new List<Hyperobject>() { transformingTesseract, transformingTesseractFace };
     }
-    private float prevTranslationValue = 0f;
-    private float TransformConnectedVertices(ConnectedVertices[] connectedVertices, Vector4 averagePosition)
+    private void TransformConnectedVertices(ConnectedVertices[] connectedVertices, Vector4 positionDelta)
     {
-        // TODO: Use rotation instead of translation when quaternion rotation implemented (rotation should be relative to world not to camera)
+        float speed = UPDATE_INTERVAL * 2 * Mathf.PI / 4f;
 
-        //float speed = Time.deltaTime * 2 * Mathf.PI / 10f;
-
-        //Rotation4 rotation = new Rotation4(speed, 0, 0, 0, 0, 0);
-        //foreach (ConnectedVertices vertices in connectedVertices)
-        //{
-        //    vertices.transformedVertices = vertices.transformedVertices
-        //        .Select(v => (v - averagePosition).Rotate(rotation) + averagePosition)
-        //        .ToArray();
-        //}
-
-        float translationValue = Mathf.Sin(Time.time);
-        Vector4 translationAmount = CameraState.instance.ana;
-        Vector4 translation = translationAmount * translationValue;
-
+        Rotation4 rotation = new Rotation4(speed, 0, 0, 0, 0, 0);
         foreach (ConnectedVertices vertices in connectedVertices)
         {
-            vertices.transformedVertices = vertices.transformedVertices
-                .Select(v => v - (translationAmount * prevTranslationValue) + (translationAmount * translationValue))
+            vertices.vertices = vertices.vertices
+                .Select(v => (v + positionDelta).ApplyRotation(rotation) - positionDelta)
                 .ToArray();
         }
-
-        return translationValue;
     }
 }
