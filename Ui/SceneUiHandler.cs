@@ -25,9 +25,18 @@ public class SceneUiHandler : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI fpsText;
-
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
+
+    [Space]
+    [SerializeField]
+    private bool displayQuaternionPair = false;
+    [SerializeField]
+    private TextMeshProUGUI switchButtonText;
+    [SerializeField]
+    private GameObject eulerAnglesParent;
+    [SerializeField]
+    private GameObject quaternionPairParent;
 
     [Space]
     [SerializeField]
@@ -63,6 +72,8 @@ public class SceneUiHandler : MonoBehaviour
             .ToList());
 
         hypersceneDropdown.SetValueWithoutNotify((int)cameraState.hypersceneRenderer.hypersceneOption);
+
+        UpdateDisplay();
     }
     private void Update()
     {
@@ -94,8 +105,8 @@ public class SceneUiHandler : MonoBehaviour
         positionText.text =
         $"x: {position.x}\n" +
         $"y: {position.y}\n" +
-            $"z: {position.z}\n" +
-            $"w: {position.w}";
+        $"z: {position.z}\n" +
+        $"w: {position.w}";
     }
 
     public void UpdateRotationText(RotationEuler4 rotation)
@@ -125,6 +136,20 @@ public class SceneUiHandler : MonoBehaviour
         RotationEuler4 rotationDelta = sliderRotation - cameraState.rotationEuler;
 
         cameraState.UpdateRotation(rotationDelta);
+    }
+
+    public void SwitchDisplay()
+    {
+        displayQuaternionPair = !displayQuaternionPair;
+
+        UpdateDisplay();
+    }
+    private void UpdateDisplay()
+    {
+        eulerAnglesParent.SetActive(!displayQuaternionPair);
+        quaternionPairParent.SetActive(displayQuaternionPair);
+
+        switchButtonText.text = displayQuaternionPair ? "Quaternion Pair <=>" : "Euler Angles <=>";
     }
 
     public void ResetRotation()
