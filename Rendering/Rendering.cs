@@ -14,12 +14,22 @@ public class Rendering : MonoBehaviour
     private readonly Vector4 to = new Vector4(0, 0, 0, -1);
     private readonly Vector4 up = new Vector4(0, 1, 0, 0);
     private readonly Vector4 over = new Vector4(0, 0, 1, 0);
-    
+
+    private Vector4 wa;
+    private Vector4 wb;
+    private Vector4 wc;
+    private Vector4 wd;
+
     public float fov;
 
     private static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
 
     private const float ORTHOGRAPHIC_SCALE = 4f;
+
+    public void Initialize()
+    {
+        Helpers.GetViewingTransformMatrix(from, to, up, over, out wa, out wb, out wc, out wd);
+    }
 
     public void ClearAllRenderedObjects()
     {
@@ -49,8 +59,6 @@ public class Rendering : MonoBehaviour
         {
             Helpers.ApplyIntersectioning(ref verticesRelativeToCamera, ref connections);
         }
-
-        Helpers.GetViewingTransformMatrix(from, to, up, over, out Vector4 wa, out Vector4 wb, out Vector4 wc, out Vector4 wd);
 
         // Project the vertices to 3D
         Vector3?[] transformedVertices = Helpers.ProjectVerticesTo3d(wa, wb, wc, wd, from, verticesRelativeToCamera, fov);

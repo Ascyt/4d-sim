@@ -59,6 +59,7 @@ public class HypersceneRenderer : MonoBehaviour
     }
     private void Start()
     {
+        rendering.Initialize();
         InitializeHyperscene();
     }
 

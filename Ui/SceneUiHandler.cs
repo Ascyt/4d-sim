@@ -94,7 +94,7 @@ public class SceneUiHandler : MonoBehaviour
     public void OnRotationSliderChange()
     {
         RotationEuler4 sliderRotation = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-        RotationEuler4 rotationDelta = sliderRotation - new RotationEuler4(cameraState.rotation);
+        RotationEuler4 rotationDelta = sliderRotation - cameraState.rotationEuler;
 
         cameraState.UpdateRotation(rotationDelta);
     }

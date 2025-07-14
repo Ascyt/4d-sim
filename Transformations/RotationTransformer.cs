@@ -18,6 +18,7 @@ public static class RotationTransformer
         YZ
     }
 
+    // Thanks to https://math.stackexchange.com/a/44974
     public static Rotation4 AddEuler(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
     {
         // Convert the delta to Quaternion and apply it to the existing rotation

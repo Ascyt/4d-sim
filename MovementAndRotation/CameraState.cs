@@ -41,6 +41,11 @@ public class CameraState : MonoBehaviour
     public Vector4 position = Vector4.zero;
     public Rotation4 rotation = new Rotation4();
 
+    /// <summary>
+    /// Used to display the rotation in the UI, and to update the rotation slider values.
+    /// </summary>
+    public RotationEuler4 rotationEuler = RotationEuler4.zero; 
+
     private void Awake()
     {
         instance = this;
@@ -55,7 +60,7 @@ public class CameraState : MonoBehaviour
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
         sceneUiHandler.UpdatePositionText(position);
-        sceneUiHandler.UpdateRotationText(new RotationEuler4(rotation));
+        sceneUiHandler.UpdateRotationText(rotationEuler);
     }
     private void Update()
     {
@@ -79,6 +84,7 @@ public class CameraState : MonoBehaviour
     public void SetRotation(RotationEuler4 rotation)
     {
         this.rotation = new Rotation4(rotation);
+        this.rotationEuler = rotation;
 
         sceneUiHandler.UpdateRotationText(rotation);
         sceneUiHandler.UpdateRotationSliderValues(rotation);
@@ -94,7 +100,6 @@ public class CameraState : MonoBehaviour
 
     public void UpdatePosition(Vector4 positionDelta)
     {
-        Debug.Log(positionDelta);
         Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation);
         position += rotatedPositionDelta;
 
@@ -108,9 +113,9 @@ public class CameraState : MonoBehaviour
 
         hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
 
-        RotationEuler4 eulerRotation = new RotationEuler4(rotation);
+        rotationEuler += rotationDelta;
 
-        sceneUiHandler.UpdateRotationText(eulerRotation);
-        sceneUiHandler.UpdateRotationSliderValues(eulerRotation);
+        sceneUiHandler.UpdateRotationText(rotationEuler);
+        sceneUiHandler.UpdateRotationSliderValues(rotationEuler);
     }
 }
