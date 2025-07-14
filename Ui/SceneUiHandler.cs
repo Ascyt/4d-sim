@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +21,11 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI rotationText;
 
-    [Space]
+    [Space] 
+
+    [SerializeField]
+    private TextMeshProUGUI fpsText;
+
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
 
@@ -42,6 +47,10 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private TMP_Dropdown hypersceneDropdown;
 
+    private float lastAvgFpsUpdate = 0f;
+    private int frameCount = 0;
+    private const float FPS_UPDATE_INTERVAL = 1f / 4f;
+
     private void Awake()
     {
         instance = this;
@@ -54,6 +63,25 @@ public class SceneUiHandler : MonoBehaviour
             .ToList());
 
         hypersceneDropdown.SetValueWithoutNotify((int)cameraState.hypersceneRenderer.hypersceneOption);
+    }
+    private void Update()
+    {
+        UpdateAvgFps();
+    }
+
+    private void UpdateAvgFps()
+    {
+        frameCount++;
+
+        if (Time.unscaledTime - lastAvgFpsUpdate < FPS_UPDATE_INTERVAL)
+            return;
+
+        float avgFps = frameCount / (Time.unscaledTime - lastAvgFpsUpdate) / FPS_UPDATE_INTERVAL;
+
+        lastAvgFpsUpdate = Time.unscaledTime;
+        frameCount = 0;
+
+        fpsText.text = $"Avg FPS: {avgFps:F2}";
     }
 
     public void UpdateMovementRotationSwitchText(bool newSwitch)
