@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -27,6 +28,10 @@ public class SceneUiHandler : MonoBehaviour
     private TextMeshProUGUI fpsText;
     [SerializeField]
     private TextMeshProUGUI movementRotationSwitchText;
+    [SerializeField]
+    private Button resetRotationButton;
+    [SerializeField]
+    private Button applyChangesButton;
 
     [Space]
     [SerializeField]
@@ -54,21 +59,21 @@ public class SceneUiHandler : MonoBehaviour
 
     [Space]
     [SerializeField]
-    private Slider lwSlider;
+    private TMP_InputField lwInput;
     [SerializeField]
-    private Slider lxSlider;
+    private TMP_InputField lxInput;
     [SerializeField]
-    private Slider lySlider;
+    private TMP_InputField lyInput;
     [SerializeField]
-    private Slider lzSlider;
+    private TMP_InputField lzInput;
     [SerializeField]
-    private Slider rwSlider;
+    private TMP_InputField rwInput;
     [SerializeField]
-    private Slider rxSlider;
+    private TMP_InputField rxInput;
     [SerializeField]
-    private Slider rySlider;
+    private TMP_InputField ryInput;
     [SerializeField]
-    private Slider rzSlider;
+    private TMP_InputField rzInput;
 
     [Space]
     [SerializeField]
@@ -90,6 +95,10 @@ public class SceneUiHandler : MonoBehaviour
             .ToList());
 
         hypersceneDropdown.SetValueWithoutNotify((int)cameraState.hypersceneRenderer.hypersceneOption);
+
+        previousCameraStateEnabled = cameraState.enabled;
+        previousCameraMovementEnabled = cameraState.cameraMovement.enabled;
+        previousCameraRotationEnabled = cameraState.cameraRotation.enabled;
 
         UpdateDisplay();
     }
@@ -166,35 +175,93 @@ public class SceneUiHandler : MonoBehaviour
         }
         else
         {
-            lwSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.w);
-            lxSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.x);
-            lySlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.y);
-            lzSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.z);
-            rwSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.w);
-            rxSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.x);
-            rySlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.y);
-            rzSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.z);
+            lwInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .w.ToString("F6"));
+            lxInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .x.ToString("F6"));
+            lyInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .y.ToString("F6"));
+            lzInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .z.ToString("F6"));
+            rwInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.w.ToString("F6"));
+            rxInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.x.ToString("F6"));
+            ryInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.y.ToString("F6"));
+            rzInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.z.ToString("F6"));
         }
+    }
+
+    private bool isEditingText = false;
+    private Rotation4 newRotation = Rotation4.identity;
+    private bool previousCameraMovementEnabled;
+    private bool previousCameraRotationEnabled;
+    private bool previousCameraStateEnabled;
+    public void DisableGlobalInput()
+    {
+        if (isEditingText)
+            return;
+
+        isEditingText = true;
+
+        previousCameraMovementEnabled = cameraState.cameraMovement.enabled;
+        previousCameraRotationEnabled = cameraState.cameraRotation.enabled;
+        previousCameraStateEnabled = cameraState.enabled;
+        cameraState.cameraMovement.enabled = false;
+        cameraState.cameraRotation.enabled = false;
+        cameraState.enabled = false;
+
+        newRotation = cameraState.rotation;
+
+        // TODO: Tab navigation if in input field
+    }
+    public void ReenableGlobalInput()
+    {
+        cameraState.enabled = previousCameraStateEnabled;
+        cameraState.cameraMovement.enabled = previousCameraMovementEnabled;
+        cameraState.cameraRotation.enabled = previousCameraRotationEnabled;
+
+        resetRotationButton.gameObject.SetActive(true);
+        applyChangesButton.gameObject.SetActive(false);
+
+        isEditingText = false;
+    }
+    public void OnInputChanged()
+    {
+        if (!isEditingText)
+            DisableGlobalInput();
+
+        resetRotationButton.gameObject.SetActive(false);
+        applyChangesButton.gameObject.SetActive(true);
+
+        if (!float.TryParse(lwInput.text, out float lw))
+            lw = 0f;
+        if (!float.TryParse(lxInput.text, out float lx))
+            lx = 0f;
+        if (!float.TryParse(lyInput.text, out float ly))
+            ly = 0f;
+        if (!float.TryParse(lzInput.text, out float lz))
+            lz = 0f;
+        if (!float.TryParse(rwInput.text, out float rw))
+            rw = 0f;
+        if (!float.TryParse(rxInput.text, out float rx))
+            rx = 0f;
+        if (!float.TryParse(ryInput.text, out float ry))
+            ry = 0f;
+        if (!float.TryParse(rzInput.text, out float rz))
+            rz = 0f;
+
+        newRotation = new Rotation4(
+            new Quaternion(lx, ly, lz, lw),
+            new Quaternion(rx, ry, rz, rw)
+        );
+    }
+    public void OnApplyChangesButtonClicked()
+    {
+        cameraState.UpdateRotation(newRotation);
+        ReenableGlobalInput();
     }
 
     public void OnRotationSliderChange()
     {
-        if (!displayQuaternionPair)
-        {
-            RotationEuler4 sliderRotationEuler = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-            RotationEuler4 rotationDeltaEuler = sliderRotationEuler - cameraState.rotationEuler;
+        RotationEuler4 sliderRotationEuler = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
+        RotationEuler4 rotationDeltaEuler = sliderRotationEuler - cameraState.rotationEuler;
 
-            cameraState.UpdateRotationDelta(rotationDeltaEuler);
-        }
-        else
-        {
-            Rotation4 sliderRotationQuat = new Rotation4(
-                new Quaternion(lxSlider.value, lySlider.value, lzSlider.value, lwSlider.value),
-                new Quaternion(rxSlider.value, rySlider.value, rzSlider.value, rwSlider.value)
-            );
-
-            cameraState.UpdateRotation(sliderRotationQuat);
-        }
+        cameraState.UpdateRotationDelta(rotationDeltaEuler);
     }
 
     public void SwitchDisplay()
@@ -212,6 +279,11 @@ public class SceneUiHandler : MonoBehaviour
 
         UpdateRotationText(cameraState.rotationEuler, cameraState.rotation);
         UpdateRotationSliderValues(cameraState.rotationEuler, cameraState.rotation);
+
+        if (!displayQuaternionPair)
+        {
+            ReenableGlobalInput();
+        }
     }
 
     public void ResetRotation()
