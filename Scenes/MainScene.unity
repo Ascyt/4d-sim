@@ -2498,7 +2498,7 @@ GameObject:
   - component: {fileID: 311708921}
   - component: {fileID: 311708922}
   m_Layer: 5
-  m_Name: xy Slider
+  m_Name: Lz Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4580,7 +4580,7 @@ GameObject:
   - component: {fileID: 545205461}
   - component: {fileID: 545205462}
   m_Layer: 5
-  m_Name: yz Slider
+  m_Name: Ry Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4868,7 +4868,7 @@ GameObject:
   - component: {fileID: 578759872}
   - component: {fileID: 578759873}
   m_Layer: 5
-  m_Name: xw Slider
+  m_Name: Lw Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5268,7 +5268,7 @@ GameObject:
   - component: {fileID: 597677883}
   - component: {fileID: 597677884}
   m_Layer: 5
-  m_Name: yz Slider
+  m_Name: Rx Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5753,7 +5753,7 @@ GameObject:
   - component: {fileID: 675836827}
   - component: {fileID: 675836828}
   m_Layer: 5
-  m_Name: yz Slider
+  m_Name: Rz Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6485,7 +6485,7 @@ GameObject:
   - component: {fileID: 777246162}
   - component: {fileID: 777246163}
   m_Layer: 5
-  m_Name: xz Slider
+  m_Name: Rw Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10441,6 +10441,14 @@ MonoBehaviour:
   xySlider: {fileID: 213183848}
   xzSlider: {fileID: 1305533206}
   yzSlider: {fileID: 474804061}
+  lwSlider: {fileID: 578759873}
+  lxSlider: {fileID: 2078190311}
+  lySlider: {fileID: 1872675916}
+  lzSlider: {fileID: 311708922}
+  rwSlider: {fileID: 777246163}
+  rxSlider: {fileID: 597677884}
+  rySlider: {fileID: 545205462}
+  rzSlider: {fileID: 675836828}
   hypersceneDropdown: {fileID: 1197209637}
 --- !u!1 &1241714176
 GameObject:
@@ -15551,7 +15559,7 @@ GameObject:
   - component: {fileID: 1872675915}
   - component: {fileID: 1872675916}
   m_Layer: 5
-  m_Name: zw Slider
+  m_Name: Ly Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16753,7 +16761,7 @@ GameObject:
   - component: {fileID: 2078190310}
   - component: {fileID: 2078190311}
   m_Layer: 5
-  m_Name: yw Slider
+  m_Name: Lx Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

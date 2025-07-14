@@ -54,6 +54,24 @@ public class SceneUiHandler : MonoBehaviour
 
     [Space]
     [SerializeField]
+    private Slider lwSlider;
+    [SerializeField]
+    private Slider lxSlider;
+    [SerializeField]
+    private Slider lySlider;
+    [SerializeField]
+    private Slider lzSlider;
+    [SerializeField]
+    private Slider rwSlider;
+    [SerializeField]
+    private Slider rxSlider;
+    [SerializeField]
+    private Slider rySlider;
+    [SerializeField]
+    private Slider rzSlider;
+
+    [Space]
+    [SerializeField]
     private TMP_Dropdown hypersceneDropdown;
 
     private float lastAvgFpsUpdate = 0f;
@@ -109,33 +127,74 @@ public class SceneUiHandler : MonoBehaviour
         $"w: {position.w}";
     }
 
-    public void UpdateRotationText(RotationEuler4 rotation)
+    public void UpdateRotationText(RotationEuler4 rotationEuler, Rotation4 rotationQuat)
     {
-        rotationText.text =
-            $"xw: {rotation.xw * Mathf.Rad2Deg}°\n" +
-            $"yw: {rotation.yw * Mathf.Rad2Deg}°\n" +
-            $"zw: {rotation.zw * Mathf.Rad2Deg}°\n" +
-            $"xy: {rotation.xy * Mathf.Rad2Deg}°\n" +
-            $"xz: {rotation.xz * Mathf.Rad2Deg}°\n" +
-            $"yz: {rotation.yz * Mathf.Rad2Deg}°";
+        if (!displayQuaternionPair)
+        {
+            rotationText.text =
+                $"xw: {rotationEuler.xw * Mathf.Rad2Deg}°\n" +
+                $"yw: {rotationEuler.yw * Mathf.Rad2Deg}°\n" +
+                $"zw: {rotationEuler.zw * Mathf.Rad2Deg}°\n" +
+                $"xy: {rotationEuler.xy * Mathf.Rad2Deg}°\n" +
+                $"xz: {rotationEuler.xz * Mathf.Rad2Deg}°\n" +
+                $"yz: {rotationEuler.yz * Mathf.Rad2Deg}°";
+        }
+        else
+        {
+            rotationText.text =
+                $"L.w: {rotationQuat.leftQuaternion.w}\n" +
+                $"L.x: {rotationQuat.leftQuaternion.x}\n" +
+                $"L.y: {rotationQuat.leftQuaternion.y}\n" +
+                $"L.z: {rotationQuat.leftQuaternion.z}\n" +
+                $"R.w: {rotationQuat.rightQuaternion.w}\n" +
+                $"R.x: {rotationQuat.rightQuaternion.x}\n" +
+                $"R.y: {rotationQuat.rightQuaternion.y}\n" +
+                $"R.z: {rotationQuat.rightQuaternion.z}\n";
+        }
     }
 
-    public void UpdateRotationSliderValues(RotationEuler4 rotation)
+    public void UpdateRotationSliderValues(RotationEuler4 rotationEuler, Rotation4 rotationQuat)
     {
-        xwSlider.SetValueWithoutNotify(rotation.xw);
-        ywSlider.SetValueWithoutNotify(rotation.yw);
-        zwSlider.SetValueWithoutNotify(rotation.zw);
-        xySlider.SetValueWithoutNotify(rotation.xy);
-        xzSlider.SetValueWithoutNotify(rotation.xz);
-        yzSlider.SetValueWithoutNotify(rotation.yz);
+        if (!displayQuaternionPair)
+        {
+            xwSlider.SetValueWithoutNotify(rotationEuler.xw);
+            ywSlider.SetValueWithoutNotify(rotationEuler.yw);
+            zwSlider.SetValueWithoutNotify(rotationEuler.zw);
+            xySlider.SetValueWithoutNotify(rotationEuler.xy);
+            xzSlider.SetValueWithoutNotify(rotationEuler.xz);
+            yzSlider.SetValueWithoutNotify(rotationEuler.yz);
+        }
+        else
+        {
+            lwSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.w);
+            lxSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.x);
+            lySlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.y);
+            lzSlider.SetValueWithoutNotify(rotationQuat.leftQuaternion.z);
+            rwSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.w);
+            rxSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.x);
+            rySlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.y);
+            rzSlider.SetValueWithoutNotify(rotationQuat.rightQuaternion.z);
+        }
     }
 
     public void OnRotationSliderChange()
     {
-        RotationEuler4 sliderRotation = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-        RotationEuler4 rotationDelta = sliderRotation - cameraState.rotationEuler;
+        if (!displayQuaternionPair)
+        {
+            RotationEuler4 sliderRotationEuler = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
+            RotationEuler4 rotationDeltaEuler = sliderRotationEuler - cameraState.rotationEuler;
 
-        cameraState.UpdateRotation(rotationDelta);
+            cameraState.UpdateRotationDelta(rotationDeltaEuler);
+        }
+        else
+        {
+            Rotation4 sliderRotationQuat = new Rotation4(
+                new Quaternion(lxSlider.value, lySlider.value, lzSlider.value, lwSlider.value),
+                new Quaternion(rxSlider.value, rySlider.value, rzSlider.value, rwSlider.value)
+            );
+
+            cameraState.UpdateRotation(sliderRotationQuat);
+        }
     }
 
     public void SwitchDisplay()
@@ -150,6 +209,9 @@ public class SceneUiHandler : MonoBehaviour
         quaternionPairParent.SetActive(displayQuaternionPair);
 
         switchButtonText.text = displayQuaternionPair ? "Quaternion Pair <=>" : "Euler Angles <=>";
+
+        UpdateRotationText(cameraState.rotationEuler, cameraState.rotation);
+        UpdateRotationSliderValues(cameraState.rotationEuler, cameraState.rotation);
     }
 
     public void ResetRotation()

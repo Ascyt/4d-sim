@@ -19,7 +19,7 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    public static Rotation4 AddEuler(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
+    public static Rotation4 ApplyRotation(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
     {
         // Convert the delta to Quaternion and apply it to the existing rotation
         foreach (RotationPlane rotationPlane in Enum.GetValues(typeof(RotationPlane)))
@@ -28,21 +28,21 @@ public static class RotationTransformer
             if (Mathf.Approximately(angle, 0f))
                 continue;
 
-            GetQuaternionPairForPlane(rotationPlane, angle, out Quaternion leftDelta, out Quaternion rightDelta);
-
-            if (worldSpace)
-            {
-                rotation.leftQuaternion = leftDelta * rotation.leftQuaternion;
-                rotation.rightQuaternion = rotation.rightQuaternion * rightDelta;
-            }
-            else
-            {
-                rotation.leftQuaternion = rotation.leftQuaternion * leftDelta;
-                rotation.rightQuaternion = rightDelta * rotation.rightQuaternion;
-            }
+            rotation = rotation.ApplyRotation(GetRotationForPlane(rotationPlane, angle), worldSpace);
         }
 
         return rotation;
+    }
+    public static Rotation4 ApplyRotation(this Rotation4 rotation, Rotation4 delta, bool worldSpace)
+    {
+        if (worldSpace)
+        {
+            return delta * rotation;
+        }
+        else
+        {
+            return rotation * delta;
+        }
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
@@ -51,7 +51,7 @@ public static class RotationTransformer
         if (alignment.HasValue)
         {
             // Apply reverse alignment rotation first
-            vector = ApplyRotation(vector, -alignment.Value);
+            vector = ApplyRotation(vector, alignment.Value.Inverse());
         }
 
         Quaternion v = Vector4ToQuaternion(vector);
@@ -60,36 +60,48 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    private static void GetQuaternionPairForPlane(RotationPlane plane, float angle, out Quaternion left, out Quaternion right)
+    private static Rotation4 GetRotationForPlane(RotationPlane plane, float angle)
     {
         float t = angle / 2f;
 
         switch (plane)
         {
             case RotationPlane.XW:
-                left = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
-                right = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t)),
+                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
+                );
             case RotationPlane.YW:
-                left = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
-                right = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t)),
+                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
+                );
             case RotationPlane.ZW:
-                left = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
-                right = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t)),
+                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
+                );
             case RotationPlane.XY:
-                left = new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t));
-                right = new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t)),
+                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
+                );
             case RotationPlane.XZ:
-                left = new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t));
-                right = new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t)),
+                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
+                );
             case RotationPlane.YZ:
-                left = new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t));
-                right = new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t));
-                break;
+                return new Rotation4
+                (
+                    new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t)),
+                new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
+                );
             default:
                 throw new ArgumentException("Invalid plane");
         }

@@ -60,7 +60,7 @@ public class CameraState : MonoBehaviour
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
         sceneUiHandler.UpdatePositionText(position);
-        sceneUiHandler.UpdateRotationText(rotationEuler);
+        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
     }
     private void Update()
     {
@@ -86,8 +86,8 @@ public class CameraState : MonoBehaviour
         this.rotation = new Rotation4(rotation);
         this.rotationEuler = rotation;
 
-        sceneUiHandler.UpdateRotationText(rotation);
-        sceneUiHandler.UpdateRotationSliderValues(rotation);
+        sceneUiHandler.UpdateRotationText(rotation, this.rotation);
+        sceneUiHandler.UpdateRotationSliderValues(rotation, this.rotation);
     }
     /// <summary>
     /// Does not cause view refresh
@@ -103,19 +103,30 @@ public class CameraState : MonoBehaviour
         Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation);
         position += rotatedPositionDelta;
 
-        hypersceneRenderer.RenderObjectsCameraPositionChange(positionDelta);
+        hypersceneRenderer.RenderObjectsCameraPositionChange();
 
         sceneUiHandler.UpdatePositionText(position);
     }
-    public void UpdateRotation(RotationEuler4 rotationDelta)
+    public void UpdateRotationDelta(RotationEuler4 rotationDelta)
     {
-        rotation = rotation.AddEuler(rotationDelta, false);
+        rotation = rotation.ApplyRotation(rotationDelta, false);
 
-        hypersceneRenderer.RenderObjectsCameraRotationChange(rotationDelta);
+        hypersceneRenderer.RenderObjectsCameraRotationChange();
 
         rotationEuler += rotationDelta;
 
-        sceneUiHandler.UpdateRotationText(rotationEuler);
-        sceneUiHandler.UpdateRotationSliderValues(rotationEuler);
+        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
+        sceneUiHandler.UpdateRotationSliderValues(rotationEuler, rotation);
+    }
+    public void UpdateRotation(Rotation4 newRotation)
+    {
+        rotation = newRotation;
+
+        hypersceneRenderer.RenderObjectsCameraRotationChange();
+
+        // TODO: Update rotationEuler based on the new rotation
+
+        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
+        sceneUiHandler.UpdateRotationSliderValues(rotationEuler, rotation);
     }
 }
