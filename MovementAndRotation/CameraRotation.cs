@@ -12,7 +12,9 @@ public class CameraRotation : MonoBehaviour
     private CameraState cameraState;
 
     [SerializeField]
-    private float rotationSpeed;
+    private float keyRotationSpeed;
+    [SerializeField]
+    private float sliderRotationSpeed;
 
     [HideInInspector]
     public KeyCode RotateXWPos;
@@ -26,6 +28,9 @@ public class CameraRotation : MonoBehaviour
     public KeyCode RotateZWPos;
     [HideInInspector]
     public KeyCode RotateZWNeg;
+
+    [HideInInspector]
+    public RotationEuler4 continuousRotationDelta = RotationEuler4.zero;
 
     private void Awake()
     {
@@ -41,9 +46,9 @@ public class CameraRotation : MonoBehaviour
 
     private void Update()
     {
-        float speed = rotationSpeed * Time.deltaTime;
+        float speed = keyRotationSpeed * Time.deltaTime;
+        RotationEuler4 rotationDelta = continuousRotationDelta * (sliderRotationSpeed * Mathf.PI * 2 * Time.deltaTime);
         bool rotationUpdated = false;
-        RotationEuler4 rotationDelta = new RotationEuler4(0, 0, 0, 0, 0, 0);
 
         if (Input.GetKey(cameraState.RotationMovementSwitch ? RotateXWPos : cameraState.cameraMovement.MoveRight))
         {
@@ -76,6 +81,11 @@ public class CameraRotation : MonoBehaviour
         {
             rotationDelta.zw -= speed;
             rotationUpdated = true;
+        }
+
+        if (!rotationUpdated)
+        {
+            rotationUpdated = !continuousRotationDelta.IsZero();
         }
 
         if (rotationUpdated)

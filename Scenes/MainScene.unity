@@ -286,6 +286,7 @@ GameObject:
   m_Component:
   - component: {fileID: 35592700}
   - component: {fileID: 35592701}
+  - component: {fileID: 35592702}
   m_Layer: 5
   m_Name: xw Slider
   m_TagString: Untagged
@@ -328,7 +329,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -359,8 +360,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 141605744}
   m_HandleRect: {fileID: 492201987}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -378,6 +379,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &35592702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35592699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &44043915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1609,6 +1639,7 @@ GameObject:
   m_Component:
   - component: {fileID: 213183847}
   - component: {fileID: 213183848}
+  - component: {fileID: 213183849}
   m_Layer: 5
   m_Name: xy Slider
   m_TagString: Untagged
@@ -1651,7 +1682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -1682,8 +1713,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 1879632358}
   m_HandleRect: {fileID: 107583310}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -1701,6 +1732,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &213183849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213183846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &226634753
 GameObject:
   m_ObjectHideFlags: 0
@@ -4113,6 +4173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 474804060}
   - component: {fileID: 474804061}
+  - component: {fileID: 474804062}
   m_Layer: 5
   m_Name: yz Slider
   m_TagString: Untagged
@@ -4155,7 +4216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -4186,8 +4247,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 1768773288}
   m_HandleRect: {fileID: 1778880129}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -4205,6 +4266,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &474804062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 474804059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &492201986
 GameObject:
   m_ObjectHideFlags: 0
@@ -6904,6 +6994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 866461805}
   - component: {fileID: 866461806}
+  - component: {fileID: 866461807}
   m_Layer: 5
   m_Name: zw Slider
   m_TagString: Untagged
@@ -6946,7 +7037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -6977,8 +7068,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 1566963270}
   m_HandleRect: {fileID: 728675944}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -6996,6 +7087,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &866461807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866461804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &872653481
 GameObject:
   m_ObjectHideFlags: 0
@@ -8370,13 +8490,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9315ed4f104b1c947b199035d6a0007b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 1
+  keyRotationSpeed: 1
+  sliderRotationSpeed: 1
   RotateXWPos: 0
   RotateXWNeg: 0
   RotateYWPos: 0
   RotateYWNeg: 0
   RotateZWPos: 0
   RotateZWNeg: 0
+  continuousRotationDelta:
+    xw: 0
+    yw: 0
+    zw: 0
+    xy: 0
+    xz: 0
+    yz: 0
 --- !u!114 &963194236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8411,13 +8539,6 @@ MonoBehaviour:
   rotation:
     leftQuaternion: {x: 0, y: 0, z: 0, w: 0}
     rightQuaternion: {x: 0, y: 0, z: 0, w: 0}
-  rotationEuler:
-    xw: 0
-    yw: 0
-    zw: 0
-    xy: 0
-    xz: 0
-    yz: 0
 --- !u!114 &963194238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10528,7 +10649,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraState: {fileID: 0}
   positionText: {fileID: 1281007518}
-  rotationText: {fileID: 1655795038}
   fpsText: {fileID: 517597243}
   movementRotationSwitchText: {fileID: 582894827}
   resetRotationButton: {fileID: 1310501180}
@@ -11326,6 +11446,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1305533205}
   - component: {fileID: 1305533206}
+  - component: {fileID: 1305533207}
   m_Layer: 5
   m_Name: xz Slider
   m_TagString: Untagged
@@ -11368,7 +11489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -11399,8 +11520,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 307988462}
   m_HandleRect: {fileID: 411066318}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -11418,6 +11539,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1305533207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305533204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1310501178
 GameObject:
   m_ObjectHideFlags: 0
@@ -13150,6 +13300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1583830526}
   - component: {fileID: 1583830527}
+  - component: {fileID: 1583830528}
   m_Layer: 5
   m_Name: yw Slider
   m_TagString: Untagged
@@ -13192,7 +13343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -13223,8 +13374,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 340383105}
   m_HandleRect: {fileID: 524405368}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 6.2831855
+  m_MinValue: -1
+  m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -13242,6 +13393,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1583830528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583830525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 14
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1236289825}
+          m_TargetAssemblyTypeName: SceneUiHandler, Assembly-CSharp
+          m_MethodName: OnRotationSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1587680118
 GameObject:
   m_ObjectHideFlags: 0

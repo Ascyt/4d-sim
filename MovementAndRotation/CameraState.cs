@@ -41,10 +41,10 @@ public class CameraState : MonoBehaviour
     public Vector4 position = Vector4.zero;
     public Rotation4 rotation = new Rotation4();
 
-    /// <summary>
-    /// Used to display the rotation in the UI, and to update the rotation slider values.
-    /// </summary>
-    public RotationEuler4 rotationEuler = RotationEuler4.zero; 
+    ///// <summary>
+    ///// Used to display the rotation in the UI, and to update the rotation slider values.
+    ///// </summary>
+    //public RotationEuler4 rotationEuler = RotationEuler4.zero; 
 
     private void Awake()
     {
@@ -60,7 +60,7 @@ public class CameraState : MonoBehaviour
     {
         UpdateMovementRotationSwitch(RotationMovementSwitch);
         sceneUiHandler.UpdatePositionText(position);
-        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
     private void Update()
     {
@@ -84,10 +84,8 @@ public class CameraState : MonoBehaviour
     public void SetRotation(RotationEuler4 rotation)
     {
         this.rotation = new Rotation4(rotation);
-        this.rotationEuler = rotation;
 
-        sceneUiHandler.UpdateRotationText(rotation, this.rotation);
-        sceneUiHandler.UpdateRotationSliderValues(rotation, this.rotation);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(this.rotation);
     }
     /// <summary>
     /// Does not cause view refresh
@@ -113,10 +111,7 @@ public class CameraState : MonoBehaviour
 
         hypersceneRenderer.RenderObjectsCameraRotationChange();
 
-        rotationEuler += rotationDelta;
-
-        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
-        sceneUiHandler.UpdateRotationSliderValues(rotationEuler, rotation);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
     public void UpdateRotation(Rotation4 newRotation)
     {
@@ -124,9 +119,6 @@ public class CameraState : MonoBehaviour
 
         hypersceneRenderer.RenderObjectsCameraRotationChange();
 
-        // TODO: Update rotationEuler based on the new rotation
-
-        sceneUiHandler.UpdateRotationText(rotationEuler, rotation);
-        sceneUiHandler.UpdateRotationSliderValues(rotationEuler, rotation);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
 }

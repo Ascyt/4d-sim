@@ -19,8 +19,6 @@ public class SceneUiHandler : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI positionText;
-    [SerializeField]
-    private TextMeshProUGUI rotationText;
 
     [Space] 
 
@@ -136,54 +134,35 @@ public class SceneUiHandler : MonoBehaviour
         $"w: {position.w}";
     }
 
-    public void UpdateRotationText(RotationEuler4 rotationEuler, Rotation4 rotationQuat)
+    public void UpdateEulerRotationSliders(RotationEuler4 rotationEuler)
     {
-        if (!displayQuaternionPair)
+        if (displayQuaternionPair)
         {
-            rotationText.text =
-                $"xw: {rotationEuler.xw * Mathf.Rad2Deg}°\n" +
-                $"yw: {rotationEuler.yw * Mathf.Rad2Deg}°\n" +
-                $"zw: {rotationEuler.zw * Mathf.Rad2Deg}°\n" +
-                $"xy: {rotationEuler.xy * Mathf.Rad2Deg}°\n" +
-                $"xz: {rotationEuler.xz * Mathf.Rad2Deg}°\n" +
-                $"yz: {rotationEuler.yz * Mathf.Rad2Deg}°";
+            return;
         }
-        else
-        {
-            rotationText.text =
-                $"L.w: {rotationQuat.leftQuaternion.w}\n" +
-                $"L.x: {rotationQuat.leftQuaternion.x}\n" +
-                $"L.y: {rotationQuat.leftQuaternion.y}\n" +
-                $"L.z: {rotationQuat.leftQuaternion.z}\n" +
-                $"R.w: {rotationQuat.rightQuaternion.w}\n" +
-                $"R.x: {rotationQuat.rightQuaternion.x}\n" +
-                $"R.y: {rotationQuat.rightQuaternion.y}\n" +
-                $"R.z: {rotationQuat.rightQuaternion.z}\n";
-        }
-    }
 
-    public void UpdateRotationSliderValues(RotationEuler4 rotationEuler, Rotation4 rotationQuat)
+        xwSlider.SetValueWithoutNotify(rotationEuler.xw);
+        ywSlider.SetValueWithoutNotify(rotationEuler.yw);
+        zwSlider.SetValueWithoutNotify(rotationEuler.zw);
+        xySlider.SetValueWithoutNotify(rotationEuler.xy);
+        xzSlider.SetValueWithoutNotify(rotationEuler.xz);
+        yzSlider.SetValueWithoutNotify(rotationEuler.yz);
+    }
+    public void UpdateQuaternionPairRotationSliders(Rotation4 rotation)
     {
         if (!displayQuaternionPair)
         {
-            xwSlider.SetValueWithoutNotify(rotationEuler.xw);
-            ywSlider.SetValueWithoutNotify(rotationEuler.yw);
-            zwSlider.SetValueWithoutNotify(rotationEuler.zw);
-            xySlider.SetValueWithoutNotify(rotationEuler.xy);
-            xzSlider.SetValueWithoutNotify(rotationEuler.xz);
-            yzSlider.SetValueWithoutNotify(rotationEuler.yz);
+            return;
         }
-        else
-        {
-            lwInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .w.ToString("F6"));
-            lxInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .x.ToString("F6"));
-            lyInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .y.ToString("F6"));
-            lzInput.SetTextWithoutNotify(rotationQuat.leftQuaternion .z.ToString("F6"));
-            rwInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.w.ToString("F6"));
-            rxInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.x.ToString("F6"));
-            ryInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.y.ToString("F6"));
-            rzInput.SetTextWithoutNotify(rotationQuat.rightQuaternion.z.ToString("F6"));
-        }
+
+        lwInput.SetTextWithoutNotify(rotation.leftQuaternion.w.ToString("F6"));
+        lxInput.SetTextWithoutNotify(rotation.leftQuaternion.x.ToString("F6"));
+        lyInput.SetTextWithoutNotify(rotation.leftQuaternion.y.ToString("F6"));
+        lzInput.SetTextWithoutNotify(rotation.leftQuaternion.z.ToString("F6"));
+        rwInput.SetTextWithoutNotify(rotation.rightQuaternion.w.ToString("F6"));
+        rxInput.SetTextWithoutNotify(rotation.rightQuaternion.x.ToString("F6"));
+        ryInput.SetTextWithoutNotify(rotation.rightQuaternion.y.ToString("F6"));
+        rzInput.SetTextWithoutNotify(rotation.rightQuaternion.z.ToString("F6"));
     }
 
     private bool isEditingText = false;
@@ -256,17 +235,36 @@ public class SceneUiHandler : MonoBehaviour
         ReenableGlobalInput();
     }
 
+    private bool draggingRotationSlider = false;
     public void OnRotationSliderChange()
     {
-        RotationEuler4 sliderRotationEuler = new RotationEuler4(xwSlider.value, ywSlider.value, zwSlider.value, xySlider.value, xzSlider.value, yzSlider.value);
-        RotationEuler4 rotationDeltaEuler = sliderRotationEuler - cameraState.rotationEuler;
+        float pow = 2f;
 
-        cameraState.UpdateRotationDelta(rotationDeltaEuler);
+        RotationEuler4 sliderRotationEuler = new RotationEuler4(
+            Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow), 
+            Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow), 
+            Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow), 
+            Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow), 
+            Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
+            Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
+
+        draggingRotationSlider = true;
+
+        cameraState.cameraRotation.continuousRotationDelta = sliderRotationEuler;
+    }
+    public void OnRotationSliderEndDrag()
+    {
+        draggingRotationSlider = false;
+        
+        cameraState.cameraRotation.continuousRotationDelta = RotationEuler4.zero;
+        UpdateEulerRotationSliders(RotationEuler4.zero);
     }
 
     public void SwitchDisplay()
     {
         displayQuaternionPair = !displayQuaternionPair;
+
+        cameraState.cameraRotation.continuousRotationDelta = RotationEuler4.zero;
 
         UpdateDisplay();
     }
@@ -277,8 +275,8 @@ public class SceneUiHandler : MonoBehaviour
 
         switchButtonText.text = displayQuaternionPair ? "Quaternion Pair <=>" : "Euler Angles <=>";
 
-        UpdateRotationText(cameraState.rotationEuler, cameraState.rotation);
-        UpdateRotationSliderValues(cameraState.rotationEuler, cameraState.rotation);
+        UpdateEulerRotationSliders(RotationEuler4.zero);
+        UpdateQuaternionPairRotationSliders(cameraState.rotation);
 
         if (!displayQuaternionPair)
         {

@@ -46,6 +46,12 @@ public struct RotationEuler4
         yz = Helpers.Mod(yz, tau);
     }
 
+    public bool IsZero()
+    {
+        return Mathf.Approximately(xw, 0f) && Mathf.Approximately(yw, 0f) && Mathf.Approximately(zw, 0f) &&
+               Mathf.Approximately(xy, 0f) && Mathf.Approximately(xz, 0f) && Mathf.Approximately(yz, 0f);
+    }
+
     public static RotationEuler4 operator -(RotationEuler4 a)
     {
         float tau = Mathf.PI * 2f;
@@ -67,5 +73,10 @@ public struct RotationEuler4
         RotationEuler4 newRotation = new RotationEuler4(a.xw - b.xw, a.yw - b.yw, a.zw - b.zw, a.xy - b.xy, a.xz - b.xz, a.yz - b.yz);
         newRotation.ModuloPlanes();
         return newRotation;
+    }
+
+    public static RotationEuler4 operator *(RotationEuler4 r, float s)
+    {
+        return new RotationEuler4(r.xw * s, r.yw * s, r.zw * s, r.xy * s, r.xz * s, r.yz * s);
     }
 }
