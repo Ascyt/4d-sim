@@ -273,7 +273,7 @@ public class SceneUiHandler : MonoBehaviour
         eulerAnglesParent.SetActive(!displayQuaternionPair);
         quaternionPairParent.SetActive(displayQuaternionPair);
 
-        switchButtonText.text = displayQuaternionPair ? "Quaternion Pair <=>" : "Euler Angles <=>";
+        switchButtonText.text = displayQuaternionPair ? "Quaternion Pair" : "Euler Angles";
 
         UpdateEulerRotationSliders(RotationEuler4.zero);
         UpdateQuaternionPairRotationSliders(cameraState.rotation);
