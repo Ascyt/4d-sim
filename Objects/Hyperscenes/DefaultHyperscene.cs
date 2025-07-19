@@ -14,10 +14,6 @@ public class DefaultHyperscene : Hyperscene
 
     private static readonly Vector4 coloredTesseractPosition = new Vector4(-3, 3, -3, 3);
 
-    private float lastUpdateTime = 0f;
-
-    private const float UPDATE_INTERVAL = 1f / 24f; 
-
     private List<Hyperobject> _objects = new()
     {
         new Axes(0.5f),
@@ -54,11 +50,6 @@ public class DefaultHyperscene : Hyperscene
     }
     public override List<Hyperobject> Update()
     {
-        if (Time.time - lastUpdateTime < 1f / 24f) 
-            return null;
-
-        lastUpdateTime = Time.time;
-
         TransformConnectedVertices(transformingTesseract.vertices, Vector4.zero);
         TransformConnectedVertices(transformingTesseractFace.vertices, transformingTesseractFace.position - transformingTesseract.position);
 
@@ -66,7 +57,7 @@ public class DefaultHyperscene : Hyperscene
     }
     private void TransformConnectedVertices(ConnectedVertices[] connectedVertices, Vector4 positionDelta)
     {
-        float speed = UPDATE_INTERVAL * 2 * Mathf.PI / 4f;
+        float speed = Time.deltaTime * 2 * Mathf.PI / 4f;
 
         Rotation4 rotation = new Rotation4(speed, 0, 0, 0, 0, 0);
         foreach (ConnectedVertices vertices in connectedVertices)

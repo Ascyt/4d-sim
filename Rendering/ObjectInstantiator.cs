@@ -34,6 +34,11 @@ public class ObjectInstantiator : MonoBehaviour
 
     public InstantiatedObject? InstantiateObject(Vector3?[] points, Vector3 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int[][] connections=null, float? vertexScale=null)
     {
+        if (points.Length == 0 || points.All(points => !points.HasValue))
+        {
+            return null;
+        }
+
         switch (connectionMethod)
         {
             case ConnectedVertices.ConnectionMethod.Solid:
@@ -149,11 +154,6 @@ public class ObjectInstantiator : MonoBehaviour
     /// </summary>
     private InstantiatedObject? InstantiateObjectVertices(Vector3?[] points, Vector3 position, Color color, float? vertexScale)
     {
-        if (points.Length == 0 || points.All(points => !points.HasValue))
-        {
-            return null;
-        }
-
         List<Object> resources = new();
 
         GameObject parent = new GameObject("VertexObject");

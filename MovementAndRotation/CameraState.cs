@@ -101,7 +101,7 @@ public class CameraState : MonoBehaviour
         Vector4 rotatedPositionDelta = positionDelta.ApplyRotation(rotation);
         position += rotatedPositionDelta;
 
-        hypersceneRenderer.RenderObjectsCameraPositionChange();
+        hypersceneRenderer.RerenderAll();
 
         sceneUiHandler.UpdatePositionText(position);
     }
@@ -109,7 +109,7 @@ public class CameraState : MonoBehaviour
     {
         rotation = rotation.ApplyRotation(rotationDelta, false);
 
-        hypersceneRenderer.RenderObjectsCameraRotationChange();
+        hypersceneRenderer.RerenderAll();
 
         sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
@@ -117,7 +117,7 @@ public class CameraState : MonoBehaviour
     {
         rotation = newRotation;
 
-        hypersceneRenderer.RenderObjectsCameraRotationChange();
+        hypersceneRenderer.RerenderAll();
 
         sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }

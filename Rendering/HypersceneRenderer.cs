@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
@@ -38,15 +39,14 @@ public class HypersceneRenderer : MonoBehaviour
     public HypersceneOption hypersceneOption { get; private set; } = HypersceneOption.Default;
     public Hyperscene? hyperscene { get; private set; } = null;
 
-    public readonly List<Hyperobject> objects = new();
-    public readonly List<Hyperobject> fixedObjects = new();
-
     private CameraPosition cameraPosition = null!;
     private CameraRotation cameraRotation = null!;
     private CameraState cameraState = null!;
     private Rendering rendering = null!;
 
     private readonly float fov = Mathf.PI / 8f;
+
+    private int lastRerenderAllFrame = -1;
 
     private void Awake()
     {
@@ -65,20 +65,20 @@ public class HypersceneRenderer : MonoBehaviour
         InitializeHyperscene();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         List<Hyperobject>? rerenderObjects = hyperscene!.Update();
 
-        if (rerenderObjects is not null)
-        {
-            foreach (Hyperobject rerenderObject in rerenderObjects)
-            {
-                _ = rendering.RemoveSingleObject(rerenderObject);
+        if (rerenderObjects is null)
+            return;
 
-                foreach (ConnectedVertices connectedVertices in rerenderObject.vertices)
-                {
-                    rendering.ProjectVertices(connectedVertices, rerenderObject, cameraState.rotation, cameraState.position);
-                }
+        foreach (Hyperobject rerenderObject in rerenderObjects)
+        {
+            _ = !rendering.RemoveSingleObject(rerenderObject);
+
+            foreach (ConnectedVertices connectedVertices in rerenderObject.vertices)
+            {
+                rendering.ProjectVertices(connectedVertices, rerenderObject, cameraState.rotation, cameraState.position);
             }
         }
     }
@@ -86,8 +86,8 @@ public class HypersceneRenderer : MonoBehaviour
     public void LoadHyperscene(HypersceneOption hypersceneOption)
     {
         rendering.ClearAllRenderedObjects();
-        objects.Clear();
-        fixedObjects.Clear();
+        hyperscene!.Objects.Clear();
+        hyperscene!.FixedObjects.Clear();
 
         this.hypersceneOption = hypersceneOption;
 
@@ -120,10 +120,7 @@ public class HypersceneRenderer : MonoBehaviour
 
         hyperscene!.Start();
 
-        objects.AddRange(hyperscene.Objects);
-        fixedObjects.AddRange(hyperscene.FixedObjects);
-
-        if (hyperscene.IsFixed && objects.Count > 0)
+        if (hyperscene!.IsFixed && hyperscene!.Objects.Count > 0)
         {
             Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any non-fixed objects.");
         }
@@ -133,25 +130,17 @@ public class HypersceneRenderer : MonoBehaviour
         RenderObjectsInitially();
     }
 
-    public void RenderObjectsCameraPositionChange()
+    public void RerenderAll()
     {
-        rendering.ClearAllRenderedObjects();
-
-        foreach (Hyperobject obj in objects)
+        if (Time.frameCount == lastRerenderAllFrame)
         {
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
-            {
-                rendering.ProjectVertices(connectedVertices, obj, cameraState.rotation, cameraState.position);
-            }
+            return; // Prevent multiple rerenders in the same frame
         }
+        lastRerenderAllFrame = Time.frameCount;
 
-        UpdateFixedObjects();
-    }
-    public void RenderObjectsCameraRotationChange()
-    {
         rendering.ClearAllRenderedObjects();
 
-        foreach (Hyperobject obj in objects)
+        foreach (Hyperobject obj in hyperscene!.Objects)
         {
             foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
@@ -167,7 +156,7 @@ public class HypersceneRenderer : MonoBehaviour
         cameraState.SetPosition(hyperscene!.StartingPosition);
         cameraState.SetRotation(hyperscene!.StartingRotation);
 
-        foreach (Hyperobject obj in objects)
+        foreach (Hyperobject obj in hyperscene!.Objects)
         {
             Vector4 pos = obj.position - cameraState.position;
 
@@ -178,7 +167,7 @@ public class HypersceneRenderer : MonoBehaviour
         }
 
         // Project the fixed objects
-        foreach (Hyperobject fixedObject in fixedObjects)
+        foreach (Hyperobject fixedObject in hyperscene!.FixedObjects)
         {
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {
@@ -190,7 +179,7 @@ public class HypersceneRenderer : MonoBehaviour
     {
         rendering.ClearAllRenderedObjects();
 
-        foreach (Hyperobject obj in objects)
+        foreach (Hyperobject obj in hyperscene!.Objects)
         {
             foreach (ConnectedVertices connectedVertices in obj.vertices)
             {
@@ -209,7 +198,7 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void UpdateFixedObjects()
     {
-        foreach (Hyperobject fixedObject in fixedObjects)
+        foreach (Hyperobject fixedObject in hyperscene!.FixedObjects)
         {
             foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
             {

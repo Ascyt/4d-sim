@@ -21,7 +21,7 @@ public class Rendering : MonoBehaviour
 
     public float fov;
 
-    private static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
+    public static readonly Dictionary<Hyperobject, List<InstantiatedObject>> instantiatedObjects = new();
 
     private const float ORTHOGRAPHIC_SCALE = 4f;
 
@@ -41,7 +41,7 @@ public class Rendering : MonoBehaviour
         }
         instantiatedObjects.Clear();
     }
-    public void RemoveSingleObject(InstantiatedObject instantiatedObject)
+    private void RemoveSingleObject(InstantiatedObject instantiatedObject)
     {
         Destroy(instantiatedObject.gameObj);
         foreach (Object resource in instantiatedObject.resources)
@@ -58,6 +58,8 @@ public class Rendering : MonoBehaviour
         {
             RemoveSingleObject(iObj);
         }
+
+        instantiatedObjects.Remove(obj);
 
         return true;
     }
