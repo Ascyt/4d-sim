@@ -11,7 +11,7 @@ public class GroundHyperscene : Hyperscene
     {
         new Tesseract(new Vector4(0, -2f, 0, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0.5f, 0.5f, 0.5f, 0.5f), new Vector4(10, 3, 10, 10 )),
 
-        new Tesseract(new Vector4(0, 0, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.cyan, Vector4.one / 4f),
+        new Pentatope(new Vector4(0, 0, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.cyan, Vector4.one / 2f),
 
         new Tesseract(new Vector4(1, 0, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, Vector4.one / 2f),
         new Tesseract(new Vector4(0, 1, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.green, Vector4.one / 2f),

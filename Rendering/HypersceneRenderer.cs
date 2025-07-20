@@ -29,6 +29,7 @@ public class HypersceneRenderer : MonoBehaviour
         Default,
         Ground,
         FixedTesseract,
+        FixedPentatope,
         FixedCubes,
         FixedRotationalPlanes
     }
@@ -106,6 +107,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.FixedTesseract:
                 hyperscene = new FixedTesseractHyperscene();
+                break;
+            case HypersceneOption.FixedPentatope:
+                hyperscene = new FixedPentatopeHyperscene();
                 break;
             case HypersceneOption.FixedCubes:
                 hyperscene = new FixedCubesHyperscene();
