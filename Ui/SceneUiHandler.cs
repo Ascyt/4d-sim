@@ -54,6 +54,14 @@ public class SceneUiHandler : MonoBehaviour
     private Slider xzSlider;
     [SerializeField]
     private Slider yzSlider;
+    [SerializeField]
+    private bool lockSliders = false;
+    [SerializeField]
+    private Image lockSlidersImage;
+    [SerializeField]
+    private Sprite lockSliderEnabledSprite;
+    [SerializeField]
+    private Sprite lockSliderDisabledSprite;
 
     [Space]
     [SerializeField]
@@ -256,8 +264,11 @@ public class SceneUiHandler : MonoBehaviour
     {
         draggingRotationSlider = false;
         
-        cameraState.cameraRotation.continuousRotationDelta = RotationEuler4.zero;
-        UpdateEulerRotationSliders(RotationEuler4.zero);
+        if (!lockSliders)
+        {
+            cameraState.cameraRotation.continuousRotationDelta = RotationEuler4.zero;
+            UpdateEulerRotationSliders(RotationEuler4.zero);
+        }
     }
 
     public void SwitchDisplay()
@@ -297,5 +308,15 @@ public class SceneUiHandler : MonoBehaviour
 
         HypersceneRenderer.HypersceneOption selectedOption = (HypersceneRenderer.HypersceneOption)value;
         cameraState.hypersceneRenderer.LoadHyperscene(selectedOption);
+    }
+
+    public void SwitchEulerSliderLock()
+    {
+        lockSliders = !lockSliders;
+
+        lockSlidersImage.sprite = lockSliders ? lockSliderEnabledSprite : lockSliderDisabledSprite;
+        lockSlidersImage.color = lockSliders ? new Color(1f, 0.5f, 1f) : new Color(160f / 256f, 160f / 256f, 160f / 256f);
+
+        OnRotationSliderEndDrag();
     }
 }
