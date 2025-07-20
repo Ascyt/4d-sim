@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 4D analogy of a cube. Also known as an 4-cube or 8-cell.
+/// </summary>
 public class Tesseract : Hyperobject
 {
     public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale=null) : base(new ConnectedVertices[]

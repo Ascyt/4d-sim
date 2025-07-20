@@ -16,7 +16,7 @@ public class FixedPentatopeHyperscene : Hyperscene
     {
         new Axes(),
         new Pentatope(Vector4.zero, ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
-        new Tetrahedron(Vector4.zero, ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 1f, 1f, 1f / 8f), pentatopeCell:true),
+        new Tetrahedron(Vector4.zero, ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 1f, 1f, 1f / 4f), cellOf:Tetrahedron.CellOf.Pentatope),
     };
     public override List<Hyperobject> FixedObjects => _fixedObjects;
 

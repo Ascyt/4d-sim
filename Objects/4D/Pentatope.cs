@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 4D analogy of a tetrahedron. Also known as a 4-simplex or 5-cell.
+/// </summary>
 public class Pentatope : Hyperobject
 {
     public Pentatope(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null) : base(new ConnectedVertices[]
