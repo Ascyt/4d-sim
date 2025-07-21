@@ -16,8 +16,6 @@ public class DefaultHyperscene : Hyperscene
 
     private List<Hyperobject> _objects = new()
     {
-        new Axes(0.5f),
-
         new Point(new Vector4(0, 0, 0, 0), Color.white),
 
         new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan),
@@ -35,6 +33,9 @@ public class DefaultHyperscene : Hyperscene
         new Tesseract(coloredTesseractPosition + new Vector4(0, 1, 0, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 1f, 0f,   0.5f), new Vector4(1, 0, 1, 1) * 0.5f),
         new Tesseract(coloredTesseractPosition + new Vector4(0, 0, 1, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 0.5f, 1f, 0.5f), new Vector4(1, 1, 0, 1) * 0.5f),
         new Tesseract(coloredTesseractPosition + new Vector4(0, 0, 0, 1), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 1f, 0f,   0.5f), new Vector4(1, 1, 1, 0) * 0.5f),
+
+        new Pentatope(new Vector4(10, -2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
+        new Orthoplex(new Vector4(10, 2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
     };
     public override List<Hyperobject> Objects => _objects;
 
