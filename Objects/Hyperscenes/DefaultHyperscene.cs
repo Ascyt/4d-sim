@@ -18,6 +18,11 @@ public class DefaultHyperscene : Hyperscene
     {
         new Point(new Vector4(0, 0, 0, 0), Color.white),
 
+        new Tesseract(new Vector4(0, 10, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
+        new Tesseract(new Vector4(1, 10, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, Vector4.one / 2f),
+        new Tesseract(new Vector4(0, 10, 1, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0f, 0.5f, 1f), Vector4.one / 2f),
+        new Tesseract(new Vector4(0, 10, 0, 1), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, Vector4.one / 2f),
+
         new Tesseract(new Vector4(2, 0, 1, 2), ConnectedVertices.ConnectionMethod.Solid, Color.cyan),
         new Cube(new Vector4(0, -1, 2, 4), ConnectedVertices.ConnectionMethod.Solid, Color.yellow),
 

@@ -22,7 +22,7 @@ public class CameraState : MonoBehaviour
     // In 3D, while the YZ (up/down) rotation and the XY camera tilt are relative to the camera's forward direction, the XZ (left/right) rotation should be relative to the world space.
     // For 4D, I could do a similar thing, make YW and camera tilt relative to the camera's forward direction and XW relative to world space,
     // but the issue is that I'm not sure what to do with ZW. I'm also not sure if it should be uncapped like the XZ rotation in 3D, or also stopped like when looking straight up or down in 3D?
-    //public bool platformerMode; 
+    public bool platformerMode; 
 
     [HideInInspector]
     public CameraPosition cameraMovement;
@@ -107,7 +107,30 @@ public class CameraState : MonoBehaviour
     }
     public void UpdateRotationDelta(RotationEuler4 rotationDelta)
     {
-        rotation = rotation.ApplyRotation(rotationDelta, false);
+        if (platformerMode)
+        {
+            RotationEuler4 absolutePart = new RotationEuler4(
+                rotationDelta.xw,
+                0,
+                rotationDelta.zw,
+                0,
+                0,
+                0);
+            RotationEuler4 relativePart = new RotationEuler4(
+                0,
+                rotationDelta.yw,
+                0,
+                rotationDelta.xy,
+                rotationDelta.xz,
+                rotationDelta.yz);
+
+            rotation = rotation.ApplyRotation(absolutePart, true);
+            rotation = rotation.ApplyRotation(relativePart, false);
+        }
+        else
+        {
+            rotation = rotation.ApplyRotation(rotationDelta, false);
+        }
 
         hypersceneRenderer.RerenderAll();
 

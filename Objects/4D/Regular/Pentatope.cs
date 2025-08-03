@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 4D analogy of a tetrahedron. Also known as a 4-simplex or 5-cell.
+/// 4D analogy of a tetrahedron. Also known as a 4-simplex. Made of 5 tetrahedral cells. 
 /// </summary>
 public class Pentatope : Hyperobject
 {

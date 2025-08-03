@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 4D analogy of a cube. Also known as an 4-cube or 8-cell.
+/// 4D analogy of a cube. Also known as an 4-cube. Made of 8 cubic cells.
 /// </summary>
 public class Tesseract : Hyperobject
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 4D analogy of an octahedron. Also known as a 4-orthoplex or 16-cell.
+/// 4D analogy of an octahedron. Also known as a 4-orthoplex. Made of 16 tetrahedral cells.
 /// </summary>
 public class Orthoplex : Hyperobject
 {
