@@ -224,4 +224,14 @@ public static class Helpers
         vertices = newVertices.ToArray();
         connections = newConnections.ToArray();
     }
+    public static int ToInt<T>(this T value) where T : Enum
+    {
+        return Convert.ToInt32(value);
+    }
+    public static T RunOnEnumAsInt<T>(this T value, Func<int, int> func) where T : Enum
+    {
+        int numericValue = Convert.ToInt32(value);
+        int newNumericValue = func(numericValue);
+        return (T)Enum.ToObject(typeof(T), newNumericValue);
+    }
 }
