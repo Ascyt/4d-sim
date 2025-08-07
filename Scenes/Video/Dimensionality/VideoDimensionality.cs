@@ -13,6 +13,7 @@ public enum VideoDimensionalityState
     YAxis,
     AddReferencePoint,
     MoveReferencePointX,
+    OrthographicToPerspective,
     ZAxis,
     AddZToText,
     TextXYZLabelToNumbers,
@@ -23,6 +24,7 @@ public enum VideoDimensionalityState
     RotateWAxisParentSecond
 }
 
+[RequireComponent(typeof(Camera))]
 public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState>
 {
     [SerializeField]
@@ -42,11 +44,13 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
     [SerializeField]
     private TextMeshPro referencePointPositionText;
 
+    private Camera cam;
+
     private TextMeshPro fadingText = null;
 
     private readonly Quaternion startWAxisRotation = Quaternion.Euler(-45, 0, 45);
-    private readonly Quaternion firstWAxisRotation = Quaternion.Euler(-130, -35, 60);
-    private readonly Quaternion secondWAxisRotation = Quaternion.Euler(0, 225, -45);
+    private readonly Quaternion firstWAxisRotation = Quaternion.Euler(0, 45, -45);
+    private readonly Quaternion secondWAxisRotation = Quaternion.Euler(-130, -35, 60);
 
     private readonly Fading _defaultFading = new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
     protected override Fading DefaultFading => _defaultFading;
@@ -54,6 +58,11 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
     {
         { VideoDimensionalityState.AddZToText, 1.5f }
     };
+    private readonly Dictionary<VideoDimensionalityState, Fading[]> _additionalFadings = new()
+    {
+        { VideoDimensionalityState.OrthographicToPerspective, new[] { new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)) } },
+    };
+    protected override Dictionary<VideoDimensionalityState, Fading[]> AdditionalFadings => _additionalFadings;
     protected override Dictionary<VideoDimensionalityState, float> AutoSkipStates => _autoSkipStates;
 
     protected override void OnEnterState(VideoDimensionalityState state)
@@ -184,6 +193,11 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 zAxisObject.transform.localPosition = new Vector3(0, 0, fadingValue * 4f);
                 return;
 
+            case VideoDimensionalityState.OrthographicToPerspective:
+                cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -3 * (99f * (1 - additionalFadingValues[0]) + 1));
+                cam.fieldOfView = 60f / (99f * (1 - additionalFadingValues[0]) + 1);
+                return;
+
             case VideoDimensionalityState.AddZToText:
                 return;
 
@@ -213,6 +227,11 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
         }
     }
 
+    private void Awake()
+    {
+        cam = GetComponent<Camera>();
+    }
+
     protected override void OnStart()
     {
         xAxisObject.SetActive(false);
@@ -223,10 +242,13 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
         referencePoint.transform.localScale = Vector3.zero;
         axisPoint.transform.localScale = Vector3.zero;
 
-        wAxisParent.transform.rotation = Quaternion.Euler(-45, 0, 45);
+        wAxisParent.transform.rotation = startWAxisRotation;
 
         fadingText = null;
         UpdateReferencePointPositionText(includeZ: false, fade: false);
+
+        cam.transform.SetPositionAndRotation(new Vector3(2, 1, -3 * 100f), Quaternion.identity);
+        cam.fieldOfView = 60f / 100f;
     }
 
     private void UpdateReferencePointPositionText(bool includeZ = true, bool fade = false, string customText = null)
