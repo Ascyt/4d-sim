@@ -23,8 +23,8 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
     [SerializeField]
     private GameObject wVectorPrefab;
 
-    private readonly Fading _defaultFading = new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
-    protected override Fading DefaultFading => _defaultFading;
+    private readonly Fading defaultFading = new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
+
     private readonly Dictionary<VideoVisionState, float> _autoSkipStates = new()
     {
         { VideoVisionState.SquaresToCubes, 1f }
@@ -53,14 +53,11 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
 
                         _ = InnerWireframeCubeRandomColor(newPixel);
 
-                        FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                            (fadingValue, isEnter, isExit) =>
-                            {
-                                if (isEnter)
-                                {
-                                    _pixelObjects.Add(newPixel);
-                                }
+                        _pixelObjects.Add(newPixel);
 
+                        Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                            (fadingValue, isExit) =>
+                            {
                                 newPixel.transform.localScale = new Vector3(1, 1, 0) * fadingValue / 10f;
                             });
                     }
@@ -73,14 +70,11 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                     {
                         GameObject newArrow = Instantiate(zVectorPrefab, new Vector3(x - offset, y - offset), Quaternion.Euler(-90f, 0, 0));
 
-                        FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                            (fadingValue, isEnter, isExit) =>
-                            {
-                                if (isEnter)
-                                {
-                                    _vectorObjects.Add(newArrow);
-                                }
+                        _vectorObjects.Add(newArrow);
 
+                        Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                            (fadingValue, isExit) =>
+                            {
                                 newArrow.transform.localScale = new Vector3(.125f, .5f, .125f) * fadingValue / 2f;
                                 newArrow.transform.position = new Vector3(newArrow.transform.position.x, newArrow.transform.position.y, -.25f * fadingValue);
                             });
@@ -92,8 +86,8 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                 {
                     GameObject obj = gameObject;
 
-                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (fadingValue, isEnter, isExit) =>
+                    Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isExit) =>
                         {
                             obj.transform.localScale = new Vector3(.125f, .5f, .125f) * (1f - fadingValue) / 2f;
                             obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, -.25f * (1f - fadingValue));
@@ -113,8 +107,8 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                 {
                     GameObject obj = gameObject;
 
-                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (fadingValue, isEnter, isExit) =>
+                    Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isExit) =>
                         {
                             obj.transform.localScale = new Vector3(1, 1, fadingValue) / 10f;
                         });
@@ -133,14 +127,11 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                             innerCubeRenderer.gameObject.transform.localScale = (1f - 1f / 16f) * 10f * Vector3.one; 
                             int localZ = z;
 
-                            FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)localZ),
-                                (fadingValue, isEnter, isExit) =>
-                                {
-                                    if (isEnter)
-                                    {
-                                        _pixelObjects.Add(newCube);
-                                    }
+                            _pixelObjects.Add(newCube);
 
+                            Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)localZ),
+                                (fadingValue, isExit) =>
+                                {
                                     innerCubeRenderer.material.color = new Color(
                                         innerCubeRenderer.material.color.r,
                                         innerCubeRenderer.material.color.g,
@@ -167,14 +158,11 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                         {
                             GameObject newArrow = Instantiate(wVectorPrefab, new Vector3(x - offset, y - offset, z), Quaternion.Euler(10, 45, 0));
 
-                            FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                                (fadingValue, isEnter, isExit) =>
-                                {
-                                    if (isEnter)
-                                    {
-                                        _vectorObjects.Add(newArrow);
-                                    }
+                            _vectorObjects.Add(newArrow);
 
+                            Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                                (fadingValue, isExit) =>
+                                {
                                     newArrow.transform.localScale = fadingValue / 2f * Vector3.one;
                                 });
                         }
@@ -186,8 +174,8 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                 {
                     GameObject obj = gameObject;
 
-                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (fadingValue, isEnter, isExit) =>
+                    Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isExit) =>
                         {
                             obj.transform.localScale = (1 - fadingValue) / 2f * Vector3.one;
 
@@ -224,20 +212,9 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
         return meshRenderer;
     }
 
-    protected override void OnExitState(VideoVisionState state)
+    protected override void BeforeExitState(VideoVisionState state)
     {
 
-    }
-
-
-    protected override void OnUpdateState(VideoVisionState state, float fadingValue, float[] additionalFadingValues)
-    {
-        switch (state)
-        {
-            case VideoVisionState.Start:
-                return;
-
-        }
     }
 
     protected override void OnStart()

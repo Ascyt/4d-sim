@@ -56,8 +56,7 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
     private Camera cam;
 
-    private readonly Fading _defaultFading = new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
-    protected override Fading DefaultFading => _defaultFading;
+    private Fading DefaultFading => new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
     private readonly Dictionary<VideoHypercubesBState, float> _autoSkipStates = new()
     {
         { VideoHypercubesBState.Start, 0f },
@@ -73,14 +72,9 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
         { VideoHypercubesBState.UnhighlightBackFace, 1f }
     };
-    private readonly Dictionary<VideoHypercubesBState, Fading[]> _additionalFadings = new()
-    {
-        { VideoHypercubesBState.OrthographicToPerspective, new[] { new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)) } },
-    };
-    protected override Dictionary<VideoHypercubesBState, Fading[]> AdditionalFadings => _additionalFadings;
+
     protected override Dictionary<VideoHypercubesBState, float> AutoSkipStates => _autoSkipStates;
 
-    
 
     protected override void OnEnterState(VideoHypercubesBState state)
     {
@@ -92,6 +86,14 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
             case VideoHypercubesBState.XAxis:
                 xAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        xAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        xAxisObject.transform.localPosition = new Vector3(fadingValue * 4f, 0, 0);
+                    });
+
                 return;
 
             case VideoHypercubesBState.AddFirstVertex:
@@ -99,6 +101,13 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
                 vertex.SetActive(true);
                 currentHypercubeVertices.Add(vertex);
+                currentHypercubeVertices[0].transform.localPosition = new Vector3(3, 0, 0);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        currentHypercubeVertices[0].transform.localScale = new Vector3(.0625f, .0625f, .0625f) * fadingValue;
+                    });
                 return;
 
             case VideoHypercubesBState.DuplicateVertex:
@@ -111,6 +120,13 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
             case VideoHypercubesBState.YAxis:
                 yAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        yAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        yAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
+                    });
                 return;
 
             case VideoHypercubesBState.DuplicateLine:
@@ -121,8 +137,24 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                 ConnectHypercubes();
                 return;
 
+            case VideoHypercubesBState.OrthographicToPerspective:
+                Fade(new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)),
+                    (fadingValue, isExit) =>
+                    {
+                        cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -3 * (99f * (1 - fadingValue) + 1));
+                        cam.fieldOfView = 60f / (99f * (1 - fadingValue) + 1);
+                    });
+                return;
+
             case VideoHypercubesBState.ZAxis:
                 zAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        zAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        zAxisObject.transform.localPosition = new Vector3(0, 0, fadingValue * 4f);
+                    });
                 return;
 
             case VideoHypercubesBState.ActualStart:
@@ -150,8 +182,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                 MeshRenderer mr = highlightedFaceObject.GetComponent<MeshRenderer>();
                 mr.material = new Material(mr.material);
 
-                FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                    (fadingValue, isEnter, isExit) =>
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
                     {
                         Material mat = mr.material;
                         mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
@@ -162,8 +194,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                 MeshRenderer mr1 = highlightedFaceObject.GetComponent<MeshRenderer>();
                 mr1.material = new Material(mr1.material);
 
-                FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                    (fadingValue, isEnter, isExit) =>
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
                     {
                         Material mat = mr1.material;
                         mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
@@ -184,8 +216,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                 MeshRenderer mr2 = highlightedFaceObject.GetComponent<MeshRenderer>();
                 mr2.material = new Material(mr2.material);
 
-                FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                    (fadingValue, isEnter, isExit) =>
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
                     {
                         Material mat = mr2.material;
                         mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
@@ -196,8 +228,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
             case VideoHypercubesBState.UnhighlightFrontFace:
                 MeshRenderer mr3 = highlightedFaceObject.GetComponent<MeshRenderer>();
 
-                FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                    (fadingValue, isEnter, isExit) =>
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
                     {
                         Material mat = mr3.material;
                         mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
@@ -221,44 +253,9 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
         }
     }
 
-    protected override void OnExitState(VideoHypercubesBState state)
+    protected override void BeforeExitState(VideoHypercubesBState state)
     {
 
-    }
-
-
-    protected override void OnUpdateState(VideoHypercubesBState state, float fadingValue, float[] additionalFadingValues)
-    {
-        switch (state)
-        {
-            case VideoHypercubesBState.Start:
-                return;
-
-            case VideoHypercubesBState.XAxis:
-                xAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                xAxisObject.transform.localPosition = new Vector3(fadingValue * 4f, 0, 0);
-                return;
-
-            case VideoHypercubesBState.AddFirstVertex:
-                currentHypercubeVertices[0].transform.localScale = new Vector3(.0625f, .0625f, .0625f) * fadingValue;
-                currentHypercubeVertices[0].transform.localPosition = new Vector3(3, 0, 0);
-                return;
-
-            case VideoHypercubesBState.YAxis:
-                yAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                yAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
-                return;
-
-            case VideoHypercubesBState.ZAxis:
-                zAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                zAxisObject.transform.localPosition = new Vector3(0, 0, fadingValue * 4f);
-                return;
-
-            case VideoHypercubesBState.OrthographicToPerspective:
-                cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -3 * (99f * (1 - additionalFadingValues[0]) + 1));
-                cam.fieldOfView = 60f / (99f * (1 - additionalFadingValues[0]) + 1);
-                return;
-        }
     }
 
     private void DuplicateCurrentHypercube(Vector3 positionDelta, float scaleMultiplier)
@@ -296,8 +293,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
             obj.transform.SetParent(parent.transform, true);
         }
 
-        FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-            (fadingValue, isEnter, isExit) =>
+        Fade(DefaultFading,
+            (fadingValue, isExit) =>
             {
                 parent.transform.position = averagePosition + positionDelta * fadingValue;
                 parent.transform.localScale = Vector3.one + (fadingValue * (scaleMultiplier - 1f) * Vector3.one);
@@ -337,8 +334,8 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
             GameObject obj = currentLine.gameObject;
 
-            FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)index / unconnectedHypercubeVertices.Count),
-                (fadingValue, isEnter, isExit) =>
+            Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)index / unconnectedHypercubeVertices.Count),
+                (fadingValue, isExit) =>
                 {
                     LineRenderer lr = obj.GetComponent<LineRenderer>();
 

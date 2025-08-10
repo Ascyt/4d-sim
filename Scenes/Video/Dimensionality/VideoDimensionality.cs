@@ -52,17 +52,11 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
     private readonly Quaternion firstWAxisRotation = Quaternion.Euler(0, 45, -45);
     private readonly Quaternion secondWAxisRotation = Quaternion.Euler(-130, -35, 60);
 
-    private readonly Fading _defaultFading = new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
-    protected override Fading DefaultFading => _defaultFading;
+    private Fading DefaultFading => new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
     private readonly Dictionary<VideoDimensionalityState, float> _autoSkipStates = new()
     {
         { VideoDimensionalityState.AddZToText, 1.5f }
     };
-    private readonly Dictionary<VideoDimensionalityState, Fading[]> _additionalFadings = new()
-    {
-        { VideoDimensionalityState.OrthographicToPerspective, new[] { new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)) } },
-    };
-    protected override Dictionary<VideoDimensionalityState, Fading[]> AdditionalFadings => _additionalFadings;
     protected override Dictionary<VideoDimensionalityState, float> AutoSkipStates => _autoSkipStates;
 
     protected override void OnEnterState(VideoDimensionalityState state)
@@ -74,25 +68,73 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 return;
 
             case VideoDimensionalityState.AddAxisPoint:
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        axisPoint.transform.localScale = 0.25f * fadingValue * Vector3.one;
+                    });
                 return;
 
             case VideoDimensionalityState.XAxis:
                 xAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        xAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        xAxisObject.transform.localPosition = new Vector3(fadingValue * 4f, 0, 0);
+                    });
+
                 return;
 
             case VideoDimensionalityState.YAxis:
                 yAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        yAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        yAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
+                    });
                 return;
 
             case VideoDimensionalityState.AddReferencePoint:
                 UpdateReferencePointPositionText(includeZ: false, fade: false);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        referencePoint.transform.localScale = 0.25f * fadingValue * Vector3.one;
+                    });
                 return;
 
             case VideoDimensionalityState.MoveReferencePointX:
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        referencePoint.transform.position = new Vector3(1f + fadingValue * 2f, 1f, 0);
+                        UpdateReferencePointPositionText(includeZ: false, fade: false);
+                    });
+                return;
+
+            case VideoDimensionalityState.OrthographicToPerspective:
+                Fade(new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)),
+                    (fadingValue, isExit) =>
+                    {
+                        cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -3 * (99f * (1 - fadingValue) + 1));
+                        cam.fieldOfView = 60f / (99f * (1 - fadingValue) + 1);
+                    });
                 return;
 
             case VideoDimensionalityState.ZAxis:
                 zAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        zAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        zAxisObject.transform.localPosition = new Vector3(0, 0, fadingValue * 4f);
+                    });
                 return;
 
             case VideoDimensionalityState.AddZToText:
@@ -108,7 +150,12 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 return;
 
             case VideoDimensionalityState.MoveReferencePointZ:
-                UpdateReferencePointPositionText(includeZ: true, fade: false);
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        referencePoint.transform.position = new Vector3(3f, 1f, fadingValue * 2f);
+                        UpdateReferencePointPositionText(includeZ: true, fade: false);
+                    });
                 return;
 
             case VideoDimensionalityState.AddWToText:
@@ -121,109 +168,40 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
 
             case VideoDimensionalityState.WAxis:
                 wAxisObject.SetActive(true);
+
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        wAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
+                        wAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
+                    });
                 return;
 
             case VideoDimensionalityState.RotateWAxisParentFirst:
-                wAxisParent.transform.rotation = startWAxisRotation;
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        wAxisParent.transform.rotation = Quaternion.Lerp(startWAxisRotation, firstWAxisRotation, fadingValue);
+                    });
                 return;
 
             case VideoDimensionalityState.RotateWAxisParentSecond:
-                wAxisParent.transform.rotation = firstWAxisRotation;
+                Fade(DefaultFading,
+                    (fadingValue, isExit) =>
+                    {
+                        wAxisParent.transform.rotation = Quaternion.Lerp(firstWAxisRotation, secondWAxisRotation, fadingValue);
+                    });
                 return;
         }
     }
 
-    protected override void OnExitState(VideoDimensionalityState state)
+    protected override void BeforeExitState(VideoDimensionalityState state)
     {
         if (fadingText != null)
         {
             Destroy(fadingText.gameObject);
             fadingText = null;
             referencePointPositionText.alpha = 1f;
-        }
-    }
-
-
-    protected override void OnUpdateState(VideoDimensionalityState state, float fadingValue, float[] additionalFadingValues)
-    {
-        if (fadingText != null)
-        {
-            fadingText.transform.position = referencePointPositionText.transform.position;
-            fadingText.transform.localScale = referencePointPositionText.transform.localScale;
-            fadingText.alpha = 1f - fadingValue;
-            referencePointPositionText.alpha = fadingValue;
-            if (Mathf.Approximately(fadingValue, 1f))
-            {
-                Destroy(fadingText.gameObject);
-                fadingText = null;
-                referencePointPositionText.alpha = 1f;
-            }
-        }
-
-        switch (state)
-        {
-            case VideoDimensionalityState.Start:
-                return;
-
-            case VideoDimensionalityState.AddAxisPoint:
-                axisPoint.transform.localScale = 0.25f * fadingValue * Vector3.one;
-                return;
-
-            case VideoDimensionalityState.XAxis:
-                xAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                xAxisObject.transform.localPosition = new Vector3(fadingValue * 4f, 0, 0);
-                return;
-
-            case VideoDimensionalityState.YAxis:
-                yAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                yAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
-                return;
-
-            case VideoDimensionalityState.AddReferencePoint:
-                referencePoint.transform.localScale = 0.25f * fadingValue * Vector3.one;
-                return;
-
-            case VideoDimensionalityState.MoveReferencePointX:
-                referencePoint.transform.position = new Vector3(1f + fadingValue * 2f, 1f, 0);
-                UpdateReferencePointPositionText(includeZ: false, fade: false);
-                return;
-
-            case VideoDimensionalityState.ZAxis:
-                zAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                zAxisObject.transform.localPosition = new Vector3(0, 0, fadingValue * 4f);
-                return;
-
-            case VideoDimensionalityState.OrthographicToPerspective:
-                cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -3 * (99f * (1 - additionalFadingValues[0]) + 1));
-                cam.fieldOfView = 60f / (99f * (1 - additionalFadingValues[0]) + 1);
-                return;
-
-            case VideoDimensionalityState.AddZToText:
-                return;
-
-            case VideoDimensionalityState.TextXYZLabelToNumbers:
-                return;
-
-            case VideoDimensionalityState.MoveReferencePointZ:
-                referencePoint.transform.position = new Vector3(3f, 1f, fadingValue * 2f);
-                UpdateReferencePointPositionText(includeZ: true, fade: false);
-                return;
-
-            case VideoDimensionalityState.AddWToText:
-                return;
-
-            case VideoDimensionalityState.WAxis:
-                wAxisObject.transform.localScale = new Vector3(0.5f, fadingValue * 4f, 0.5f);
-                wAxisObject.transform.localPosition = new Vector3(0, fadingValue * 4f, 0);
-                return;
-
-            case VideoDimensionalityState.RotateWAxisParentFirst:
-                wAxisParent.transform.rotation = Quaternion.Lerp(startWAxisRotation, firstWAxisRotation, fadingValue);
-                return;
-
-            case VideoDimensionalityState.RotateWAxisParentSecond:
-                wAxisParent.transform.rotation = Quaternion.Lerp(firstWAxisRotation, secondWAxisRotation, fadingValue);
-                return;
         }
     }
 
@@ -244,7 +222,13 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
 
         wAxisParent.transform.rotation = startWAxisRotation;
 
-        fadingText = null;
+        if (fadingText != null)
+        {
+            Destroy(fadingText.gameObject);
+            fadingText = null;
+        }
+
+        referencePoint.transform.position = new Vector3(1f, 1f, 0);
         UpdateReferencePointPositionText(includeZ: false, fade: false);
 
         cam.transform.SetPositionAndRotation(new Vector3(2, 1, -3 * 100f), Quaternion.identity);
@@ -263,6 +247,23 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
             }
             fadingText = Instantiate(referencePointPositionText.gameObject, referencePointPositionText.transform.parent).GetComponent<TextMeshPro>();
             referencePointPositionText.alpha = 0f;
+
+            Fade(DefaultFading,
+                (fadingValue, isExit) =>
+                {
+                    if (fadingText == null)
+                        return;
+                    fadingText.transform.position = referencePointPositionText.transform.position;
+                    fadingText.transform.localScale = referencePointPositionText.transform.localScale;
+                    fadingText.alpha = 1f - fadingValue;
+                    referencePointPositionText.alpha = fadingValue;
+                    if (Mathf.Approximately(fadingValue, 1f))
+                    {
+                        Destroy(fadingText.gameObject);
+                        fadingText = null;
+                        referencePointPositionText.alpha = 1f;
+                    }
+                });
         }
 
         customText ??= $"<color=\"grey\">" +
