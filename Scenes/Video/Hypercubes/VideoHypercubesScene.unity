@@ -9675,6 +9675,7 @@ GameObject:
   - component: {fileID: 963194237}
   - component: {fileID: 963194238}
   - component: {fileID: 963194239}
+  - component: {fileID: 963194240}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -9750,7 +9751,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 1, z: -3}
+  m_LocalPosition: {x: 2, y: 1, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9892,16 +9893,37 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 008c1b650bae705478a82a10b8411f0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  centerSphereObject: {fileID: 528257059}
   xAxisObject: {fileID: 945674456}
   yAxisObject: {fileID: 174308484}
   zAxisObject: {fileID: 1065882942}
   vertexObjectPrefab: {fileID: 8608966006968332114, guid: c12ebec2dd9be6f4e84de5c6c6630f78, type: 3}
   lineRendererPrefab: {fileID: 7342401229210305920, guid: 1c006ac8c0b6cd549b806ed832e24016, type: 3}
+  highlightableCubePrefab: {fileID: 1162190742001372839, guid: 31744d9ef85a5204697061315cee90b3, type: 3}
+--- !u!114 &963194240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09e44ab8e5e1c2844b9cce49562aa38d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  centerSphereObject: {fileID: 528257059}
+  xAxisObject: {fileID: 945674456}
+  yAxisObject: {fileID: 174308484}
+  zAxisObject: {fileID: 1065882942}
+  vertexObjectPrefab: {fileID: 8608966006968332114, guid: c12ebec2dd9be6f4e84de5c6c6630f78, type: 3}
+  lineRendererPrefab: {fileID: 7342401229210305920, guid: 1c006ac8c0b6cd549b806ed832e24016, type: 3}
+  highlightableCubePrefab: {fileID: 1162190742001372839, guid: 31744d9ef85a5204697061315cee90b3, type: 3}
 --- !u!1 &976932914
 GameObject:
   m_ObjectHideFlags: 0

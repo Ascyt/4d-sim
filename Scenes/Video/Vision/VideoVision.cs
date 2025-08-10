@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public enum VideoVisionState
@@ -52,15 +53,15 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
 
                         _ = InnerWireframeCubeRandomColor(newPixel);
 
-                        FadeSingleObject(newPixel, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                            (obj, original, fadingValue, isEnter, isExit) =>
+                        FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                            (fadingValue, isEnter, isExit) =>
                             {
                                 if (isEnter)
                                 {
-                                    _pixelObjects.Add(obj);
+                                    _pixelObjects.Add(newPixel);
                                 }
 
-                                obj.transform.localScale = new Vector3(1, 1, 0) * fadingValue / 10f;
+                                newPixel.transform.localScale = new Vector3(1, 1, 0) * fadingValue / 10f;
                             });
                     }
                 }
@@ -72,16 +73,16 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                     {
                         GameObject newArrow = Instantiate(zVectorPrefab, new Vector3(x - offset, y - offset), Quaternion.Euler(-90f, 0, 0));
 
-                        FadeSingleObject(newArrow, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                            (obj, original, fadingValue, isEnter, isExit) =>
+                        FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                            (fadingValue, isEnter, isExit) =>
                             {
                                 if (isEnter)
                                 {
-                                    _vectorObjects.Add(obj);
+                                    _vectorObjects.Add(newArrow);
                                 }
 
-                                obj.transform.localScale = new Vector3(.125f, .5f, .125f) * fadingValue / 2f;
-                                obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, -.25f * fadingValue);
+                                newArrow.transform.localScale = new Vector3(.125f, .5f, .125f) * fadingValue / 2f;
+                                newArrow.transform.position = new Vector3(newArrow.transform.position.x, newArrow.transform.position.y, -.25f * fadingValue);
                             });
                     }
                 }
@@ -89,8 +90,10 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
             case VideoVisionState.RemoveZVectorGrid:
                 foreach (GameObject gameObject in _vectorObjects)
                 {
-                    FadeSingleObject(gameObject, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (obj, original, fadingValue, isEnter, isExit) =>
+                    GameObject obj = gameObject;
+
+                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isEnter, isExit) =>
                         {
                             obj.transform.localScale = new Vector3(.125f, .5f, .125f) * (1f - fadingValue) / 2f;
                             obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, -.25f * (1f - fadingValue));
@@ -108,8 +111,10 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
             case VideoVisionState.SquaresToCubes:
                 foreach (GameObject gameObject in _pixelObjects)
                 {
-                    FadeSingleObject(gameObject, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (obj, original, fadingValue, isEnter, isExit) =>
+                    GameObject obj = gameObject;
+
+                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isEnter, isExit) =>
                         {
                             obj.transform.localScale = new Vector3(1, 1, fadingValue) / 10f;
                         });
@@ -125,15 +130,15 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                             GameObject newCube = Instantiate(cubeWireframePrefab, new Vector3(x - offset, y - offset, 0), Quaternion.identity);
 
                             MeshRenderer innerCubeRenderer = InnerWireframeCubeRandomColor(newCube);
-                            innerCubeRenderer.gameObject.transform.localScale = Vector3.one * (1f - 1f / 16f) * 10f; 
+                            innerCubeRenderer.gameObject.transform.localScale = (1f - 1f / 16f) * 10f * Vector3.one; 
                             int localZ = z;
 
-                            FadeSingleObject(newCube, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)localZ),
-                                (obj, original, fadingValue, isEnter, isExit) =>
+                            FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (float)localZ),
+                                (fadingValue, isEnter, isExit) =>
                                 {
                                     if (isEnter)
                                     {
-                                        _pixelObjects.Add(obj);
+                                        _pixelObjects.Add(newCube);
                                     }
 
                                     innerCubeRenderer.material.color = new Color(
@@ -146,7 +151,7 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
 
                                     if (fadingValue > 0.0f)
                                     {
-                                        obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, localZ + fadingValue);
+                                        newCube.transform.position = new Vector3(newCube.transform.position.x, newCube.transform.position.y, localZ + fadingValue);
                                     }
                                 });
                         }
@@ -162,15 +167,15 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
                         {
                             GameObject newArrow = Instantiate(wVectorPrefab, new Vector3(x - offset, y - offset, z), Quaternion.Euler(10, 45, 0));
 
-                            FadeSingleObject(newArrow, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
-                                (obj, original, fadingValue, isEnter, isExit) =>
+                            FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), (x + ((GRID_SIZE - 1) - y)) / (float)(GRID_SIZE) / 2f),
+                                (fadingValue, isEnter, isExit) =>
                                 {
                                     if (isEnter)
                                     {
-                                        _vectorObjects.Add(obj);
+                                        _vectorObjects.Add(newArrow);
                                     }
 
-                                    obj.transform.localScale = fadingValue / 2f * Vector3.one;
+                                    newArrow.transform.localScale = fadingValue / 2f * Vector3.one;
                                 });
                         }
                     }
@@ -179,8 +184,10 @@ public class VideoVision : AnimatedStateMachine<VideoVisionState>
             case VideoVisionState.RemoveWVectorGrid:
                 foreach (GameObject gameObject in _vectorObjects)
                 {
-                    FadeSingleObject(gameObject, false, new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
-                        (obj, original, fadingValue, isEnter, isExit) =>
+                    GameObject obj = gameObject;
+
+                    FadeSingle(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+                        (fadingValue, isEnter, isExit) =>
                         {
                             obj.transform.localScale = (1 - fadingValue) / 2f * Vector3.one;
 

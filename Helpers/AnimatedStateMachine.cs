@@ -43,6 +43,9 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         }
         if (_currentState.Equals(target))
         {
+            // Restart current state
+            StartStateFadings(_currentState);
+
             return;
         }
 
@@ -50,7 +53,6 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         RushStateFadings(_currentState);
 
         // Exit currently running state
-        PrivateOnUpdateState(_currentState, DefaultFading.value, SelectAdditionalFadingValues(AdditionalFadings, _currentState));
         PrivateOnExitState(_currentState);
 
         // If jumping to a future state: Enter, rush and exit intermediate states from old to new
@@ -65,7 +67,6 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
 
             // Rush intermediate step
             RushStateFadings(pastState);
-            PrivateOnUpdateState(pastState, DefaultFading.value, SelectAdditionalFadingValues(AdditionalFadings, pastState));
 
             // Exit intermediate step
             PrivateOnExitState(pastState);
@@ -76,14 +77,20 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
             _currentState = default!;
             OnStart();
 
+            // Start first state
             StartStateFadings(_currentState);
             PrivateOnEnterState(_currentState);
 
+            // Rush first state
             RushStateFadings(_currentState);
             PrivateOnUpdateState(_currentState, DefaultFading.value, SelectAdditionalFadingValues(AdditionalFadings, _currentState));
 
+            // Run through all states until target
             SetState(target);
+
+            // Rush the current state
             RushStateFadings(_currentState);
+            PrivateOnUpdateState(_currentState, DefaultFading.value, SelectAdditionalFadingValues(AdditionalFadings, _currentState));
             return;
         }
 
@@ -109,7 +116,7 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     {
         SetState(_currentState.RunOnEnumAsInt(s => (s + 1) % StateCount));
     }
-    public void PreviousState()
+    public void PrevState()
     {
         SetState(_currentState.RunOnEnumAsInt(s => (s - 1 + StateCount) % StateCount));
     }
@@ -120,19 +127,16 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     }
     private void PrivateOnExitState(T state)
     {
-        foreach (SingleObjectFadeData data in _singleObjectFades)
+        PrivateOnUpdateState(state, DefaultFading.value, SelectAdditionalFadingValues(AdditionalFadings, state));
+
+        foreach (SingleObjectFadeData data in _singleFades)
         {
             data.fading.RushFade();
 
-            if (data.original != null)
-            {
-                Destroy(data.original);
-            }
-
-            data.func(data.obj, null, data.fading.value, isEnter:false, isExit:true);
+            data.func(data.fading.value, isEnter:false, isExit:true);
         }
 
-        _singleObjectFades.Clear();
+        _singleFades.Clear();
 
         OnExitState(state);
     }
@@ -140,10 +144,10 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     {
         OnUpdateState(state, fadingValue, additionalFadingValues);
 
-        foreach (SingleObjectFadeData singleObjectFadeData in _singleObjectFades)
+        foreach (SingleObjectFadeData singleObjectFadeData in _singleFades)
         {
             singleObjectFadeData.fading.UpdateFade(Time.deltaTime);
-            singleObjectFadeData.func(singleObjectFadeData.obj, singleObjectFadeData.original, singleObjectFadeData.fading.value, isEnter: false, isExit: false);
+            singleObjectFadeData.func(singleObjectFadeData.fading.value, isEnter: false, isExit: false);
         }
     }
 
@@ -190,7 +194,7 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         {
             _autoSkipTimeLeft -= Time.deltaTime;
 
-            if (_autoSkipTimeLeft <= 0f)
+            while (_autoSkipTimeLeft <= 0f && _autoSkipCurrentState)
             {
                 _autoSkipCurrentState = false;
                 NextState();
@@ -203,7 +207,7 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         }
         if (PrevKeys.Any(key => Input.GetKeyDown(key)))
         {
-            PreviousState();
+            PrevState();
         }
 
         DefaultFading.UpdateFade(Time.deltaTime);
@@ -222,32 +226,34 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     {
         OnStart();
         StartStateFadings(_currentState);
-        PrivateOnEnterState(_currentState);
+
+        if (AutoSkipStates.TryGetValue(_currentState, out float autoSkipTime))
+        {
+            _autoSkipCurrentState = true;
+            _autoSkipTimeLeft = autoSkipTime;
+        }
     }
 
     private struct SingleObjectFadeData
     {
         public GameObject obj;
-        public GameObject? original;
         public Fading fading;
-        public SingleObjectFade func;
+        public SingleFade func;
     }
-    private List<SingleObjectFadeData> _singleObjectFades = new();
-    public delegate void SingleObjectFade(GameObject obj, GameObject? original, float fadingValue, bool isEnter, bool isExit);
-    protected void FadeSingleObject(GameObject obj, bool createNew, Fading fading, SingleObjectFade func)
+    private readonly List<SingleObjectFadeData> _singleFades = new();
+    public delegate void SingleFade(float fadingValue, bool isEnter, bool isExit);
+    protected void FadeSingle(Fading fading, SingleFade func)
     {
         SingleObjectFadeData newData = new()
         {
-            obj = createNew ? Instantiate(obj, obj.transform.parent) : obj,
-            original = createNew ? obj : null,
             fading = fading,
             func = func
         };
 
-        _singleObjectFades.Add(newData);
+        _singleFades.Add(newData);
 
         fading.StartFade();
 
-        func(newData.obj, newData.original, newData.fading.value, isEnter: true, isExit: false);
+        func(newData.fading.value, isEnter: true, isExit: false);
     }
 }
