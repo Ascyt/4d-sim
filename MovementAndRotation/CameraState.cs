@@ -18,11 +18,8 @@ public class CameraState : MonoBehaviour
     /// </summary>
     public bool useDvorak = true;
 
-    // TODO: This should make part of the rotation relative to world space, not the camera's forward direction.
-    // In 3D, while the YZ (up/down) rotation and the XY camera tilt are relative to the camera's forward direction, the XZ (left/right) rotation should be relative to the world space.
-    // For 4D, I could do a similar thing, make YW and camera tilt relative to the camera's forward direction and XW relative to world space,
-    // but the issue is that I'm not sure what to do with ZW. I'm also not sure if it should be uncapped like the XZ rotation in 3D, or also stopped like when looking straight up or down in 3D?
-    public bool platformerMode; 
+    public bool absoluteMode; 
+    public Vector3 absoluteModeRotationAngles = Vector3.zero;
 
     [HideInInspector]
     public CameraPosition cameraMovement;
@@ -39,7 +36,7 @@ public class CameraState : MonoBehaviour
     private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
 
     public Vector4 position = Vector4.zero;
-    public Rotation4 rotation = new Rotation4();
+    public Rotation4 rotation;
 
     ///// <summary>
     ///// Used to display the rotation in the UI, and to update the rotation slider values.
@@ -55,6 +52,7 @@ public class CameraState : MonoBehaviour
         hypersceneRenderer = GetComponent<HypersceneRenderer>();
 
         sceneUiHandler.cameraState = this;
+        rotation = Rotation4.identity;
     }
     private void Start()
     {
@@ -72,7 +70,7 @@ public class CameraState : MonoBehaviour
 
     public void UpdateMovementRotationSwitch(bool? newValue = null)
     {
-        newValue = newValue ?? !RotationMovementSwitch;
+        newValue ??= !RotationMovementSwitch;
         RotationMovementSwitch = newValue.Value;
 
         sceneUiHandler.UpdateMovementRotationSwitchText(RotationMovementSwitch);
@@ -81,11 +79,14 @@ public class CameraState : MonoBehaviour
     /// <summary>
     /// Does not cause view refresh
     /// </summary>
-    public void SetRotation(RotationEuler4 rotation)
+    public void ResetRotation()
     {
-        this.rotation = new Rotation4(rotation);
+        absoluteModeRotationAngles = Vector3.zero;
+
+        UpdateRotation(Rotation4.identity);
 
         sceneUiHandler.UpdateQuaternionPairRotationSliders(this.rotation);
+        sceneUiHandler.OnAbsoluteRotationChange(Vector3.zero);
     }
     /// <summary>
     /// Does not cause view refresh
@@ -107,25 +108,21 @@ public class CameraState : MonoBehaviour
     }
     public void UpdateRotationDelta(RotationEuler4 rotationDelta)
     {
-        if (platformerMode)
+        if (absoluteMode)
         {
-            RotationEuler4 absolutePart = new RotationEuler4(
-                rotationDelta.xw,
-                0,
-                rotationDelta.zw,
-                0,
-                0,
-                0);
-            RotationEuler4 relativePart = new RotationEuler4(
-                0,
-                rotationDelta.yw,
-                0,
-                rotationDelta.xy,
-                rotationDelta.xz,
-                rotationDelta.yz);
+            absoluteModeRotationAngles += new Vector3(rotationDelta.xw, rotationDelta.yw, rotationDelta.zw);
 
-            rotation = rotation.ApplyRotation(absolutePart, true);
-            rotation = rotation.ApplyRotation(relativePart, false);
+            float epsilon = 1f / 4096f;
+
+            absoluteModeRotationAngles.y = Mathf.Clamp(absoluteModeRotationAngles.y, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
+            absoluteModeRotationAngles.z = Mathf.Clamp(absoluteModeRotationAngles.z, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
+
+            rotation = Rotation4.identity
+                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.z, false)
+                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XW, absoluteModeRotationAngles.x, false)
+                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.y, false);
+
+            sceneUiHandler.OnAbsoluteRotationChange(absoluteModeRotationAngles);
         }
         else
         {
