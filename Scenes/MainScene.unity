@@ -11588,7 +11588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useDvorak: 0
-  absoluteMode: 1
+  absoluteMode: 0
   absoluteModeRotationAngles: {x: 0, y: 0, z: 0}
   cameraMovement: {fileID: 0}
   cameraRotation: {fileID: 0}

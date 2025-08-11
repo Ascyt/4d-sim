@@ -116,11 +116,11 @@ public class CameraState : MonoBehaviour
 
             absoluteModeRotationAngles.y = Mathf.Clamp(absoluteModeRotationAngles.y, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
             absoluteModeRotationAngles.z = Mathf.Clamp(absoluteModeRotationAngles.z, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
-
+            
             rotation = Rotation4.identity
-                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.z, false)
                 .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XW, absoluteModeRotationAngles.x, false)
-                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.y, false);
+                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.y, false)
+                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.z, false);
 
             sceneUiHandler.OnAbsoluteRotationChange(absoluteModeRotationAngles);
         }
