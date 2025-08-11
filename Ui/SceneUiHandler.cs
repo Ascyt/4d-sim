@@ -157,11 +157,11 @@ public class SceneUiHandler : MonoBehaviour
 
     public void UpdatePositionText(Vector4 position)
     {
-        positionText.text =
-        $"x: {position.x}\n" +
-        $"y: {position.y}\n" +
-        $"z: {position.z}\n" +
-        $"w: {position.w}";
+        positionText.text = $"<color=#808080>" +
+        $"<color=#FF0000>x</color>: <color=#FF0000>{position.x:F2}</color>\n" +
+        $"<color=#00FF00>y</color>: <color=#00FF00>{position.y:F2}</color>\n" +
+        $"<color=#0080FF>z</color>: <color=#0080FF>{position.z:F2}</color>\n" +
+        $"<color=#FFFF00>w</color>: <color=#FFFF00>{position.w:F2}</color></color>";
     }
 
     public void UpdateEulerRotationSliders(RotationEuler4 rotationEuler)
