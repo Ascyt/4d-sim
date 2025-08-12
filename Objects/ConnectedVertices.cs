@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,7 @@ public class ConnectedVertices
     }
 
     public ConnectionMethod connectionMethod;
+    public readonly Vector4[] identityVertices; 
     public Vector4[] vertices;
     public readonly int[][] connections;
     public float? vertexScale;
@@ -33,7 +35,11 @@ public class ConnectedVertices
     public ConnectedVertices(ConnectionMethod connectionMethod, Vector4[] vertices, Color color, int[][] connections=null, float? vertexScale=null)
     {
         this.connectionMethod = connectionMethod;
-        this.vertices = vertices;
+
+        this.identityVertices = vertices;
+        this.vertices = new Vector4[vertices.Length];
+        Array.Copy(vertices, this.vertices, vertices.Length);
+
         this.color = color;
         this.connections = connections;
         this.vertexScale = vertexScale;

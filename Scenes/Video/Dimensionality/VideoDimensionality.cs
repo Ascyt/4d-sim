@@ -181,7 +181,7 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 Fade(DefaultFading,
                     (fadingValue, isExit) =>
                     {
-                        wAxisParent.transform.rotation = Quaternion.Slerp(startWAxisRotation, firstWAxisRotation, fadingValue);
+                        wAxisParent.transform.rotation = Quaternion.Lerp(startWAxisRotation, firstWAxisRotation, fadingValue);
                     });
                 return;
 
@@ -189,7 +189,7 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 Fade(DefaultFading,
                     (fadingValue, isExit) =>
                     {
-                        wAxisParent.transform.rotation = Quaternion.Slerp(firstWAxisRotation, secondWAxisRotation, fadingValue);
+                        wAxisParent.transform.rotation = Quaternion.Lerp(firstWAxisRotation, secondWAxisRotation, fadingValue);
                     });
                 return;
         }

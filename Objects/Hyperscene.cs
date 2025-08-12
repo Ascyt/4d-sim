@@ -32,6 +32,6 @@ public abstract class Hyperscene
     public virtual Vector4 StartingPosition => Vector4.zero; 
     public virtual RotationEuler4 StartingRotation => RotationEuler4.zero; 
     public virtual void Start() { }
-    /// <returns>Refresh objects</returns>
-    public virtual List<Hyperobject>? Update() { return null; }
+    /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
+    public virtual (List<Hyperobject>?, List<Hyperobject>?) Update() { return (null, null); }
 }

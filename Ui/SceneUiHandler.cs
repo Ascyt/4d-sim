@@ -163,14 +163,14 @@ public class SceneUiHandler : MonoBehaviour
             return;
         }
 
-        lwInput.SetTextWithoutNotify(rotation.leftQuaternion.w.ToString("F6"));
-        lxInput.SetTextWithoutNotify(rotation.leftQuaternion.x.ToString("F6"));
-        lyInput.SetTextWithoutNotify(rotation.leftQuaternion.y.ToString("F6"));
-        lzInput.SetTextWithoutNotify(rotation.leftQuaternion.z.ToString("F6"));
-        rwInput.SetTextWithoutNotify(rotation.rightQuaternion.w.ToString("F6"));
-        rxInput.SetTextWithoutNotify(rotation.rightQuaternion.x.ToString("F6"));
-        ryInput.SetTextWithoutNotify(rotation.rightQuaternion.y.ToString("F6"));
-        rzInput.SetTextWithoutNotify(rotation.rightQuaternion.z.ToString("F6"));
+        lwInput.SetTextWithoutNotify(rotation.l.w.ToString("F6"));
+        lxInput.SetTextWithoutNotify(rotation.l.x.ToString("F6"));
+        lyInput.SetTextWithoutNotify(rotation.l.y.ToString("F6"));
+        lzInput.SetTextWithoutNotify(rotation.l.z.ToString("F6"));
+        rwInput.SetTextWithoutNotify(rotation.r.w.ToString("F6"));
+        rxInput.SetTextWithoutNotify(rotation.r.x.ToString("F6"));
+        ryInput.SetTextWithoutNotify(rotation.r.y.ToString("F6"));
+        rzInput.SetTextWithoutNotify(rotation.r.z.ToString("F6"));
     }
 
     private bool isEditingText = false;
