@@ -65,7 +65,7 @@ public class DefaultHyperscene : Hyperscene
     {
         float speed = Time.deltaTime * 2 * Mathf.PI / 4f;
 
-        Rotation4 rotation = new Rotation4(speed, 0, 0, 0, 0, 0);
+        Quatpair rotation = new Quatpair(speed, 0, 0, 0, 0, 0);
         foreach (ConnectedVertices vertices in connectedVertices)
         {
             vertices.vertices = vertices.vertices

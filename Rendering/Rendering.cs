@@ -64,7 +64,7 @@ public class Rendering : MonoBehaviour
         return true;
     }
 
-    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Rotation4 cameraRotation, Vector4 cameraPosition, bool allowIntersectioning = true)
+    public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Quatpair cameraRotation, Vector4 cameraPosition, bool allowIntersectioning = true)
     {
         bool applyIntersectioning = allowIntersectioning && connectedVertices.connections is not null &&
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
@@ -105,7 +105,7 @@ public class Rendering : MonoBehaviour
         DisplayObject(connectedVertices, obj, transformedVertices, averagePos, connections);
     }
 
-    public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Rotation4 objectRotation, bool orthographic)
+    public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Quatpair objectRotation, bool orthographic)
     {
         Vector4[] transformedVertices = connectedVertices.vertices
             .Select(v => (v + obj.position).ApplyRotation(objectRotation.Inverse()))

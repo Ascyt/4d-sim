@@ -19,7 +19,7 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    public static Rotation4 ApplyRotation(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
+    public static Quatpair ApplyRotation(this Quatpair rotation, RotationEuler4 delta, bool worldSpace)
     {
         // Convert the delta to Quaternion and apply it to the existing rotation
         foreach (RotationPlane rotationPlane in Enum.GetValues(typeof(RotationPlane)))
@@ -33,7 +33,7 @@ public static class RotationTransformer
 
         return rotation;
     }
-    public static Rotation4 ApplyRotation(this Rotation4 rotation, Rotation4 delta, bool worldSpace)
+    public static Quatpair ApplyRotation(this Quatpair rotation, Quatpair delta, bool worldSpace)
     {
         if (worldSpace)
         {
@@ -46,7 +46,7 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    public static Vector4 ApplyRotation(this Vector4 vector, Rotation4 rotation, Rotation4? alignment=null)
+    public static Vector4 ApplyRotation(this Vector4 vector, Quatpair rotation, Quatpair? alignment=null)
     {
         if (alignment.HasValue)
         {
@@ -60,44 +60,44 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    private static Rotation4 GetRotationForPlane(RotationPlane plane, float angle)
+    private static Quatpair GetRotationForPlane(RotationPlane plane, float angle)
     {
         float t = angle / 2f;
 
         switch (plane)
         {
             case RotationPlane.XW:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t)),
                     new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
                 );
             case RotationPlane.YW:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t)),
                     new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
                 );
             case RotationPlane.ZW:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t)),
                     new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
                 );
             case RotationPlane.XY:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t)),
                     new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
                 );
             case RotationPlane.XZ:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t)),
                     new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
                 );
             case RotationPlane.YZ:
-                return new Rotation4
+                return new Quatpair
                 (
                     new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t)),
                     new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))

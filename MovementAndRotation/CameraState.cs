@@ -39,7 +39,7 @@ public class CameraState : MonoBehaviour
     private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
 
     public Vector4 position = Vector4.zero;
-    public Rotation4 rotation = new Rotation4();
+    public Quatpair rotation = new Quatpair();
 
     ///// <summary>
     ///// Used to display the rotation in the UI, and to update the rotation slider values.
@@ -83,7 +83,7 @@ public class CameraState : MonoBehaviour
     /// </summary>
     public void SetRotation(RotationEuler4 rotation)
     {
-        this.rotation = new Rotation4(rotation);
+        this.rotation = new Quatpair(rotation);
 
         sceneUiHandler.UpdateQuaternionPairRotationSliders(this.rotation);
     }
@@ -136,7 +136,7 @@ public class CameraState : MonoBehaviour
 
         sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
-    public void UpdateRotation(Rotation4 newRotation)
+    public void UpdateRotation(Quatpair newRotation)
     {
         rotation = newRotation;
 

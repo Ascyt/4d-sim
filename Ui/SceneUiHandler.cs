@@ -156,7 +156,7 @@ public class SceneUiHandler : MonoBehaviour
         xzSlider.SetValueWithoutNotify(rotationEuler.xz);
         yzSlider.SetValueWithoutNotify(rotationEuler.yz);
     }
-    public void UpdateQuaternionPairRotationSliders(Rotation4 rotation)
+    public void UpdateQuaternionPairRotationSliders(Quatpair rotation)
     {
         if (!displayQuaternionPair)
         {
@@ -174,7 +174,7 @@ public class SceneUiHandler : MonoBehaviour
     }
 
     private bool isEditingText = false;
-    private Rotation4 newRotation = Rotation4.identity;
+    private Quatpair newRotation = Quatpair.identity;
     private bool previousCameraMovementEnabled;
     private bool previousCameraRotationEnabled;
     private bool previousCameraStateEnabled;
@@ -232,7 +232,7 @@ public class SceneUiHandler : MonoBehaviour
         if (!float.TryParse(rzInput.text, out float rz))
             rz = 0f;
 
-        newRotation = new Rotation4(
+        newRotation = new Quatpair(
             new Quaternion(lx, ly, lz, lw),
             new Quaternion(rx, ry, rz, rw)
         );
