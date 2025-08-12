@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum VideoHypercubesBState
+public enum VideoHypercubesCState
 {
     Start,
     XAxis,
@@ -16,20 +16,17 @@ public enum VideoHypercubesBState
     ActualStart,
     DuplicateSquare,
     MakeCube,
+    HighlightAndUnhighlightSideFaces,
     HighlightBackFace,
+    RotateCubeToFirstEdge,
+    RotateCubeToSide,
+    RotateCubeToSecondEdge,
+    RotateCubeToFront,
     UnhighlightBackFace,
-    HighlightFrontFace,
-    UnhighlightFrontFace,
-    DuplicateCube,
-    MakeTesseract,
-    HighlightBackCell,
-    UnhighlightBackCell,
-    HighlightFrontCell,
-    UnhighlightFrontCell,
 }
 
 [RequireComponent(typeof(Camera))]
-public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
+public class VideoHypercubesC : AnimatedStateMachine<VideoHypercubesCState>
 {
     [SerializeField]
     private GameObject centerSphereObject;
@@ -49,41 +46,42 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
     private readonly List<GameObject> currentHypercubeVertices = new();
     private readonly List<LineRenderer> currentHypercubeLines = new();
     private readonly List<GameObject> unconnectedHypercubeVertices = new();
+    private GameObject hypercubeParent;
 
     private GameObject highlightedFaceObject;
+    private readonly List<GameObject> highlightedFaceObjects = new();
 
     private Camera cam;
 
     private Fading DefaultFading => new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
-    private readonly Dictionary<VideoHypercubesBState, float> _autoSkipStates = new()
+    private readonly Dictionary<VideoHypercubesCState, float> _autoSkipStates = new()
     {
-        { VideoHypercubesBState.Start, 0f },
-        { VideoHypercubesBState.XAxis, 0f },
-        { VideoHypercubesBState.AddFirstVertex, 0f },
-        { VideoHypercubesBState.DuplicateVertex, 0f },
-        { VideoHypercubesBState.MakeLine, 0f },
-        { VideoHypercubesBState.YAxis, 0f },
-        { VideoHypercubesBState.DuplicateLine, 0f },
-        { VideoHypercubesBState.MakeSquare, 0f },
-        { VideoHypercubesBState.OrthographicToPerspective, 0f },
-        { VideoHypercubesBState.ZAxis, 0f },
-
-        { VideoHypercubesBState.UnhighlightBackFace, 1f },
-        { VideoHypercubesBState.UnhighlightBackCell, 1f }
+        { VideoHypercubesCState.Start, 0f },
+        { VideoHypercubesCState.XAxis, 0f },
+        { VideoHypercubesCState.AddFirstVertex, 0f },
+        { VideoHypercubesCState.DuplicateVertex, 0f },
+        { VideoHypercubesCState.MakeLine, 0f },
+        { VideoHypercubesCState.YAxis, 0f },
+        { VideoHypercubesCState.DuplicateLine, 0f },
+        { VideoHypercubesCState.MakeSquare, 0f },
+        { VideoHypercubesCState.OrthographicToPerspective, 0f },
+        { VideoHypercubesCState.ZAxis, 0f },
+        { VideoHypercubesCState.ActualStart, 0f },
+        { VideoHypercubesCState.DuplicateSquare, 0f },
     };
 
-    protected override Dictionary<VideoHypercubesBState, float> AutoSkipStates => _autoSkipStates;
+    protected override Dictionary<VideoHypercubesCState, float> AutoSkipStates => _autoSkipStates;
 
 
-    protected override void OnEnterState(VideoHypercubesBState state)
+    protected override void OnEnterState(VideoHypercubesCState state)
     {
         switch (state)
         {
-            case VideoHypercubesBState.Start:
+            case VideoHypercubesCState.Start:
                 OnStart();
                 return;
 
-            case VideoHypercubesBState.XAxis:
+            case VideoHypercubesCState.XAxis:
                 xAxisObject.SetActive(true);
 
                 Fade(DefaultFading,
@@ -95,7 +93,7 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
 
                 return;
 
-            case VideoHypercubesBState.AddFirstVertex:
+            case VideoHypercubesCState.AddFirstVertex:
                 GameObject vertex = Instantiate(vertexObjectPrefab, new Vector3(3, 0, 0), Quaternion.identity);
 
                 vertex.SetActive(true);
@@ -109,15 +107,15 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
                 return;
 
-            case VideoHypercubesBState.DuplicateVertex:
+            case VideoHypercubesCState.DuplicateVertex:
                 DuplicateCurrentHypercube(new Vector3(2, 0, 0), 1f);
                 return;
 
-            case VideoHypercubesBState.MakeLine:
+            case VideoHypercubesCState.MakeLine:
                 ConnectHypercubes();
                 return;
 
-            case VideoHypercubesBState.YAxis:
+            case VideoHypercubesCState.YAxis:
                 yAxisObject.SetActive(true);
 
                 Fade(DefaultFading,
@@ -128,15 +126,15 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
                 return;
 
-            case VideoHypercubesBState.DuplicateLine:
+            case VideoHypercubesCState.DuplicateLine:
                 DuplicateCurrentHypercube(new Vector3(0, 2, 0), 1f);
                 return;
 
-            case VideoHypercubesBState.MakeSquare:
+            case VideoHypercubesCState.MakeSquare:
                 ConnectHypercubes();
                 return;
 
-            case VideoHypercubesBState.OrthographicToPerspective:
+            case VideoHypercubesCState.OrthographicToPerspective:
                 Fade(new Fading(0.5f, new Easing(Easing.Type.Expo, Easing.IO.Out)),
                     (fadingValue, isExit) =>
                     {
@@ -145,7 +143,7 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
                 return;
 
-            case VideoHypercubesBState.ZAxis:
+            case VideoHypercubesCState.ZAxis:
                 zAxisObject.SetActive(true);
 
                 Fade(DefaultFading,
@@ -156,20 +154,71 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
                 return;
 
-            case VideoHypercubesBState.ActualStart:
+            case VideoHypercubesCState.ActualStart:
                 transform.position = new Vector3(4f, 1f, -3f);
                 centerSphereObject.SetActive(false);
                 return;
 
-            case VideoHypercubesBState.DuplicateSquare:
+            case VideoHypercubesCState.DuplicateSquare:
                 DuplicateCurrentHypercube(new Vector3(0, 0, 2), 1f);
                 return;
 
-            case VideoHypercubesBState.MakeCube:
+            case VideoHypercubesCState.MakeCube:
                 ConnectHypercubes();
                 return;
 
-            case VideoHypercubesBState.HighlightBackFace:
+            case VideoHypercubesCState.HighlightAndUnhighlightSideFaces:
+                // Hypercube parent
+                hypercubeParent = new GameObject("HypercubeParent");
+                hypercubeParent.transform.position = new Vector3(4f, 1f, 1f);
+                foreach (GameObject vertex1 in currentHypercubeVertices)
+                {
+                    vertex1.transform.SetParent(hypercubeParent.transform, true);
+                }
+                foreach (LineRenderer line in currentHypercubeLines)
+                {
+                    line.transform.SetParent(hypercubeParent.transform, true);
+                }
+
+                AddFace(new Vector3(4f, 2f, 1f), new Vector3(2f, 0f, 2f), 0.0f); // top
+                AddFace(new Vector3(5f, 1f, 1f), new Vector3(0f, 2f, 2f), 0.5f); // right
+                AddFace(new Vector3(4f, 0f, 1f), new Vector3(2f, 0f, 2f), 1.0f); // bottom
+                AddFace(new Vector3(3f, 1f, 1f), new Vector3(0f, 2f, 2f), 1.5f); // left
+
+                void AddFace(Vector3 position, Vector3 scale, float delay)
+                {
+                    GameObject newFace = Instantiate(highlightableCubePrefab, position, Quaternion.identity);
+                    newFace.transform.localScale = scale;
+                    newFace.SetActive(true);
+
+                    highlightedFaceObjects.Add(newFace);
+
+                    MeshRenderer mr = newFace.GetComponent<MeshRenderer>();
+                    mr.material = new Material(mr.material);
+                    Material mat = mr.material;
+
+                    Fade(new Fading(0.5f, new Easing(Easing.Type.Sine, Easing.IO.InOut), delay),
+                        (fadingValue, isExit) =>
+                        {
+                            mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
+                        });
+
+                    Fade(new Fading(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut), delay + 0.5f),
+                        (fadingValue, isExit) =>
+                        {
+                            mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
+
+                            if (isExit)
+                            {
+                                highlightedFaceObjects.Remove(newFace);
+                                Destroy(mr.material);
+                                Destroy(newFace);
+                            }
+                        }, runWhileOnDelay:false);
+                }
+                return;
+
+            case VideoHypercubesCState.HighlightBackFace:
                 if (highlightedFaceObject != null)
                 {
                     Destroy(highlightedFaceObject);
@@ -177,6 +226,7 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                 highlightedFaceObject = Instantiate(highlightableCubePrefab, new Vector3(4f, 1f, 2f), Quaternion.identity);
                 highlightedFaceObject.transform.localScale = new Vector3(2f, 2f, 0f);
                 highlightedFaceObject.SetActive(true);
+                highlightedFaceObject.transform.SetParent(hypercubeParent.transform, true);
 
                 MeshRenderer mr = highlightedFaceObject.GetComponent<MeshRenderer>();
                 mr.material = new Material(mr.material);
@@ -189,7 +239,20 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
                 return;
 
-            case VideoHypercubesBState.UnhighlightBackFace:
+            case VideoHypercubesCState.RotateCubeToFirstEdge:
+                RotateCube(Quaternion.Euler(0, 45, 0));
+                return;
+            case VideoHypercubesCState.RotateCubeToSide:
+                RotateCube(Quaternion.Euler(0, 90, 0));
+                return;
+            case VideoHypercubesCState.RotateCubeToSecondEdge:
+                RotateCube(Quaternion.Euler(0, 135, 0));
+                return;
+            case VideoHypercubesCState.RotateCubeToFront:
+                RotateCube(Quaternion.Euler(0, 180, 0));
+                return;
+
+            case VideoHypercubesCState.UnhighlightBackFace:
                 MeshRenderer mr1 = highlightedFaceObject.GetComponent<MeshRenderer>();
                 mr1.material = new Material(mr1.material);
 
@@ -207,125 +270,21 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
                     });
 
                 return;
-
-            case VideoHypercubesBState.HighlightFrontFace:
-                highlightedFaceObject = Instantiate(highlightableCubePrefab, new Vector3(4f, 1f, 0f), Quaternion.identity);
-                highlightedFaceObject.transform.localScale = new Vector3(2f, 2f, 0f);
-
-                MeshRenderer mr2 = highlightedFaceObject.GetComponent<MeshRenderer>();
-                mr2.material = new Material(mr2.material);
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr2.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
-                    });
-
-                return;
-
-            case VideoHypercubesBState.UnhighlightFrontFace:
-                MeshRenderer mr3 = highlightedFaceObject.GetComponent<MeshRenderer>();
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr3.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
-
-                        if (isExit)
-                        {
-                            Destroy(mr3.material);
-                            Destroy(highlightedFaceObject);
-                        }
-                    });
-
-                return;
-
-            case VideoHypercubesBState.DuplicateCube:
-                DuplicateCurrentHypercube(new Vector3(0, 0, 0), .5f);
-                return;
-
-            case VideoHypercubesBState.MakeTesseract:
-                ConnectHypercubes();
-                return;
-
-            case VideoHypercubesBState.HighlightBackCell:
-                if (highlightedFaceObject != null)
-                {
-                    Destroy(highlightedFaceObject);
-                }
-                highlightedFaceObject = Instantiate(highlightableCubePrefab, new Vector3(4f, 1f, 1f), Quaternion.identity);
-                highlightedFaceObject.transform.localScale = new Vector3(1f, 1f, 1f);
-                highlightedFaceObject.SetActive(true);
-
-                MeshRenderer mr4 = highlightedFaceObject.GetComponent<MeshRenderer>();
-                mr4.material = new Material(mr4.material);
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr4.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
-                    });
-                return;
-
-            case VideoHypercubesBState.UnhighlightBackCell:
-                MeshRenderer mr5 = highlightedFaceObject.GetComponent<MeshRenderer>();
-                mr5.material = new Material(mr5.material);
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr5.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
-
-                        if (isExit)
-                        {
-                            Destroy(mr5.material);
-                            Destroy(highlightedFaceObject);
-                        }
-                    });
-
-                return;
-
-            case VideoHypercubesBState.HighlightFrontCell:
-                highlightedFaceObject = Instantiate(highlightableCubePrefab, new Vector3(4f, 1f, 1f), Quaternion.identity);
-                highlightedFaceObject.transform.localScale = new Vector3(2f, 2f, 2f);
-
-                MeshRenderer mr6 = highlightedFaceObject.GetComponent<MeshRenderer>();
-                mr6.material = new Material(mr6.material);
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr6.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, fadingValue * .5f);
-                    });
-
-                return;
-
-            case VideoHypercubesBState.UnhighlightFrontCell:
-                MeshRenderer mr7 = highlightedFaceObject.GetComponent<MeshRenderer>();
-
-                Fade(DefaultFading,
-                    (fadingValue, isExit) =>
-                    {
-                        Material mat = mr7.material;
-                        mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, (1f - fadingValue) * .5f);
-
-                        if (isExit)
-                        {
-                            Destroy(mr7.material);
-                            Destroy(highlightedFaceObject);
-                        }
-                    });
-
-                return;
         }
     }
 
-    protected override void BeforeExitState(VideoHypercubesBState state)
+    private void RotateCube(Quaternion endRotation)
+    {
+        Quaternion startRotation = hypercubeParent.transform.rotation;
+
+        Fade(new Fading(2f, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
+            (fadingValue, isExit) =>
+            {
+                hypercubeParent.transform.rotation = Quaternion.Slerp(startRotation, endRotation, fadingValue);
+            });
+    }
+
+    protected override void BeforeExitState(VideoHypercubesCState state)
     {
 
     }
@@ -455,10 +414,22 @@ public class VideoHypercubesB : AnimatedStateMachine<VideoHypercubesBState>
         }
         unconnectedHypercubeVertices.Clear();
 
+        foreach (GameObject obj in highlightedFaceObjects)
+        {
+            Destroy(obj);
+        }
+        highlightedFaceObjects.Clear();
+
         if (highlightedFaceObject != null)
         {
             Destroy(highlightedFaceObject);
             highlightedFaceObject = null;
+        }
+
+        if (hypercubeParent != null)
+        {
+            Destroy(hypercubeParent);
+            hypercubeParent = null;
         }
     }
 }

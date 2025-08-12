@@ -24,29 +24,32 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
 
     private T _currentState = default!;
     public T CurrentState { get => _currentState; set => SetState(value); }
-    public int StateCount = Enum.GetValues(typeof(T)).Length;
+    public int StateCount => Enum.GetValues(typeof(T)).Length;
 
 
     private struct FadeData
     {
         public Fading fading;
         public FadeUpdate func;
+        public bool runWhileOnDelay;
     }
     private readonly HashSet<FadeData> _singleFades = new();
     public delegate void FadeUpdate(float fadingValue, bool isExit);
-    protected void Fade(Fading fading, FadeUpdate func)
+    protected void Fade(Fading fading, FadeUpdate func, bool runWhileOnDelay=true)
     {
         FadeData newData = new()
         {
             fading = fading,
-            func = func
+            func = func,
+            runWhileOnDelay = runWhileOnDelay
         };
 
         _singleFades.Add(newData);
 
         fading.StartFade();
 
-        func(newData.fading.value, isExit: false);
+        if (runWhileOnDelay || fading.delayTimeLeft <= 0f)
+            func(newData.fading.value, isExit: false);
     }
 
 
@@ -129,7 +132,9 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         foreach (FadeData data in _singleFades)
         {
             data.fading.StartFade();
-            data.func(data.fading.value, isExit: false);
+
+            if (data.runWhileOnDelay || data.fading.delayTimeLeft <= 0f)
+                data.func(data.fading.value, isExit: false);
         }
 
         OnEnterState(_currentState);
@@ -147,7 +152,9 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     {
         foreach (FadeData data in _singleFades.ToArray())
         {
-            data.func(data.fading.value, isExit: false);
+            if (data.runWhileOnDelay || data.fading.delayTimeLeft <= 0f)
+                data.func(data.fading.value, isExit: false);
+
             data.fading.UpdateFade(deltaTime);
 
             if (!data.fading.isFading)
@@ -162,7 +169,8 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     {
         foreach (FadeData data in _singleFades)
         {
-            data.func(data.fading.value, isExit: false);
+            if (data.runWhileOnDelay || data.fading.delayTimeLeft <= 0f)
+                data.func(data.fading.value, isExit: false);
         }
     }
 
