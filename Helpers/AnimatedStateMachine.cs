@@ -11,6 +11,8 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     protected abstract void BeforeExitState(T state);
     protected abstract void OnStart();
 
+    protected virtual void OnUpdate() { }
+
 
     private readonly HashSet<KeyCode> _nextKeysDefault = new() { KeyCode.RightArrow, KeyCode.Space, KeyCode.PageDown, KeyCode.Return };
     protected virtual HashSet<KeyCode> NextKeys => _nextKeysDefault;
@@ -208,6 +210,8 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         }
 
         UpdateCurrentState(Time.deltaTime);
+
+        OnUpdate();
     }
 
     private void Start()

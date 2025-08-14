@@ -139,6 +139,7 @@ public class ObjectInstantiator : MonoBehaviour
         mf.mesh = mesh;
 
         Material mat = new Material(solidMaterial);
+        mat.hideFlags = HideFlags.DontSave;
         mat.color = color;
 
         mr.material = mat;
@@ -160,6 +161,7 @@ public class ObjectInstantiator : MonoBehaviour
         parent.transform.position = position;
 
         Material mat = new Material(wireframeVertexMaterial);
+        mat.hideFlags = HideFlags.DontSave;
         mat.color = color;
 
         foreach (Vector3? pt in points)
@@ -210,6 +212,7 @@ public class ObjectInstantiator : MonoBehaviour
         verticesObject.Value.gameObj.name = "WireframeObject";
 
         Material mat = new Material(wireframeLineMaterial);
+        mat.hideFlags = HideFlags.DontSave;
         mat.color = color;
 
         // For each connection, create a child GameObject with a LineRenderer.

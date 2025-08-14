@@ -113,8 +113,8 @@ public class HypersceneRenderer : MonoBehaviour
         switch (hypersceneOption)
         {
             case HypersceneOption.Default:
-                hyperscene = new VideoHypercubesHyperscene();
-                //hyperscene = new DefaultHyperscene();
+                //hyperscene = new VideoHypercubesHyperscene();
+                hyperscene = new DefaultHyperscene();
                 break;
             case HypersceneOption.Ground:
                 hyperscene = new GroundHyperscene();

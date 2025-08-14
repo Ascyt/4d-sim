@@ -58,7 +58,7 @@ public class VideoHypercubesHypersceneInteractivity : AnimatedStateMachine<Video
         Fade(new Fading(time, new Easing(Easing.Type.Sine, Easing.IO.InOut)),
             (fadingValue, isExit) =>
             {
-                tesseractRotation = Quatpair.Lerp(startRotation, endRotation, fadingValue);
+                tesseractRotation = Quatpair.Slerp(startRotation, endRotation, fadingValue);
             });
     }
 
