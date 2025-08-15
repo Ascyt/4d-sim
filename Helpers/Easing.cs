@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Easing
+public struct Easing
 {
     public Easing(Type type = Type.Linear, IO io = IO.InOut)
     {
@@ -22,7 +22,7 @@ public class Easing
     public Type type;
     public IO io;
 
-    public float Get(float x) => Get(x, type, io);
+    public readonly float Get(float x) => Get(x, type, io);
     public static float Get(float x, Easing easing) => Get(x, easing.type, easing.io);
 
     public static float Get(float x, Type type, IO io)
@@ -40,96 +40,72 @@ public class Easing
             case Type.Linear:
                 return x;
             case Type.Jump:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return 1;
-                    case IO.Out:
-                        return x >= 1 ? 1 : 0;
-                    default:
-                        return x > 0.5f ? 1 : 0;
-                }
+                    IO.In => 1,
+                    IO.Out => x >= 1 ? 1 : 0,
+                    _ => (float)(x > 0.5f ? 1 : 0),
+                };
             case Type.Sine:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return 1 - Mathf.Cos(x * Mathf.PI / 2f);
-                    case IO.Out:
-                        return Mathf.Sin(x * Mathf.PI / 2f);
-                    default:
-                        return -(Mathf.Cos(Mathf.PI * x) - 1) / 2f;
-                }
+                    IO.In => 1 - Mathf.Cos(x * Mathf.PI / 2f),
+                    IO.Out => Mathf.Sin(x * Mathf.PI / 2f),
+                    _ => -(Mathf.Cos(Mathf.PI * x) - 1) / 2f,
+                };
             case Type.Quad:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return x * x;
-                    case IO.Out:
-                        return 1 - (1 - x) * (1 - x);
-                    default:
-                        return x < 0.5f ? 2 * x * x : 1 - Mathf.Pow(-2 * x + 2, 2) / 2f;
-                }
+                    IO.In => x * x,
+                    IO.Out => 1 - (1 - x) * (1 - x),
+                    _ => x < 0.5f ? 2 * x * x : 1 - Mathf.Pow(-2 * x + 2, 2) / 2f,
+                };
             case Type.Cubic:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return x * x * x;
-                    case IO.Out:
-                        return 1 - Mathf.Pow(1 - x, 3);
-                    default:
-                        return x < 0.5f ? 4 * x * x * x : 1 - Mathf.Pow(-2 * x + 2, 3) / 2f;
-                }
+                    IO.In => x * x * x,
+                    IO.Out => 1 - Mathf.Pow(1 - x, 3),
+                    _ => x < 0.5f ? 4 * x * x * x : 1 - Mathf.Pow(-2 * x + 2, 3) / 2f,
+                };
             case Type.Expo:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return x == 0 ? 0 : Mathf.Pow(2f, 10f * x - 10);
-                    case IO.Out:
-                        return x == 1 ? 1 : 1 - Mathf.Pow(2f, -10f * x);
-                    default:
-                        return x <= 0 ?
-                            0 : x >= 1 ?
-                            1 : x < 0.5f ?
-                            Mathf.Pow(2f, 20f * x - 10) / 2f : (2 - Mathf.Pow(2, -20 * x + 10)) / 2f;
-                }
+                    IO.In => x == 0 ? 0 : Mathf.Pow(2f, 10f * x - 10),
+                    IO.Out => x == 1 ? 1 : 1 - Mathf.Pow(2f, -10f * x),
+                    _ => x <= 0 ?
+                        0 : x >= 1 ?
+                        1 : x < 0.5f ?
+                        Mathf.Pow(2f, 20f * x - 10) / 2f : (2 - Mathf.Pow(2, -20 * x + 10)) / 2f,
+                };
             case Type.Circ:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return 1 - Mathf.Sqrt(1 - Mathf.Pow(x, 2));
-                    case IO.Out:
-                        return Mathf.Sqrt(1 - Mathf.Pow(x - 1, 2));
-                    default:
-                        return x < 0.5f ?
-                            (1 - Mathf.Sqrt(1 - Mathf.Pow(2 * x, 2))) / 2 : (Mathf.Sqrt(1 - Mathf.Pow(-2 * x + 2, 2)) + 1) / 2f;
-                }
+                    IO.In => 1 - Mathf.Sqrt(1 - Mathf.Pow(x, 2)),
+                    IO.Out => Mathf.Sqrt(1 - Mathf.Pow(x - 1, 2)),
+                    _ => x < 0.5f ?
+                                                (1 - Mathf.Sqrt(1 - Mathf.Pow(2 * x, 2))) / 2 : (Mathf.Sqrt(1 - Mathf.Pow(-2 * x + 2, 2)) + 1) / 2f,
+                };
             case Type.Back:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return c3 * x * x * x - c1 * x * x;
-                    case IO.Out:
-                        return 1 + c3 * Mathf.Pow(x - 1, 3) + c1 * Mathf.Pow(x - 1, 2);
-                    default:
-                        return x < 0.5 ? Mathf.Pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2) / 2f : (Mathf.Pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2f;
-                }
+                    IO.In => c3 * x * x * x - c1 * x * x,
+                    IO.Out => 1 + c3 * Mathf.Pow(x - 1, 3) + c1 * Mathf.Pow(x - 1, 2),
+                    _ => x < 0.5 ? Mathf.Pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2) / 2f : (Mathf.Pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2f,
+                };
             case Type.Elastic:
-                switch (io)
+                return io switch
                 {
-                    case IO.In:
-                        return x <= 0 ? 0 :
-                            x >= 1 ?
-                            1 : -Mathf.Pow(2, 10f * x - 10) * Mathf.Sin((x * 10f - 10.75f) * c4);
-                    case IO.Out:
-                        return x <= 0 ?
-                            0 : x >= 1 ?
-                            1 : Mathf.Pow(2, -10 * x) * Mathf.Sin((x * 10f - 0.75f) * c4) + 1;
-                    default:
-                        return x <= 0 ?
-                            0 : x >= 1 ?
-                            1 : x < 0.5f ?
-                            -(Mathf.Pow(2, 20f * x - 10) * Mathf.Sin((20f * x - 11.125f) * c5)) / 2f : (Mathf.Pow(2, -20f * x + 10) * Mathf.Sin((20 * x - 11.125f) * c5)) / 2f + 1;
-                }
+                    IO.In => x <= 0 ? 0 :
+                        x >= 1 ?
+                        1 : -Mathf.Pow(2, 10f * x - 10) * Mathf.Sin((x * 10f - 10.75f) * c4),
+                    IO.Out => x <= 0 ?
+                        0 : x >= 1 ?
+                        1 : Mathf.Pow(2, -10 * x) * Mathf.Sin((x * 10f - 0.75f) * c4) + 1,
+                    _ => x <= 0 ?
+                        0 : x >= 1 ?
+                        1 : x < 0.5f ?
+                        -(Mathf.Pow(2, 20f * x - 10) * Mathf.Sin((20f * x - 11.125f) * c5)) / 2f : (Mathf.Pow(2, -20f * x + 10) * Mathf.Sin((20 * x - 11.125f) * c5)) / 2f + 1,
+                };
             case Type.Bounce:
                 switch (io)
                 {
@@ -149,5 +125,14 @@ public class Easing
                 }
         }
         return x;
+    }
+
+    public readonly Easing WithType(Type newType)
+    {
+        return new Easing(newType, io);
+    }
+    public readonly Easing WithIO(IO newIO)
+    {
+        return new Easing(type, newIO);
     }
 }

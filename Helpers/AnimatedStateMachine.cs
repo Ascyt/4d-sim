@@ -29,15 +29,15 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
     public int StateCount => Enum.GetValues(typeof(T)).Length;
 
 
+    public delegate void FadeFunc(float fadingValue, bool isExit);
     private struct FadeData
     {
         public Fading fading;
-        public FadeUpdate func;
+        public FadeFunc func;
         public bool runWhileOnDelay;
     }
     private readonly HashSet<FadeData> _singleFades = new();
-    public delegate void FadeUpdate(float fadingValue, bool isExit);
-    protected void Fade(Fading fading, FadeUpdate func, bool runWhileOnDelay=true)
+    protected void Fade(Fading fading, FadeFunc func, bool runWhileOnDelay=true)
     {
         FadeData newData = new()
         {
@@ -53,7 +53,25 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         if (runWhileOnDelay || fading.delayTimeLeft <= 0f)
             func(newData.fading.value, isExit: false);
     }
+    public delegate void UpdateFunc(float deltaTime, bool isExit);
+    private class UpdateData
+    {
+        #pragma warning disable CS8618 // "required" keyword doesn't exist in this C# version
+        public UpdateFunc func;
+        #pragma warning restore CS8618 
+    }
+    private readonly HashSet<UpdateData> _singleUpdates = new();
+    protected void OnStateUpdate(UpdateFunc func)
+    {
+        UpdateData newData = new()
+        {
+            func = func
+        };
 
+        _singleUpdates.Add(newData);
+
+        func(0f, isExit: false);
+    }
 
     public void SetState(T state)
     {
@@ -131,6 +149,11 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
 
     public void RestartCurrentState()
     {
+        foreach (UpdateData data in _singleUpdates)
+        {
+            data.func(0f, isExit: false);
+        }
+
         foreach (FadeData data in _singleFades)
         {
             data.fading.StartFade();
@@ -149,6 +172,12 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
             data.func(data.fading.value, isExit: true);
         }
         _singleFades.Clear();
+
+        foreach (UpdateData data in _singleUpdates.ToArray())
+        {
+            data.func(0f, isExit: true);
+            _singleUpdates.Remove(data); 
+        }
     }
     public void UpdateCurrentState(float deltaTime)
     {
@@ -166,6 +195,11 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
                 _singleFades.Remove(data);
             }
         }
+
+        foreach (UpdateData data in _singleUpdates)
+        {
+            data.func(deltaTime, isExit: false);
+        }
     }
     private void RunCurrentState()
     {
@@ -173,6 +207,11 @@ public abstract class AnimatedStateMachine<T> : MonoBehaviour where T : Enum
         {
             if (data.runWhileOnDelay || data.fading.delayTimeLeft <= 0f)
                 data.func(data.fading.value, isExit: false);
+        }
+
+        foreach (UpdateData data in _singleUpdates)
+        {
+            data.func(0f, isExit: false);
         }
     }
 
