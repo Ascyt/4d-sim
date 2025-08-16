@@ -8,7 +8,7 @@ using UnityEngine;
 public enum VideoRotationPlanesState
 {
     Start,
-    ShowRotateObject,
+    ShowRotateParent,
     RotateAroundXAxis,
     RotateAroundYAxis,
     RotateAroundZAxis,
@@ -21,6 +21,13 @@ public enum VideoRotationPlanesState
     RotateInXYPlaneHighlightZAxis,
     RotateInXZPlaneHighlightYAxis,
     RotateInYZPlaneHighlightXAxis,
+    HideRotateCube,
+    ShowCameraSquare,
+    RotateCameraSquareInXZPlane,
+    RotateCameraSquareBack1,
+    RotateCameraSquareInYZPlane,
+    RotateCameraSquareBack2,
+    RotateCameraSquareInXYPlane,
     End
 }
 
@@ -35,7 +42,13 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
     protected override Dictionary<VideoRotationPlanesState, float> AutoSkipStates => _autoSkipStates;
 
     [SerializeField]
-    private GameObject rotatingObject;
+    private GameObject rotatingObjectParent;
+    [SerializeField]
+    private GameObject rotatingCube;
+    [SerializeField]
+    private GameObject rotatingCameraSquare;
+
+    [Space]
     [SerializeField]
     private MeshRenderer xAxisRenderer;
     [SerializeField]
@@ -49,6 +62,7 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
     [SerializeField]
     private MeshRenderer zAxisArrowRenderer;
 
+    [Space]
     [SerializeField]
     private GameObject xyPlaneObject;
     [SerializeField]
@@ -72,10 +86,10 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
     {
         switch (state)
         {
-            case VideoRotationPlanesState.ShowRotateObject:
+            case VideoRotationPlanesState.ShowRotateParent:
                 Fade(DefaultFading, (fadingValue, isExit) =>
                 {
-                    rotatingObject.transform.localScale = Mathf.Lerp(0f, .5f, fadingValue) * Vector3.one;
+                    rotatingObjectParent.transform.localScale = fadingValue * Vector3.one;
                 });
                 return;
 
@@ -174,9 +188,66 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
                 RotateObjectEuler(new Vector3(360f, 0f, 0f));
                 return;
 
-            case VideoRotationPlanesState.End:
+            case VideoRotationPlanesState.HideRotateCube:
                 UnhighlightYZPlane();
                 UnhighlightXAxis();
+
+                Fade(DefaultFading, (fadingValue, isExit) =>
+                {
+                    rotatingCube.transform.localScale = Vector3.Lerp(Vector3.one * .5f, Vector3.zero, fadingValue);
+                });
+                return;
+
+            case VideoRotationPlanesState.ShowCameraSquare:
+                rotatingObjectParent.transform.rotation = Quaternion.identity;
+
+                Fade(DefaultFading, (fadingValue, isExit) =>
+                {
+                    rotatingCameraSquare.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, fadingValue);
+                });
+                return;
+
+            case VideoRotationPlanesState.RotateCameraSquareInXZPlane:
+                HighlightXZPlane();
+                HighlightYAxis();
+
+                RotateObjectEuler(new Vector3(0f, 180f, 0f));
+                return;
+
+            case VideoRotationPlanesState.RotateCameraSquareBack1:
+                UnhighlightXZPlane();
+                UnhighlightYAxis();
+
+                Quaternion startRotation = rotatingObjectParent.transform.rotation;
+                Fade(DefaultFading, (fadingValue, isExit) =>
+                {
+                    rotatingObjectParent.transform.rotation = Quaternion.Slerp(startRotation, Quaternion.identity, fadingValue);
+                });
+                return;
+
+            case VideoRotationPlanesState.RotateCameraSquareInYZPlane:
+                HighlightYZPlane();
+                HighlightXAxis();
+
+                RotateObjectEuler(new Vector3(180f, 0f, 0f));
+                return;
+
+            case VideoRotationPlanesState.RotateCameraSquareBack2:
+                UnhighlightYZPlane();
+                UnhighlightXAxis();
+
+                Quaternion startRotation1 = rotatingObjectParent.transform.rotation;
+                Fade(DefaultFading, (fadingValue, isExit) =>
+                {
+                    rotatingObjectParent.transform.rotation = Quaternion.Slerp(startRotation1, Quaternion.identity, fadingValue);
+                });
+                return;
+
+            case VideoRotationPlanesState.RotateCameraSquareInXYPlane:
+                HighlightXYPlane();
+                HighlightZAxis();
+
+                RotateObjectEuler(new Vector3(0f, 0f, 360f), rotatingCameraSquare);
                 return;
         }
     }
@@ -186,8 +257,10 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
 
     }
 
-    private void RotateObjectEuler(Vector3 euler)
+    private void RotateObjectEuler(Vector3 euler, GameObject obj = null)
     {
+        obj = obj != null ? obj : rotatingObjectParent;
+
         bool isStarted = false;
 
         Quaternion startRotation = Quaternion.identity;
@@ -196,30 +269,30 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
         {
             if (!isStarted)
             {
-                startRotation = rotatingObject.transform.rotation;
+                startRotation = obj.transform.rotation;
                 // Rotation is half of the per-second rotation speed to adjust for integration over time.
                 fadeInEndRotation = Quaternion.Euler(euler * ROTATION_SPEED / 2f) * startRotation; 
                 isStarted = true;
             }
 
-            rotatingObject.transform.rotation = Quaternion.Slerp(startRotation, fadeInEndRotation, fadingValueA);
+            obj.transform.rotation = Quaternion.Slerp(startRotation, fadeInEndRotation, fadingValueA);
 
             if (isExitA)
             {
                 OnStateUpdate((float deltaTime, bool isExitB) =>
                 {
-                    rotatingObject.transform.rotation = Quaternion.Euler(ROTATION_SPEED * deltaTime * euler) * rotatingObject.transform.rotation;
+                    obj.transform.rotation = Quaternion.Euler(ROTATION_SPEED * deltaTime * euler) * obj.transform.rotation;
 
                     if (isExitB)
                     {
-                        Quaternion fadeOutStartRotation = rotatingObject.transform.rotation;
+                        Quaternion fadeOutStartRotation = obj.transform.rotation;
                         Quaternion endRotation = Quaternion.Euler(euler * ROTATION_SPEED / 2f) * fadeOutStartRotation;
 
                         rotationResidue = 1f;
 
                         Fade(DefaultFading.WithEasingIO(Easing.IO.Out), (fadingValueB, isExitC) =>
                         {
-                            rotatingObject.transform.rotation = Quaternion.Slerp(fadeOutStartRotation, endRotation, fadingValueB);
+                            obj.transform.rotation = Quaternion.Slerp(fadeOutStartRotation, endRotation, fadingValueB);
 
                             rotationResidue = 1f - fadingValueB;
 
@@ -335,8 +408,8 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
         zAxisRenderer.material.color = new Color(0f, .25f, .5f, 1f);
         zAxisArrowRenderer.material.color = new Color(0f, .25f, .5f, 1f);
 
-        rotatingObject.transform.localScale = Vector3.zero;
-        rotatingObject.transform.rotation = Quaternion.identity;
+        rotatingObjectParent.transform.localScale = Vector3.zero;
+        rotatingObjectParent.transform.rotation = Quaternion.identity;
 
         rotationResidue = 0f;
 
@@ -347,5 +420,8 @@ public class VideoRotationPlanes : AnimatedStateMachine<VideoRotationPlanesState
         xyPlaneObject.transform.localScale = Vector3.zero;
         xzPlaneObject.transform.localScale = Vector3.zero;
         yzPlaneObject.transform.localScale = Vector3.zero;
+
+        rotatingCube.transform.localScale = Vector3.one * .5f;
+        rotatingCameraSquare.transform.localScale = Vector3.zero;
     }
 }
