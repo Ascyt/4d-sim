@@ -52,7 +52,7 @@ public class CameraState : MonoBehaviour
         hypersceneRenderer = GetComponent<HypersceneRenderer>();
 
         sceneUiHandler.cameraState = this;
-        rotation = Rotation4.identity;
+        rotation = Quatpair.identity;
     }
     private void Start()
     {
@@ -81,10 +81,10 @@ public class CameraState : MonoBehaviour
     /// </summary>
     public void ResetRotation()
     {
-        this.rotation = new Quatpair(rotation);
+        UpdateRotation(Quatpair.identity);
         absoluteModeRotationAngles = Vector3.zero;
 
-        sceneUiHandler.UpdateQuaternionPairRotationSliders(this.rotation);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
         sceneUiHandler.OnAbsoluteRotationChange(Vector3.zero);
     }
     /// <summary>
@@ -116,7 +116,7 @@ public class CameraState : MonoBehaviour
             absoluteModeRotationAngles.y = Mathf.Clamp(absoluteModeRotationAngles.y, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
             absoluteModeRotationAngles.z = Mathf.Clamp(absoluteModeRotationAngles.z, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
             
-            rotation = Rotation4.identity
+            rotation = Quatpair.identity
                 .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XW, absoluteModeRotationAngles.x, false)
                 .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.y, false)
                 .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.z, false);

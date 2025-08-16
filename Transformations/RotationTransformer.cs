@@ -29,7 +29,7 @@ public static class RotationTransformer
             .ApplyRotationInSinglePlane(RotationPlane.XZ, delta.xz, worldSpace)
             .ApplyRotationInSinglePlane(RotationPlane.YZ, delta.yz, worldSpace);
     }
-    public static Rotation4 ApplyRotationInSinglePlane(this Rotation4 rotation, RotationPlane plane, float delta, bool worldSpace)
+    public static Quatpair ApplyRotationInSinglePlane(this Quatpair rotation, RotationPlane plane, float delta, bool worldSpace)
     {
         if (delta == 0f)
             return rotation;
