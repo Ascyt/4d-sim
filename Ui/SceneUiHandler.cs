@@ -81,6 +81,12 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private Slider zwSliderAbsolute;
     [SerializeField]
+    private Slider xySliderAbsolute;
+    [SerializeField]
+    private Slider xzSliderAbsolute;
+    [SerializeField]
+    private Slider yzSliderAbsolute;
+    [SerializeField]
     private GameObject relativeModeParent;
     [SerializeField]
     private GameObject absoluteModeParent;
@@ -178,25 +184,25 @@ public class SceneUiHandler : MonoBehaviour
         xzSlider.SetValueWithoutNotify(rotationEuler.xz);
         yzSlider.SetValueWithoutNotify(rotationEuler.yz);
     }
-    public void UpdateQuaternionPairRotationSliders(Rotation4 rotation)
+    public void UpdateQuaternionPairRotationSliders(Quatpair rotation)
     {
         if (!displayQuaternionPair)
         {
             return;
         }
 
-        lwInput.SetTextWithoutNotify(rotation.leftQuaternion.w.ToString("F6"));
-        lxInput.SetTextWithoutNotify(rotation.leftQuaternion.x.ToString("F6"));
-        lyInput.SetTextWithoutNotify(rotation.leftQuaternion.y.ToString("F6"));
-        lzInput.SetTextWithoutNotify(rotation.leftQuaternion.z.ToString("F6"));
-        rwInput.SetTextWithoutNotify(rotation.rightQuaternion.w.ToString("F6"));
-        rxInput.SetTextWithoutNotify(rotation.rightQuaternion.x.ToString("F6"));
-        ryInput.SetTextWithoutNotify(rotation.rightQuaternion.y.ToString("F6"));
-        rzInput.SetTextWithoutNotify(rotation.rightQuaternion.z.ToString("F6"));
+        lwInput.SetTextWithoutNotify(rotation.l.w.ToString("F6"));
+        lxInput.SetTextWithoutNotify(rotation.l.x.ToString("F6"));
+        lyInput.SetTextWithoutNotify(rotation.l.y.ToString("F6"));
+        lzInput.SetTextWithoutNotify(rotation.l.z.ToString("F6"));
+        rwInput.SetTextWithoutNotify(rotation.r.w.ToString("F6"));
+        rxInput.SetTextWithoutNotify(rotation.r.x.ToString("F6"));
+        ryInput.SetTextWithoutNotify(rotation.r.y.ToString("F6"));
+        rzInput.SetTextWithoutNotify(rotation.r.z.ToString("F6"));
     }
 
     private bool isEditingText = false;
-    private Rotation4 newRotation = Rotation4.identity;
+    private Quatpair newRotation = Quatpair.identity;
     private bool previousCameraMovementEnabled;
     private bool previousCameraRotationEnabled;
     private bool previousCameraStateEnabled;
@@ -254,7 +260,7 @@ public class SceneUiHandler : MonoBehaviour
         if (!float.TryParse(rzInput.text, out float rz))
             rz = 0f;
 
-        newRotation = new Rotation4(
+        newRotation = new Quatpair(
             new Quaternion(lx, ly, lz, lw),
             new Quaternion(rx, ry, rz, rw)
         );
@@ -269,24 +275,25 @@ public class SceneUiHandler : MonoBehaviour
     {
         float pow = 2f;
 
-        RotationEuler4 sliderRotationEuler = new(
-            absoluteMode ? 0 : Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow),
-            absoluteMode ? 0 : Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow),
-            absoluteMode ? 0 : Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow),
-            Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow),
-            Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
-            Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
-
-        cameraState.cameraRotation.continuousRotationDelta = sliderRotationEuler;
-
-        if (absoluteMode)
+        if (!absoluteMode)
         {
-            cameraState.absoluteModeRotationAngles = new Vector3(
+            cameraState.cameraRotation.continuousRotationDelta = new RotationEuler4(
+                Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow),
+                Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow),
+                Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow),
+                Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow),
+                Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
+                Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
+        }
+        else
+        {
+            cameraState.UpdateAbsoluteRotation(new RotationEuler4(
                 xwSliderAbsolute.value,
                 ywSliderAbsolute.value,
-                zwSliderAbsolute.value);
-
-            cameraState.UpdateRotationDelta(RotationEuler4.zero);
+                zwSliderAbsolute.value,
+                xySliderAbsolute.value,
+                xzSliderAbsolute.value,
+                yzSliderAbsolute.value));
         }
     }
     public void OnRotationSliderEndDrag()
@@ -360,10 +367,13 @@ public class SceneUiHandler : MonoBehaviour
         absoluteModeParent.SetActive(absoluteMode);
         relativeModeParent.SetActive(!absoluteMode);
     }
-    public void OnAbsoluteRotationChange(Vector3 newValues)
+    public void OnAbsoluteRotationChange(RotationEuler4 newValues)
     {
-        xwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.x + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
-        ywSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.y + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
-        zwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.z + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        xwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xw + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        ywSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yw + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        zwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.zw + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        xySliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xy + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        xzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        yzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
     }
 }

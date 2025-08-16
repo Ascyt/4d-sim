@@ -19,7 +19,7 @@ public class CameraState : MonoBehaviour
     public bool useDvorak = true;
 
     public bool absoluteMode; 
-    public Vector3 absoluteModeRotationAngles = Vector3.zero;
+    public RotationEuler4 absoluteModeRotationAngles = RotationEuler4.zero;
 
     [HideInInspector]
     public CameraPosition cameraMovement;
@@ -36,7 +36,7 @@ public class CameraState : MonoBehaviour
     private readonly KeyCode movementRotationSwitchKey = KeyCode.Tab;
 
     public Vector4 position = Vector4.zero;
-    public Rotation4 rotation;
+    public Quatpair rotation = new Quatpair();
 
     ///// <summary>
     ///// Used to display the rotation in the UI, and to update the rotation slider values.
@@ -52,7 +52,7 @@ public class CameraState : MonoBehaviour
         hypersceneRenderer = GetComponent<HypersceneRenderer>();
 
         sceneUiHandler.cameraState = this;
-        rotation = Rotation4.identity;
+        rotation = Quatpair.identity;
     }
     private void Start()
     {
@@ -81,12 +81,11 @@ public class CameraState : MonoBehaviour
     /// </summary>
     public void ResetRotation()
     {
-        absoluteModeRotationAngles = Vector3.zero;
+        UpdateRotation(Quatpair.identity);
+        absoluteModeRotationAngles = RotationEuler4.zero;
 
-        UpdateRotation(Rotation4.identity);
-
-        sceneUiHandler.UpdateQuaternionPairRotationSliders(this.rotation);
-        sceneUiHandler.OnAbsoluteRotationChange(Vector3.zero);
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
+        sceneUiHandler.OnAbsoluteRotationChange(absoluteModeRotationAngles);
     }
     /// <summary>
     /// Does not cause view refresh
@@ -106,34 +105,43 @@ public class CameraState : MonoBehaviour
 
         sceneUiHandler.UpdatePositionText(position);
     }
-    public void UpdateRotationDelta(RotationEuler4 rotationDelta)
+    public void UpdateRelativeRotationDelta(RotationEuler4 relativeDelta)
     {
+        rotation = rotation.ApplyRotation(relativeDelta, false);
+        
         if (absoluteMode)
         {
-            absoluteModeRotationAngles += new Vector3(rotationDelta.xw, rotationDelta.yw, rotationDelta.zw);
-
-            float epsilon = 1f / 4096f;
-
-            absoluteModeRotationAngles.y = Mathf.Clamp(absoluteModeRotationAngles.y, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
-            absoluteModeRotationAngles.z = Mathf.Clamp(absoluteModeRotationAngles.z, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
-            
-            rotation = Rotation4.identity
-                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XW, absoluteModeRotationAngles.x, false)
-                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.y, false)
-                .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.z, false);
-
-            sceneUiHandler.OnAbsoluteRotationChange(absoluteModeRotationAngles);
-        }
-        else
-        {
-            rotation = rotation.ApplyRotation(rotationDelta, false);
+            UpdateAbsoluteRotation(absoluteModeRotationAngles + relativeDelta);
+            return;
         }
 
         hypersceneRenderer.RerenderAll();
-
         sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
     }
-    public void UpdateRotation(Rotation4 newRotation)
+    public void UpdateAbsoluteRotation(RotationEuler4 newRotation)
+    {
+        absoluteModeRotationAngles = newRotation;
+
+        float epsilon = 1f / 4096f;
+
+        absoluteModeRotationAngles.yw = Mathf.Clamp(absoluteModeRotationAngles.yw, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
+        absoluteModeRotationAngles.zw = Mathf.Clamp(absoluteModeRotationAngles.zw, -Mathf.PI / 2f + epsilon, Mathf.PI / 2f - epsilon);
+
+        rotation = Quatpair.identity
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XW, absoluteModeRotationAngles.xw, false)
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YW, absoluteModeRotationAngles.yw, false)
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.ZW, absoluteModeRotationAngles.zw, false)
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XY, absoluteModeRotationAngles.xy, false)
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.XZ, absoluteModeRotationAngles.xz, false)
+            .ApplyRotationInSinglePlane(RotationTransformer.RotationPlane.YZ, absoluteModeRotationAngles.yz, false);
+
+        sceneUiHandler.OnAbsoluteRotationChange(absoluteModeRotationAngles);
+
+        hypersceneRenderer.RerenderAll();
+        sceneUiHandler.UpdateQuaternionPairRotationSliders(rotation);
+    }
+
+    public void UpdateRotation(Quatpair newRotation)
     {
         rotation = newRotation;
 

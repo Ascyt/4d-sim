@@ -90,7 +90,7 @@ public class CameraRotation : MonoBehaviour
 
         if (rotationUpdated)
         {
-            cameraState.UpdateRotationDelta(rotationDelta);
+            cameraState.UpdateRelativeRotationDelta(rotationDelta);
         }
     }
 }

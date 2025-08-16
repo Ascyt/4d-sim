@@ -69,18 +69,30 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void LateUpdate()
     {
-        List<Hyperobject>? rerenderObjects = hyperscene!.Update();
+        (List<Hyperobject>?, List<Hyperobject>?) rerenderObjects = hyperscene!.Update();
 
-        if (rerenderObjects is null)
-            return;
-
-        foreach (Hyperobject rerenderObject in rerenderObjects)
+        if (rerenderObjects.Item1 != null)
         {
-            _ = !rendering.RemoveSingleObject(rerenderObject);
-
-            foreach (ConnectedVertices connectedVertices in rerenderObject.vertices)
+            foreach (Hyperobject rerenderObject in rerenderObjects.Item1)
             {
-                rendering.ProjectVertices(connectedVertices, rerenderObject, cameraState.rotation, cameraState.position);
+                _ = !rendering.RemoveSingleObject(rerenderObject);
+
+                foreach (ConnectedVertices connectedVertices in rerenderObject.connectedVertices)
+                {
+                    rendering.ProjectVertices(connectedVertices, rerenderObject, cameraState.rotation, cameraState.position);
+                }
+            }
+        }
+        if (rerenderObjects.Item2 != null)
+        {
+            foreach (Hyperobject rerenderObject in rerenderObjects.Item2)
+            {
+                _ = !rendering.RemoveSingleObject(rerenderObject);
+
+                foreach (ConnectedVertices connectedVertices in rerenderObject.connectedVertices)
+                {
+                    rendering.ProjectFixedVertices(connectedVertices, rerenderObject, cameraState.rotation, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                }
             }
         }
     }
@@ -101,7 +113,11 @@ public class HypersceneRenderer : MonoBehaviour
         switch (hypersceneOption)
         {
             case HypersceneOption.Default:
-                hyperscene = new DefaultHyperscene();
+                //hyperscene = new VideoHypercubesHyperscene();
+                //hyperscene = new VideoMovementHyperscene();
+                hyperscene = new VideoRotationFirstpersonHyperscene();
+
+                //hyperscene = new DefaultHyperscene();
                 break;
             case HypersceneOption.Ground:
                 hyperscene = new GroundHyperscene();
@@ -150,7 +166,7 @@ public class HypersceneRenderer : MonoBehaviour
 
         foreach (Hyperobject obj in hyperscene!.Objects)
         {
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
+            foreach (ConnectedVertices connectedVertices in obj.connectedVertices)
             {
                 rendering.ProjectVertices(connectedVertices, obj, cameraState.rotation, cameraState.position);
             }
@@ -167,7 +183,7 @@ public class HypersceneRenderer : MonoBehaviour
         {
             Vector4 pos = obj.position - cameraState.position;
 
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
+            foreach (ConnectedVertices connectedVertices in obj.connectedVertices)
             {
                 rendering.ProjectVertices(connectedVertices, obj, cameraState.rotation, cameraState.position);
             }
@@ -176,7 +192,7 @@ public class HypersceneRenderer : MonoBehaviour
         // Project the fixed objects
         foreach (Hyperobject fixedObject in hyperscene!.FixedObjects)
         {
-            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
+            foreach (ConnectedVertices connectedVertices in fixedObject.connectedVertices)
             {
                 rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene.IsFixed || hyperscene.IsOrthographic);
             }
@@ -188,7 +204,7 @@ public class HypersceneRenderer : MonoBehaviour
 
         foreach (Hyperobject obj in hyperscene!.Objects)
         {
-            foreach (ConnectedVertices connectedVertices in obj.vertices)
+            foreach (ConnectedVertices connectedVertices in obj.connectedVertices)
             {
                 rendering.ProjectVertices(connectedVertices, obj, cameraState.rotation, cameraState.position);
             }
@@ -207,7 +223,7 @@ public class HypersceneRenderer : MonoBehaviour
     {
         foreach (Hyperobject fixedObject in hyperscene!.FixedObjects)
         {
-            foreach (ConnectedVertices connectedVertices in fixedObject.vertices)
+            foreach (ConnectedVertices connectedVertices in fixedObject.connectedVertices)
             {
                 rendering.ProjectFixedVertices(connectedVertices, fixedObject, cameraState.rotation, !hyperscene!.IsFixed || hyperscene.IsOrthographic);
             }

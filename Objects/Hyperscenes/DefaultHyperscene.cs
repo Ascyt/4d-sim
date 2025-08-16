@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
+
+#nullable enable
 
 /// <summary>
 /// Includes a bunch of tesseracts, cubes and points.
@@ -54,23 +57,20 @@ public class DefaultHyperscene : Hyperscene
         _objects.Add(transformingTesseract);
         _objects.Add(transformingTesseractFace);
     }
-    public override List<Hyperobject> Update()
+    public override (List<Hyperobject>?, List<Hyperobject>?) Update()
     {
-        TransformConnectedVertices(transformingTesseract.vertices, Vector4.zero);
-        TransformConnectedVertices(transformingTesseractFace.vertices, transformingTesseractFace.position - transformingTesseract.position);
+        TransformConnectedVertices(transformingTesseract, transformingTesseractPosition);
+        TransformConnectedVertices(transformingTesseractFace, transformingTesseractPosition);
 
-        return new List<Hyperobject>() { transformingTesseract, transformingTesseractFace };
+        return (new List<Hyperobject>() { transformingTesseract, transformingTesseractFace }, null);
     }
-    private void TransformConnectedVertices(ConnectedVertices[] connectedVertices, Vector4 positionDelta)
+    private void TransformConnectedVertices(Hyperobject obj, Vector4 rotateAroundPoint)
     {
         float speed = Time.deltaTime * 2 * Mathf.PI / 4f;
 
-        Rotation4 rotation = new Rotation4(speed, 0, 0, 0, 0, 0);
-        foreach (ConnectedVertices vertices in connectedVertices)
-        {
-            vertices.vertices = vertices.vertices
-                .Select(v => (v + positionDelta).ApplyRotation(rotation) - positionDelta)
-                .ToArray();
-        }
+        Quatpair rotation = new Quatpair(speed, 0, 0, 0, 0, 0) * obj.Rotation;
+
+        obj.Rotation = rotation;
+        obj.position = (rotation * (obj.startPosition - rotateAroundPoint)) + rotateAroundPoint;
     }
 }

@@ -19,7 +19,7 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    public static Rotation4 ApplyRotation(this Rotation4 rotation, RotationEuler4 delta, bool worldSpace)
+    public static Quatpair ApplyRotation(this Quatpair rotation, RotationEuler4 delta, bool worldSpace)
     {
         return rotation
             .ApplyRotationInSinglePlane(RotationPlane.XW, delta.xw, worldSpace)
@@ -29,14 +29,14 @@ public static class RotationTransformer
             .ApplyRotationInSinglePlane(RotationPlane.XZ, delta.xz, worldSpace)
             .ApplyRotationInSinglePlane(RotationPlane.YZ, delta.yz, worldSpace);
     }
-    public static Rotation4 ApplyRotationInSinglePlane(this Rotation4 rotation, RotationPlane plane, float delta, bool worldSpace)
+    public static Quatpair ApplyRotationInSinglePlane(this Quatpair rotation, RotationPlane plane, float delta, bool worldSpace)
     {
         if (delta == 0f)
             return rotation;
 
         return rotation.ApplyRotation(GetRotationForPlane(plane, delta), worldSpace);
     }
-    public static Rotation4 ApplyRotation(this Rotation4 rotation, Rotation4 delta, bool worldSpace)
+    public static Quatpair ApplyRotation(this Quatpair rotation, Quatpair delta, bool worldSpace)
     {
         if (worldSpace)
         {
@@ -49,73 +49,55 @@ public static class RotationTransformer
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    public static Vector4 ApplyRotation(this Vector4 vector, Rotation4 rotation, Rotation4? alignment=null)
+    public static Vector4 ApplyRotation(this Vector4 vector, Quatpair rotation, Quatpair? alignment=null)
     {
         if (alignment.HasValue)
         {
             // Apply reverse alignment rotation first
-            vector = ApplyRotation(vector, alignment.Value.Inverse());
+            vector = ApplyRotation(vector, Quatpair.Inverse(alignment.Value));
         }
 
-        Quaternion v = Vector4ToQuaternion(vector);
-        Quaternion rotated = rotation.leftQuaternion * v * rotation.rightQuaternion;
-        return QuaternionToVector4(rotated);
+        return rotation * vector;
     }
 
     // Thanks to https://math.stackexchange.com/a/44974
-    private static Rotation4 GetRotationForPlane(RotationPlane plane, float angle)
+    private static Quatpair GetRotationForPlane(RotationPlane plane, float angle)
     {
         float t = angle / 2f;
 
-        switch (plane)
+        return plane switch
         {
-            case RotationPlane.XW:
-                return new Rotation4
-                (
-                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t)),
-                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
-                );
-            case RotationPlane.YW:
-                return new Rotation4
-                (
-                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t)),
-                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
-                );
-            case RotationPlane.ZW:
-                return new Rotation4
-                (
-                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t)),
-                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
-                );
-            case RotationPlane.XY:
-                return new Rotation4
-                (
-                    new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t)),
-                    new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
-                );
-            case RotationPlane.XZ:
-                return new Rotation4
-                (
-                    new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t)),
-                    new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
-                );
-            case RotationPlane.YZ:
-                return new Rotation4
-                (
-                    new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t)),
-                    new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
-                );
-            default:
-                throw new ArgumentException("Invalid plane");
-        }
-    }
-
-    private static Quaternion Vector4ToQuaternion(Vector4 vector)
-    {
-        return new Quaternion(vector.x, vector.y, vector.z, vector.w);
-    }
-    private static Vector4 QuaternionToVector4(Quaternion quaternion)
-    {
-        return new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            RotationPlane.XW => new Quatpair
+                            (
+                                new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t)),
+                                new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
+                            ),
+            RotationPlane.YW => new Quatpair
+                            (
+                                new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t)),
+                                new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
+                            ),
+            RotationPlane.ZW => new Quatpair
+                            (
+                                new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t)),
+                                new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
+                            ),
+            RotationPlane.XY => new Quatpair
+                            (
+                                new Quaternion(0, 0, Mathf.Sin(-t), Mathf.Cos(-t)),
+                                new Quaternion(0, 0, Mathf.Sin(t), Mathf.Cos(t))
+                            ),
+            RotationPlane.XZ => new Quatpair
+                            (
+                                new Quaternion(0, Mathf.Sin(-t), 0, Mathf.Cos(-t)),
+                                new Quaternion(0, Mathf.Sin(t), 0, Mathf.Cos(t))
+                            ),
+            RotationPlane.YZ => new Quatpair
+                            (
+                                new Quaternion(Mathf.Sin(-t), 0, 0, Mathf.Cos(-t)),
+                                new Quaternion(Mathf.Sin(t), 0, 0, Mathf.Cos(t))
+                            ),
+            _ => throw new ArgumentException("Invalid plane"),
+        };
     }
 }

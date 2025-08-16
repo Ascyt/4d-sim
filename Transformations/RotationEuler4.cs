@@ -55,28 +55,22 @@ public struct RotationEuler4
     public static RotationEuler4 operator -(RotationEuler4 a)
     {
         float tau = Mathf.PI * 2f;
-        RotationEuler4 newRotation = new RotationEuler4(tau - a.xw, tau - a.yw, tau - a.zw, tau - a.xy, tau - a.xz, tau - a.yz);
-    
-        newRotation.ModuloPlanes();
-        return newRotation;
+        return new(tau - a.xw, tau - a.yw, tau - a.zw, tau - a.xy, tau - a.xz, tau - a.yz);
     }
 
     public static RotationEuler4 operator +(RotationEuler4 a, RotationEuler4 b)
     {
-        RotationEuler4 newRotation = new RotationEuler4(a.xw + b.xw, a.yw + b.yw, a.zw + b.zw, a.xy + b.xy, a.xz + b.xz, a.yz + b.yz);
-        newRotation.ModuloPlanes();
-        return newRotation;
+        return new(a.xw + b.xw, a.yw + b.yw, a.zw + b.zw, a.xy + b.xy, a.xz + b.xz, a.yz + b.yz);
     }
 
     public static RotationEuler4 operator -(RotationEuler4 a, RotationEuler4 b)
     {
-        RotationEuler4 newRotation = new RotationEuler4(a.xw - b.xw, a.yw - b.yw, a.zw - b.zw, a.xy - b.xy, a.xz - b.xz, a.yz - b.yz);
-        newRotation.ModuloPlanes();
+        RotationEuler4 newRotation = new(a.xw - b.xw, a.yw - b.yw, a.zw - b.zw, a.xy - b.xy, a.xz - b.xz, a.yz - b.yz);
         return newRotation;
     }
 
     public static RotationEuler4 operator *(RotationEuler4 r, float s)
     {
-        return new RotationEuler4(r.xw * s, r.yw * s, r.zw * s, r.xy * s, r.xz * s, r.yz * s);
+        return new(r.xw * s, r.yw * s, r.zw * s, r.xy * s, r.xz * s, r.yz * s);
     }
 }
