@@ -81,6 +81,12 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private Slider zwSliderAbsolute;
     [SerializeField]
+    private Slider xySliderAbsolute;
+    [SerializeField]
+    private Slider xzSliderAbsolute;
+    [SerializeField]
+    private Slider yzSliderAbsolute;
+    [SerializeField]
     private GameObject relativeModeParent;
     [SerializeField]
     private GameObject absoluteModeParent;
@@ -269,24 +275,25 @@ public class SceneUiHandler : MonoBehaviour
     {
         float pow = 2f;
 
-        RotationEuler4 sliderRotationEuler = new(
-            absoluteMode ? 0 : Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow),
-            absoluteMode ? 0 : Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow),
-            absoluteMode ? 0 : Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow),
-            Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow),
-            Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
-            Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
-
-        cameraState.cameraRotation.continuousRotationDelta = sliderRotationEuler;
-
-        if (absoluteMode)
+        if (!absoluteMode)
         {
-            cameraState.absoluteModeRotationAngles = new Vector3(
+            cameraState.cameraRotation.continuousRotationDelta = new RotationEuler4(
+                Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow),
+                Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow),
+                Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow),
+                Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow),
+                Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
+                Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
+        }
+        else
+        {
+            cameraState.UpdateAbsoluteRotation(new RotationEuler4(
                 xwSliderAbsolute.value,
                 ywSliderAbsolute.value,
-                zwSliderAbsolute.value);
-
-            cameraState.UpdateRotationDelta(RotationEuler4.zero);
+                zwSliderAbsolute.value,
+                xySliderAbsolute.value,
+                xzSliderAbsolute.value,
+                yzSliderAbsolute.value));
         }
     }
     public void OnRotationSliderEndDrag()
@@ -360,10 +367,13 @@ public class SceneUiHandler : MonoBehaviour
         absoluteModeParent.SetActive(absoluteMode);
         relativeModeParent.SetActive(!absoluteMode);
     }
-    public void OnAbsoluteRotationChange(Vector3 newValues)
+    public void OnAbsoluteRotationChange(RotationEuler4 newValues)
     {
-        xwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.x + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
-        ywSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.y + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
-        zwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.z + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        xwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xw + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        ywSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yw + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        zwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.zw + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        xySliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xy + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        xzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        yzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
     }
 }
