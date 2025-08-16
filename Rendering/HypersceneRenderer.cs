@@ -178,7 +178,6 @@ public class HypersceneRenderer : MonoBehaviour
     public void RenderObjectsInitially()
     {
         cameraState.SetPosition(hyperscene!.StartingPosition);
-        cameraState.SetRotation(hyperscene!.StartingRotation);
 
         foreach (Hyperobject obj in hyperscene!.Objects)
         {

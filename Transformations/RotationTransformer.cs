@@ -21,17 +21,20 @@ public static class RotationTransformer
     // Thanks to https://math.stackexchange.com/a/44974
     public static Quatpair ApplyRotation(this Quatpair rotation, RotationEuler4 delta, bool worldSpace)
     {
-        // Convert the delta to Quaternion and apply it to the existing rotation
-        foreach (RotationPlane rotationPlane in Enum.GetValues(typeof(RotationPlane)))
-        {
-            float angle = delta[rotationPlane];
-            if (Mathf.Approximately(angle, 0f))
-                continue;
+        return rotation
+            .ApplyRotationInSinglePlane(RotationPlane.XW, delta.xw, worldSpace)
+            .ApplyRotationInSinglePlane(RotationPlane.YW, delta.yw, worldSpace)
+            .ApplyRotationInSinglePlane(RotationPlane.ZW, delta.zw, worldSpace)
+            .ApplyRotationInSinglePlane(RotationPlane.XY, delta.xy, worldSpace)
+            .ApplyRotationInSinglePlane(RotationPlane.XZ, delta.xz, worldSpace)
+            .ApplyRotationInSinglePlane(RotationPlane.YZ, delta.yz, worldSpace);
+    }
+    public static Rotation4 ApplyRotationInSinglePlane(this Rotation4 rotation, RotationPlane plane, float delta, bool worldSpace)
+    {
+        if (delta == 0f)
+            return rotation;
 
-            rotation = rotation.ApplyRotation(GetRotationForPlane(rotationPlane, angle), worldSpace);
-        }
-
-        return rotation;
+        return rotation.ApplyRotation(GetRotationForPlane(plane, delta), worldSpace);
     }
     public static Quatpair ApplyRotation(this Quatpair rotation, Quatpair delta, bool worldSpace)
     {

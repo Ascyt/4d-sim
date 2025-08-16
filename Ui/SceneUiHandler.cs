@@ -20,7 +20,7 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI positionText;
 
-    [Space] 
+    [Space]
 
     [SerializeField]
     private TextMeshProUGUI fpsText;
@@ -54,6 +54,8 @@ public class SceneUiHandler : MonoBehaviour
     private Slider xzSlider;
     [SerializeField]
     private Slider yzSlider;
+
+    [Space]
     [SerializeField]
     private bool lockSliders = false;
     [SerializeField]
@@ -62,6 +64,26 @@ public class SceneUiHandler : MonoBehaviour
     private Sprite lockSliderEnabledSprite;
     [SerializeField]
     private Sprite lockSliderDisabledSprite;
+
+    [Space]
+    [SerializeField]
+    private bool absoluteMode = false;
+    [SerializeField]
+    private Image absoluteModeImage;
+    [SerializeField]
+    private Sprite absoluteModeEnabledSprite;
+    [SerializeField]
+    private Sprite absoluteModeDisabledSprite;
+    [SerializeField]
+    private Slider xwSliderAbsolute;
+    [SerializeField]
+    private Slider ywSliderAbsolute;
+    [SerializeField]
+    private Slider zwSliderAbsolute;
+    [SerializeField]
+    private GameObject relativeModeParent;
+    [SerializeField]
+    private GameObject absoluteModeParent;
 
     [Space]
     [SerializeField]
@@ -135,11 +157,11 @@ public class SceneUiHandler : MonoBehaviour
 
     public void UpdatePositionText(Vector4 position)
     {
-        positionText.text =
-        $"x: {position.x}\n" +
-        $"y: {position.y}\n" +
-        $"z: {position.z}\n" +
-        $"w: {position.w}";
+        positionText.text = $"<color=#808080>" +
+        $"<color=#FF0000>x</color>: <color=#FF0000>{position.x:F2}</color>\n" +
+        $"<color=#00FF00>y</color>: <color=#00FF00>{position.y:F2}</color>\n" +
+        $"<color=#0080FF>z</color>: <color=#0080FF>{position.z:F2}</color>\n" +
+        $"<color=#FFFF00>w</color>: <color=#FFFF00>{position.w:F2}</color></color>";
     }
 
     public void UpdateEulerRotationSliders(RotationEuler4 rotationEuler)
@@ -243,27 +265,32 @@ public class SceneUiHandler : MonoBehaviour
         ReenableGlobalInput();
     }
 
-    private bool draggingRotationSlider = false;
     public void OnRotationSliderChange()
     {
         float pow = 2f;
 
-        RotationEuler4 sliderRotationEuler = new RotationEuler4(
-            Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow), 
-            Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow), 
-            Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow), 
-            Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow), 
+        RotationEuler4 sliderRotationEuler = new(
+            absoluteMode ? 0 : Mathf.Sign(xwSlider.value) * Mathf.Pow(Mathf.Abs(xwSlider.value), pow),
+            absoluteMode ? 0 : Mathf.Sign(ywSlider.value) * Mathf.Pow(Mathf.Abs(ywSlider.value), pow),
+            absoluteMode ? 0 : Mathf.Sign(zwSlider.value) * Mathf.Pow(Mathf.Abs(zwSlider.value), pow),
+            Mathf.Sign(xySlider.value) * Mathf.Pow(Mathf.Abs(xySlider.value), pow),
             Mathf.Sign(xzSlider.value) * Mathf.Pow(Mathf.Abs(xzSlider.value), pow),
             Mathf.Sign(yzSlider.value) * Mathf.Pow(Mathf.Abs(yzSlider.value), pow));
 
-        draggingRotationSlider = true;
-
         cameraState.cameraRotation.continuousRotationDelta = sliderRotationEuler;
+
+        if (absoluteMode)
+        {
+            cameraState.absoluteModeRotationAngles = new Vector3(
+                xwSliderAbsolute.value,
+                ywSliderAbsolute.value,
+                zwSliderAbsolute.value);
+
+            cameraState.UpdateRotationDelta(RotationEuler4.zero);
+        }
     }
     public void OnRotationSliderEndDrag()
     {
-        draggingRotationSlider = false;
-        
         if (!lockSliders)
         {
             cameraState.cameraRotation.continuousRotationDelta = RotationEuler4.zero;
@@ -297,7 +324,7 @@ public class SceneUiHandler : MonoBehaviour
 
     public void ResetRotation()
     {
-        cameraState.SetRotation(RotationEuler4.zero);
+        cameraState.ResetRotation();
 
         cameraState.hypersceneRenderer.ResetRotation();
     }
@@ -318,5 +345,25 @@ public class SceneUiHandler : MonoBehaviour
         lockSlidersImage.color = lockSliders ? new Color(1f, 0.5f, 1f) : new Color(160f / 256f, 160f / 256f, 160f / 256f);
 
         OnRotationSliderEndDrag();
+    }
+
+    public void SwitchAbsoluteRelativeMode()
+    {
+        absoluteMode = !absoluteMode;
+
+        cameraState.ResetRotation();
+        cameraState.absoluteMode = absoluteMode;
+
+        absoluteModeImage.sprite = absoluteMode ? absoluteModeEnabledSprite : absoluteModeDisabledSprite;
+        absoluteModeImage.color = absoluteMode ? new Color(1f, 0.5f, 1f) : new Color(160f / 256f, 160f / 256f, 160f / 256f);
+
+        absoluteModeParent.SetActive(absoluteMode);
+        relativeModeParent.SetActive(!absoluteMode);
+    }
+    public void OnAbsoluteRotationChange(Vector3 newValues)
+    {
+        xwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.x + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+        ywSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.y + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
+        zwSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.z + Mathf.PI / 2f, Mathf.PI) - Mathf.PI / 2f);
     }
 }
