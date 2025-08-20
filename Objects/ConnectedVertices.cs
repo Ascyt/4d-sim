@@ -29,6 +29,7 @@ public class ConnectedVertices
     public Vector4[] vertices;
     public readonly int[][] connections;
     public float? vertexScale;
+    public bool isEnabled = true;
 
     public Color color;
 

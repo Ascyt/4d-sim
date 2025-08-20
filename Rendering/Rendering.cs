@@ -66,6 +66,9 @@ public class Rendering : MonoBehaviour
 
     public void ProjectVertices(ConnectedVertices connectedVertices, Hyperobject obj, Quatpair cameraRotation, Vector4 cameraPosition, bool allowIntersectioning = true)
     {
+        if (!connectedVertices.isEnabled || connectedVertices.vertices.Length == 0)
+            return;
+
         bool applyIntersectioning = allowIntersectioning && connectedVertices.connections is not null &&
                 (new[] { ConnectedVertices.ConnectionMethod.Solid, ConnectedVertices.ConnectionMethod.Wireframe })
                 .Contains(connectedVertices.connectionMethod);
@@ -107,6 +110,9 @@ public class Rendering : MonoBehaviour
 
     public void ProjectFixedVertices(ConnectedVertices connectedVertices, Hyperobject obj, Quatpair objectRotation, bool orthographic)
     {
+        if (!connectedVertices.isEnabled || connectedVertices.vertices.Length == 0)
+            return;
+
         Vector4[] transformedVertices = connectedVertices.vertices
             .Select(v => (v + obj.position).ApplyRotation(Quatpair.Inverse(objectRotation)))
             .ToArray();
