@@ -12,6 +12,7 @@ public enum VideoDimensionalityState
     XAxis,
     YAxis,
     AddReferencePoint,
+    TextXYLabelToNumbers,
     MoveReferencePointX,
     OrthographicToPerspective,
     ZAxis,
@@ -55,7 +56,8 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
     private Fading DefaultFading => new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
     private readonly Dictionary<VideoDimensionalityState, float> _autoSkipStates = new()
     {
-        { VideoDimensionalityState.AddZToText, 1.5f }
+        { VideoDimensionalityState.AddReferencePoint, 2f },
+        { VideoDimensionalityState.AddZToText, 2f }
     };
     protected override Dictionary<VideoDimensionalityState, float> AutoSkipStates => _autoSkipStates;
 
@@ -99,7 +101,9 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 return;
 
             case VideoDimensionalityState.AddReferencePoint:
-                UpdateReferencePointPositionText(includeZ: false, fade: false);
+                UpdateReferencePointPositionText(includeZ: false, fade: false, customText: $"<color=\"grey\">" +
+                    $"(<color=\"red\">x</color>" +
+                    $", <color=\"green\">y</color>)");
 
                 Fade(DefaultFading,
                     (fadingValue, isExit) =>
@@ -108,8 +112,12 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                     });
                 return;
 
+            case VideoDimensionalityState.TextXYLabelToNumbers:
+                UpdateReferencePointPositionText(includeZ: false, fade: true);
+                return;
+
             case VideoDimensionalityState.MoveReferencePointX:
-                Fade(DefaultFading,
+                Fade(DefaultFading.WithDuration(3f),
                     (fadingValue, isExit) =>
                     {
                         referencePoint.transform.position = new Vector3(1f + fadingValue * 2f, 1f, 0);
@@ -150,7 +158,7 @@ public class VideoDimensionality : AnimatedStateMachine<VideoDimensionalityState
                 return;
 
             case VideoDimensionalityState.MoveReferencePointZ:
-                Fade(DefaultFading,
+                Fade(DefaultFading.WithDuration(3f),
                     (fadingValue, isExit) =>
                     {
                         referencePoint.transform.position = new Vector3(3f, 1f, fadingValue * 2f);

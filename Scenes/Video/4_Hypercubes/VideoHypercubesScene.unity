@@ -9857,15 +9857,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useDvorak: 0
-  platformerMode: 0
+  absoluteMode: 0
+  absoluteModeRotationAngles:
+    xw: 0
+    yw: 0
+    zw: 0
+    xy: 0
+    xz: 0
+    yz: 0
   cameraMovement: {fileID: 0}
   cameraRotation: {fileID: 0}
   hypersceneRenderer: {fileID: 0}
   sceneUiHandler: {fileID: 1236289825}
   position: {x: 0, y: 0, z: 0, w: 0}
   rotation:
-    leftQuaternion: {x: 0, y: 0, z: 0, w: 0}
-    rightQuaternion: {x: 0, y: 0, z: 0, w: 0}
+    l: {x: 0, y: 0, z: 0, w: 0}
+    r: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &963194238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9913,7 +9920,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09e44ab8e5e1c2844b9cce49562aa38d, type: 3}
   m_Name: 
@@ -9932,7 +9939,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 762d5e73987f31c44bd2bfcb40395612, type: 3}
   m_Name: 
@@ -12425,6 +12432,18 @@ MonoBehaviour:
   lockSlidersImage: {fileID: 1469213304}
   lockSliderEnabledSprite: {fileID: 21300000, guid: ac284e8dd79a28749aef82ee3b0f08d3, type: 3}
   lockSliderDisabledSprite: {fileID: 21300000, guid: 038e5ea90123bb84d9e188fed09cedec, type: 3}
+  absoluteMode: 0
+  absoluteModeImage: {fileID: 0}
+  absoluteModeEnabledSprite: {fileID: 0}
+  absoluteModeDisabledSprite: {fileID: 0}
+  xwSliderAbsolute: {fileID: 0}
+  ywSliderAbsolute: {fileID: 0}
+  zwSliderAbsolute: {fileID: 0}
+  xySliderAbsolute: {fileID: 0}
+  xzSliderAbsolute: {fileID: 0}
+  yzSliderAbsolute: {fileID: 0}
+  relativeModeParent: {fileID: 0}
+  absoluteModeParent: {fileID: 0}
   lwInput: {fileID: 1662273844}
   lxInput: {fileID: 1943223752}
   lyInput: {fileID: 593247602}

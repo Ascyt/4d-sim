@@ -4,6 +4,7 @@ using UnityEngine;
 public enum VideoHypercubesHypersceneState
 {
     Start,
+    HighlightAndUnhighlightCells,
     RotateTesseractToFirstEdge,
     RotateTesseractToSide,
     RotateTesseractToSecondEdge,
@@ -16,6 +17,16 @@ public class VideoHypercubesHypersceneInteractivity : AnimatedStateMachine<Video
     public static VideoHypercubesHypersceneInteractivity Instance { get; private set; }
 
     public Quatpair tesseractRotation = Quatpair.identity;
+
+    public Color[] highlightedCellColors = new Color[]
+    {
+        new(1f, 0f, 1f, 0f),
+        new(1f, 0f, 1f, 0f),
+        new(1f, 0f, 1f, 0f),
+        new(1f, 0f, 1f, 0f),
+        new(1f, 0f, 1f, 0f),
+        new(1f, 0f, 1f, 0f),
+    };
 
     private Fading DefaultFading => new(1f, new Easing(Easing.Type.Sine, Easing.IO.InOut));
     private readonly Dictionary<VideoHypercubesHypersceneState, float> _autoSkipStates = new()
@@ -30,6 +41,29 @@ public class VideoHypercubesHypersceneInteractivity : AnimatedStateMachine<Video
         {
             case VideoHypercubesHypersceneState.Start:
                 OnStart();
+                return;
+
+            case VideoHypercubesHypersceneState.HighlightAndUnhighlightCells:
+
+                for (int i = 0; i < highlightedCellColors.Length; i++)
+                {
+                    int index = i;
+
+                    Fade(DefaultFading.WithDuration(f => f.fadeDuration / 2f).WithDelay(index / 2f),
+                    (fadingValue, isExit) =>
+                    {
+                        highlightedCellColors[index] = new Color(highlightedCellColors[index].r, highlightedCellColors[index].g, highlightedCellColors[index].b, Mathf.Lerp(0f, .5f, fadingValue));
+
+                        if (isExit)
+                        {
+                            Fade(DefaultFading,
+                                (exitFadingValue, exitIsExit) =>
+                                {
+                                    highlightedCellColors[index] = new Color(highlightedCellColors[index].r, highlightedCellColors[index].g, highlightedCellColors[index].b, Mathf.Lerp(.5f, 0f, exitFadingValue));
+                                });
+                        }
+                    });
+                }
                 return;
 
             case VideoHypercubesHypersceneState.RotateTesseractToFirstEdge:
