@@ -23,6 +23,7 @@ public class DefaultHyperscene : Hyperscene
 
         new Tesseract(new Vector4(0, 10, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
         new Tesseract(new Vector4(1, 10, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.red, Vector4.one / 2f),
+        new Tesseract(new Vector4(0, 11, 0, 0), ConnectedVertices.ConnectionMethod.Wireframe, Color.green, Vector4.one / 2f),
         new Tesseract(new Vector4(0, 10, 1, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0f, 0.5f, 1f), Vector4.one / 2f),
         new Tesseract(new Vector4(0, 10, 0, 1), ConnectedVertices.ConnectionMethod.Wireframe, Color.yellow, Vector4.one / 2f),
 

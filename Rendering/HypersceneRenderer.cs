@@ -165,6 +165,7 @@ public class HypersceneRenderer : MonoBehaviour
         }
 
         cameraPosition.enabled = !hyperscene.IsFixed;
+        cameraState.sceneUiHandler.SetPositionTextActive(!hyperscene.IsFixed);
         cameraState.sceneUiHandler.SetSceneSpecificSliderActive(hyperscene.ShowSceneSlider);
         cameraState.sceneUiHandler.SetSceneSpecificSliderValue(0f);
 

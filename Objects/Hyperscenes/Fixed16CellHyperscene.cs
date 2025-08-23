@@ -16,7 +16,7 @@ public class Fixed16CellHyperscene : Hyperscene
     {
         new Axes(),
         new C16(Vector4.zero, ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
-        new Tetrahedron(Vector4.zero, ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 1f, 1f, 1f / 4f), cellOf:Tetrahedron.CellOf.Orthoplex),
+        new Tetrahedron(Vector4.zero, ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 0f, 1f, 1f / 4f), cellOf:Tetrahedron.CellOf.Orthoplex),
     };
     public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
 

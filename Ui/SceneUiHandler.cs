@@ -19,7 +19,8 @@ public class SceneUiHandler : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI positionText;
-
+    [SerializeField]
+    private GameObject positionTextParent;
     [Space]
 
     [SerializeField]
@@ -164,7 +165,9 @@ public class SceneUiHandler : MonoBehaviour
 
     public void UpdateMovementRotationSwitchText(bool newSwitch)
     {
-        movementRotationSwitchText.text = $"Rotation/Movement switched: {newSwitch}";
+        const string MOVEMENT_TEXT = "<color=#80FFFF>Movement</color>";
+        const string ROTATION_TEXT = "<color=#FF80FF>Rotation</color>";
+        movementRotationSwitchText.text = $"{(newSwitch ? MOVEMENT_TEXT : ROTATION_TEXT)}<color=#808080> | </color>{(newSwitch ? ROTATION_TEXT : MOVEMENT_TEXT)}";
     }
 
     public void UpdatePositionText(Vector4 position)
@@ -394,5 +397,10 @@ public class SceneUiHandler : MonoBehaviour
     public void SetSceneSpecificSliderValue(float value)
     {
         sceneSpecificSlider.SetValueWithoutNotify(value);
+    }
+
+    public void SetPositionTextActive(bool active)
+    {
+        positionTextParent.gameObject.SetActive(active);
     }
 }
