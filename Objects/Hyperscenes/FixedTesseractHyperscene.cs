@@ -17,7 +17,7 @@ public class FixedTesseractHyperscene : Hyperscene
         new Axes(),
         new Tesseract(Vector4.zero, ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
         new Cube(new Vector4(0, 0, 0, 0.5f), ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 1f, 1f, 1f / 4f)),
-        new Tesseract(Vector4.one / 2f, ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 0f, 1f, 1f / 4f), Vector4.one * 1f / 8f),
+        //new Tesseract(Vector4.one / 2f, ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 0f, 1f, 1f / 4f), Vector4.one * 1f / 8f),
     };
     public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
 

@@ -28,6 +28,7 @@ public class HypersceneRenderer : MonoBehaviour
     {
         Default,
         Ground,
+        RotatingTesseracts,
         FixedTesseract,
         Fixed5Cell,
         Fixed16Cell,
@@ -132,6 +133,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.Ground:
                 hyperscene = new GroundHyperscene();
+                break;
+            case HypersceneOption.RotatingTesseracts:
+                hyperscene = new RotatingTesseractsHyperscene();
                 break;
             case HypersceneOption.FixedTesseract:
                 hyperscene = new FixedTesseractHyperscene();
