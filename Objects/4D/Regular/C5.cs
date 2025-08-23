@@ -5,9 +5,9 @@ using UnityEngine;
 /// <summary>
 /// 4D analogy of a tetrahedron. Also known as a 4-simplex. Made of 5 tetrahedral cells. 
 /// </summary>
-public class Pentatope : Hyperobject
+public class C5 : Hyperobject
 {
-    public Pentatope(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null) : base(new ConnectedVertices[]
+    public C5(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,

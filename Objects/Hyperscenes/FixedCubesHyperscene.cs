@@ -7,16 +7,16 @@ using UnityEngine;
 /// </summary>
 public class FixedCubesHyperscene : Hyperscene
 {
-    private List<Hyperobject> _objects = new()
+    private HashSet<Hyperobject> _objects = new()
     {
     };
-    public override List<Hyperobject> Objects => _objects;
+    public override HashSet<Hyperobject> Objects => _objects;
 
-    private List<Hyperobject> _fixedObjects = new()
+    private HashSet<Hyperobject> _fixedObjects = new()
     {
         new Axes()
     };
-    public override List<Hyperobject> FixedObjects => _fixedObjects;
+    public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
 
     public override bool IsFixed => true;
     public override bool IsOrthographic => true;

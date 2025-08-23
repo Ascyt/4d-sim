@@ -17,7 +17,7 @@ public class DefaultHyperscene : Hyperscene
 
     private static readonly Vector4 coloredTesseractPosition = new Vector4(-3, 3, -3, 3);
 
-    private List<Hyperobject> _objects = new()
+    private HashSet<Hyperobject> _objects = new()
     {
         new Point(new Vector4(0, 0, 0, 0), Color.white),
 
@@ -42,27 +42,27 @@ public class DefaultHyperscene : Hyperscene
         new Tesseract(coloredTesseractPosition + new Vector4(0, 0, 1, 0), ConnectedVertices.ConnectionMethod.Solid, new Color(0f, 0.5f, 1f, 0.5f), new Vector4(1, 1, 0, 1) * 0.5f),
         new Tesseract(coloredTesseractPosition + new Vector4(0, 0, 0, 1), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 1f, 0f,   0.5f), new Vector4(1, 1, 1, 0) * 0.5f),
 
-        new Pentatope(new Vector4(10, -2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
-        new Orthoplex(new Vector4(10, 2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
+        new C5(new Vector4(10, -2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
+        new C16(new Vector4(10, 2, -5, 0), ConnectedVertices.ConnectionMethod.Wireframe, new Color(0, 0.5f, 1f), scale:Vector4.one * 2f),
     };
-    public override List<Hyperobject> Objects => _objects;
+    public override HashSet<Hyperobject> Objects => _objects;
 
-    private List<Hyperobject> _fixedObjects = new()
+    private HashSet<Hyperobject> _fixedObjects = new()
     {
         new Axes()
     };
-    public override List<Hyperobject> FixedObjects => _fixedObjects;
+    public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
     public override void Start()
     {
         _objects.Add(transformingTesseract);
         _objects.Add(transformingTesseractFace);
     }
-    public override (List<Hyperobject>?, List<Hyperobject>?) Update()
+    public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update()
     {
         TransformConnectedVertices(transformingTesseract, transformingTesseractPosition);
         TransformConnectedVertices(transformingTesseractFace, transformingTesseractPosition);
 
-        return (new List<Hyperobject>() { transformingTesseract, transformingTesseractFace }, null);
+        return (new HashSet<Hyperobject>() { transformingTesseract, transformingTesseractFace }, null);
     }
     private void TransformConnectedVertices(Hyperobject obj, Vector4 rotateAroundPoint)
     {

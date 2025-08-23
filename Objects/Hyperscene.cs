@@ -13,11 +13,11 @@ public abstract class Hyperscene
     /// Objects in the hyperscene that are not fixed and can be moved or rotated by the user.<br /><br />
     /// Should be empty if IsFixed is true.<br />
     /// </summary>
-    public abstract List<Hyperobject> Objects { get; }
+    public abstract HashSet<Hyperobject> Objects { get; }
     /// <summary>
     /// Fixed objects in the hyperscene that only rotate but do not move with the camera position.
     /// </summary>
-    public abstract List<Hyperobject> FixedObjects { get; }
+    public abstract HashSet<Hyperobject> FixedObjects { get; }
 
     /// <summary>
     /// Whether or not the entire hyperscene should be seen as being fixed in space (reverts rotation direction).
@@ -32,5 +32,5 @@ public abstract class Hyperscene
     public virtual Vector4 StartingPosition => Vector4.zero;
     public virtual void Start() { }
     /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
-    public virtual (List<Hyperobject>?, List<Hyperobject>?) Update() { return (null, null); }
+    public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update() { return (null, null); }
 }

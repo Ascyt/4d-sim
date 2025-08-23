@@ -69,7 +69,7 @@ public class HypersceneRenderer : MonoBehaviour
 
     private void LateUpdate()
     {
-        (List<Hyperobject>?, List<Hyperobject>?) rerenderObjects = hyperscene!.Update();
+        (HashSet<Hyperobject>?, HashSet<Hyperobject>?) rerenderObjects = hyperscene!.Update();
 
         if (rerenderObjects.Item1 != null)
         {
@@ -126,10 +126,10 @@ public class HypersceneRenderer : MonoBehaviour
                 hyperscene = new FixedTesseractHyperscene();
                 break;
             case HypersceneOption.FixedPentatope:
-                hyperscene = new FixedPentatopeHyperscene();
+                hyperscene = new FixedPentachoronHyperscene();
                 break;
             case HypersceneOption.FixedOrthoplex:
-                hyperscene = new FixedOrthoplexHyperscene();
+                hyperscene = new FixedHexadecachoronHyperscene();
                 break;
             case HypersceneOption.FixedCubes:
                 hyperscene = new FixedCubesHyperscene();

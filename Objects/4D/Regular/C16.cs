@@ -5,9 +5,9 @@ using UnityEngine;
 /// <summary>
 /// 4D analogy of an octahedron. Also known as a 4-orthoplex. Made of 16 tetrahedral cells.
 /// </summary>
-public class Orthoplex : Hyperobject
+public class C16 : Hyperobject
 {
-    public Orthoplex(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null) : base(new ConnectedVertices[]
+    public C16(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null) : base(new ConnectedVertices[]
     {
         new ConnectedVertices(
             connectionMethod,
@@ -28,14 +28,14 @@ public class Orthoplex : Hyperobject
                                       new[] { 1, 5 },                                                                                        // (1, 2, 5, 6) = (-x,  y, -z,  w) 1   5
                                                           new[] { 3, 5 },                                                                    // (0, 3, 5, 6) = ( x, -y, -z,  w)   3 5
                                                                                                                                              // (1, 3, 5, 6) = (-x, -y, -z,  w) 1 3 5
-                                                                                 new[] { 0, 7 },     new[] { 2, 7 },     new[] { 4, 7 },     // (0, 2, 4, 6) = ( x,  y,  z, -w) 
-                                                                                 new[] { 1, 7 },                                             // (1, 2, 4, 6) = (-x,  y,  z, -w) 1     7
-                                                                                                     new[] { 3, 7 },                         // (0, 3, 4, 6) = ( x, -y,  z, -w)   3   7
-                                                                                                                                             // (1, 3, 4, 6) = (-x, -y,  z, -w) 1 3   7
-                                                                                                                         new[] { 5, 7 },     // (0, 2, 5, 6) = ( x,  y, -z, -w)     5 7
-                                                                                                                                             // (1, 2, 5, 6) = (-x,  y, -z, -w) 1   5 7
-                                                                                                                                             // (0, 3, 5, 6) = ( x, -y, -z, -w)   3 5 7
-                                                                                                                                             // (1, 3, 5, 6) = (-x, -y, -z, -w) 1 3 5 7
+                                                                                 new[] { 0, 7 },     new[] { 2, 7 },     new[] { 4, 7 },     // (0, 2, 4, 7) = ( x,  y,  z, -w) 
+                                                                                 new[] { 1, 7 },                                             // (1, 2, 4, 7) = (-x,  y,  z, -w) 1     7
+                                                                                                     new[] { 3, 7 },                         // (0, 3, 4, 7) = ( x, -y,  z, -w)   3   7
+                                                                                                                                             // (1, 3, 4, 7) = (-x, -y,  z, -w) 1 3   7
+                                                                                                                         new[] { 5, 7 },     // (0, 2, 5, 7) = ( x,  y, -z, -w)     5 7
+                                                                                                                                             // (1, 2, 5, 7) = (-x,  y, -z, -w) 1   5 7
+                                                                                                                                             // (0, 3, 5, 7) = ( x, -y, -z, -w)   3 5 7
+                                                                                                                                             // (1, 3, 5, 7) = (-x, -y, -z, -w) 1 3 5 7
             }
         )
     }, position)
