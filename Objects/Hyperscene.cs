@@ -20,7 +20,7 @@ public abstract class Hyperscene
     public abstract HashSet<Hyperobject> FixedObjects { get; }
 
     /// <summary>
-    /// Whether or not the entire hyperscene should be seen as being fixed in space (reverts rotation direction).
+    /// Whether or not the entire hyperscene should be seen as being fixed in space (reverts rotationDelta direction).
     /// </summary>
     public virtual bool IsFixed => false;
     /// <summary>
@@ -33,4 +33,8 @@ public abstract class Hyperscene
     public virtual void Start() { }
     /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
     public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update() { return (null, null); }
+
+    public virtual bool ShowSceneSlider => false;
+    /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
+    public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSliderUpdate(float value) { return (null, null); }
 }

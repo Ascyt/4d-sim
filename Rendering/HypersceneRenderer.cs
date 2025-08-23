@@ -29,9 +29,9 @@ public class HypersceneRenderer : MonoBehaviour
         Default,
         Ground,
         FixedTesseract,
-        FixedPentatope,
-        FixedOrthoplex,
-        FixedCubes,
+        Fixed5Cell,
+        Fixed16Cell,
+        FixedExtrudingCube,
         FixedRotationalPlanes
     }
 
@@ -71,9 +71,19 @@ public class HypersceneRenderer : MonoBehaviour
     {
         (HashSet<Hyperobject>?, HashSet<Hyperobject>?) rerenderObjects = hyperscene!.Update();
 
-        if (rerenderObjects.Item1 != null)
+        RerenderSpecificObjects(rerenderObjects.Item1, rerenderObjects.Item2);
+    }
+    public void OnSceneSpecificSliderUpdate(float value)
+    {
+        (HashSet<Hyperobject>?, HashSet<Hyperobject>?) rerenderObjects = hyperscene!.OnSceneSliderUpdate(value);
+
+        RerenderSpecificObjects(rerenderObjects.Item1, rerenderObjects.Item2);
+    }
+    private void RerenderSpecificObjects(HashSet<Hyperobject>? objects, HashSet<Hyperobject>? fixedObjects)
+    {
+        if (objects != null)
         {
-            foreach (Hyperobject rerenderObject in rerenderObjects.Item1)
+            foreach (Hyperobject rerenderObject in objects)
             {
                 _ = !rendering.RemoveSingleObject(rerenderObject);
 
@@ -83,15 +93,15 @@ public class HypersceneRenderer : MonoBehaviour
                 }
             }
         }
-        if (rerenderObjects.Item2 != null)
+        if (fixedObjects != null)
         {
-            foreach (Hyperobject rerenderObject in rerenderObjects.Item2)
+            foreach (Hyperobject rerenderObject in fixedObjects)
             {
                 _ = !rendering.RemoveSingleObject(rerenderObject);
 
                 foreach (ConnectedVertices connectedVertices in rerenderObject.connectedVertices)
                 {
-                    rendering.ProjectFixedVertices(connectedVertices, rerenderObject, cameraState.rotation, !hyperscene.IsFixed || hyperscene.IsOrthographic);
+                    rendering.ProjectFixedVertices(connectedVertices, rerenderObject, cameraState.rotation, !hyperscene!.IsFixed || hyperscene.IsOrthographic);
                 }
             }
         }
@@ -104,6 +114,7 @@ public class HypersceneRenderer : MonoBehaviour
         hyperscene!.FixedObjects.Clear();
 
         this.hypersceneOption = hypersceneOption;
+        cameraState.ResetRotation();
 
         InitializeHyperscene();
     }
@@ -125,14 +136,14 @@ public class HypersceneRenderer : MonoBehaviour
             case HypersceneOption.FixedTesseract:
                 hyperscene = new FixedTesseractHyperscene();
                 break;
-            case HypersceneOption.FixedPentatope:
-                hyperscene = new FixedPentachoronHyperscene();
+            case HypersceneOption.Fixed5Cell:
+                hyperscene = new Fixed5CellHyperscene();
                 break;
-            case HypersceneOption.FixedOrthoplex:
-                hyperscene = new FixedHexadecachoronHyperscene();
+            case HypersceneOption.Fixed16Cell:
+                hyperscene = new Fixed16CellHyperscene();
                 break;
-            case HypersceneOption.FixedCubes:
-                hyperscene = new FixedCubesHyperscene();
+            case HypersceneOption.FixedExtrudingCube:
+                hyperscene = new FixedExtrudingCubeHyperscene();
                 break;
             case HypersceneOption.FixedRotationalPlanes:
                 hyperscene = new FixedRotationalPlanesHyperscene();
@@ -150,16 +161,18 @@ public class HypersceneRenderer : MonoBehaviour
         }
 
         cameraPosition.enabled = !hyperscene.IsFixed;
+        cameraState.sceneUiHandler.SetSceneSpecificSliderActive(hyperscene.ShowSceneSlider);
+        cameraState.sceneUiHandler.SetSceneSpecificSliderValue(0f);
 
         RenderObjectsInitially();
+
+        OnSceneSpecificSliderUpdate(0f);
     }
 
     public void RerenderAll()
     {
         if (Time.frameCount == lastRerenderAllFrame)
-        {
             return; // Prevent multiple rerenders in the same frame
-        }
         lastRerenderAllFrame = Time.frameCount;
 
         rendering.ClearAllRenderedObjects();
@@ -213,7 +226,7 @@ public class HypersceneRenderer : MonoBehaviour
         UpdateFixedObjects();
     }
 
-    public void ResetRotation()
+    public void ReloadScene()
     {
         rendering.ClearAllRenderedObjects();
         RenderObjectsInitially();

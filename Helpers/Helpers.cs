@@ -234,4 +234,6 @@ public static class Helpers
         int newNumericValue = func(numericValue);
         return (T)Enum.ToObject(typeof(T), newNumericValue);
     }
+
+    public const float TAU = Mathf.PI * 2f;
 }

@@ -12,12 +12,12 @@ using UnityEngine.UIElements;
 public class DefaultHyperscene : Hyperscene
 {
     private static readonly Vector4 transformingTesseractPosition = new Vector4(-3, 1, -3, 2);
-    private Tesseract transformingTesseract = new Tesseract(transformingTesseractPosition, ConnectedVertices.ConnectionMethod.Wireframe, Color.white);
-    private Cube transformingTesseractFace = new Cube(transformingTesseractPosition + new Vector4(0, 0, 0, 0.5f), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 1f, 0f, 0.75f));
+    private readonly Tesseract transformingTesseract = new(transformingTesseractPosition, ConnectedVertices.ConnectionMethod.Wireframe, Color.white);
+    private readonly Cube transformingTesseractFace = new(transformingTesseractPosition + new Vector4(0, 0, 0, 0.5f), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 1f, 0f, 0.75f));
 
     private static readonly Vector4 coloredTesseractPosition = new Vector4(-3, 3, -3, 3);
 
-    private HashSet<Hyperobject> _objects = new()
+    private readonly HashSet<Hyperobject> _objects = new()
     {
         new Point(new Vector4(0, 0, 0, 0), Color.white),
 
@@ -47,7 +47,7 @@ public class DefaultHyperscene : Hyperscene
     };
     public override HashSet<Hyperobject> Objects => _objects;
 
-    private HashSet<Hyperobject> _fixedObjects = new()
+    private readonly HashSet<Hyperobject> _fixedObjects = new()
     {
         new Axes()
     };
@@ -59,18 +59,13 @@ public class DefaultHyperscene : Hyperscene
     }
     public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update()
     {
-        TransformConnectedVertices(transformingTesseract, transformingTesseractPosition);
-        TransformConnectedVertices(transformingTesseractFace, transformingTesseractPosition);
-
-        return (new HashSet<Hyperobject>() { transformingTesseract, transformingTesseractFace }, null);
-    }
-    private void TransformConnectedVertices(Hyperobject obj, Vector4 rotateAroundPoint)
-    {
         float speed = Time.deltaTime * 2 * Mathf.PI / 4f;
 
-        Quatpair rotation = new Quatpair(speed, 0, 0, 0, 0, 0) * obj.Rotation;
+        Quatpair rotationDelta = new(speed, 0, 0, 0, 0, 0);
 
-        obj.Rotation = rotation;
-        obj.position = (rotation * (obj.startPosition - rotateAroundPoint)) + rotateAroundPoint;
+        transformingTesseract.RotateAroundPoint(rotationDelta, transformingTesseractPosition);
+        transformingTesseractFace.RotateAroundPoint(rotationDelta, transformingTesseractPosition);
+
+        return (new HashSet<Hyperobject>() { transformingTesseract, transformingTesseractFace }, null);
     }
 }
