@@ -29,7 +29,7 @@ public class CameraState : MonoBehaviour
     public HypersceneRenderer hypersceneRenderer;
 
     [SerializeField]
-    private SceneUiHandler sceneUiHandler;
+    public SceneUiHandler sceneUiHandler;
 
     public bool RotationMovementSwitch { get; private set; } = false;
 

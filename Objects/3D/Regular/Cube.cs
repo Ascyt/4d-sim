@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Cube : Hyperobject
 {
-    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector3? scale = null) : base(new ConnectedVertices[]
+    public Cube(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector3? scale = null, Quatpair? rotation = null) : base(new ConnectedVertices[]
     {
-        new ConnectedVertices(
+        new(
             connectionMethod,
 
             GetVertices(scale ?? Vector3.one),
@@ -20,7 +20,7 @@ public class Cube : Hyperobject
                 new[] { 0, 7 }, new[] { 1, 6 }, new[] { 2, 5 }, new[] { 3, 4 }, // Connecting first and second square to form a cube
             }
         )
-    }, position)
+    }, position, rotation)
     {
         
     }

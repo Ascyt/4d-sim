@@ -6,21 +6,21 @@ using UnityEngine;
 
 public class VideoHypercubesHyperscene : Hyperscene
 {
-    private List<Hyperobject> _objects = new()
+    private HashSet<Hyperobject> _objects = new()
     {
     };
-    public override List<Hyperobject> Objects => _objects;
+    public override HashSet<Hyperobject> Objects => _objects;
 
-    private List<Hyperobject> _fixedObjects = new()
+    private HashSet<Hyperobject> _fixedObjects = new()
     {
         new Tesseract(Vector4.zero, ConnectedVertices.ConnectionMethod.Wireframe, Color.white),
         new Cube(new Vector4(0, 0, 0, 0.5f), ConnectedVertices.ConnectionMethod.Solid, new Color(1f, 0, 1f, 1f / 2f)),
     };
-    public override List<Hyperobject> FixedObjects => _fixedObjects;
+    public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
 
     public override bool IsFixed => true;
 
-    public override (List<Hyperobject>?, List<Hyperobject>?) Update()
+    public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update()
     {
         foreach (Hyperobject obj in _fixedObjects)
         {

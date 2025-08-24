@@ -7,9 +7,16 @@ using UnityEngine;
 /// </summary>
 public class Tesseract : Hyperobject
 {
-    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale=null) : base(new ConnectedVertices[]
+    public Tesseract(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale=null, Quatpair? rotation=null) : base(new ConnectedVertices[]
     {
-        new ConnectedVertices(
+        GetConnectedVertices(connectionMethod, color, scale)
+    }, position, rotation)
+    {
+
+    }
+
+    public static ConnectedVertices GetConnectedVertices(ConnectedVertices.ConnectionMethod connectionMethod, Color color, Vector4? scale = null)
+        => new(
             connectionMethod,
 
             GetVertices(scale ?? Vector4.one),
@@ -27,11 +34,7 @@ public class Tesseract : Hyperobject
                 new[] { 0, 8 },   new[] { 1, 9 },   new[] { 2, 10 },  new[] { 3, 11 },  // Connecting the two cubes
                 new[] { 4, 12 },  new[] { 5, 13 },  new[] { 6, 14 },  new[] { 7, 15 }   // Connecting the two cubes
             }
-        )
-    }, position)
-    {
-
-    }
+        );
 
     private static Vector4[] GetVertices(Vector4 scale)
     {

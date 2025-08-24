@@ -7,8 +7,8 @@ using UnityEngine;
 /// </summary>
 public abstract class Hyperobject
 {
-    public readonly ConnectedVertices[] connectedVertices;
-    public readonly Vector4 startPosition;
+    public ConnectedVertices[] connectedVertices;
+    public Vector4 startPosition;
     public Vector4 position;
 
     private Quatpair _rotation = Quatpair.identity;
@@ -34,6 +34,12 @@ public abstract class Hyperobject
         this.connectedVertices = vertices;
         this.position = position;
         this.startPosition = position;
-        _rotation = rotation ?? Quatpair.identity;
+        Rotation = rotation ?? Quatpair.identity;
+    }
+
+    public void RotateAroundPoint(Quatpair rotationDelta, Vector4 rotateAroundPoint, bool worldSpace = true)
+    {
+        Rotation = Rotation.ApplyRotation(rotationDelta, worldSpace);
+        position = (Rotation * (startPosition - rotateAroundPoint)) + rotateAroundPoint;
     }
 }

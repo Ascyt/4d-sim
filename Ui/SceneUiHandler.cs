@@ -19,7 +19,8 @@ public class SceneUiHandler : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI positionText;
-
+    [SerializeField]
+    private GameObject positionTextParent;
     [Space]
 
     [SerializeField]
@@ -113,6 +114,12 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private TMP_Dropdown hypersceneDropdown;
 
+    [Space]
+    [SerializeField]
+    private GameObject sceneSpecificSliderParent;
+    [SerializeField]
+    private Slider sceneSpecificSlider;
+
     private float lastAvgFpsUpdate = 0f;
     private int frameCount = 0;
     private const float FPS_UPDATE_INTERVAL = 1f / 4f;
@@ -158,7 +165,9 @@ public class SceneUiHandler : MonoBehaviour
 
     public void UpdateMovementRotationSwitchText(bool newSwitch)
     {
-        movementRotationSwitchText.text = $"Rotation/Movement switched: {newSwitch}";
+        const string MOVEMENT_TEXT = "<color=#80FFFF>Movement</color>";
+        const string ROTATION_TEXT = "<color=#FF80FF>Rotation</color>";
+        movementRotationSwitchText.text = $"{(newSwitch ? MOVEMENT_TEXT : ROTATION_TEXT)}<color=#808080> | </color>{(newSwitch ? ROTATION_TEXT : MOVEMENT_TEXT)}";
     }
 
     public void UpdatePositionText(Vector4 position)
@@ -333,7 +342,7 @@ public class SceneUiHandler : MonoBehaviour
     {
         cameraState.ResetRotation();
 
-        cameraState.hypersceneRenderer.ResetRotation();
+        cameraState.hypersceneRenderer.ReloadScene();
     }
 
     public void OnDropdownValueChanged(int id)
@@ -375,5 +384,23 @@ public class SceneUiHandler : MonoBehaviour
         xySliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xy + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
         xzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.xz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
         yzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
+    }
+
+    public void SetSceneSpecificSliderActive(bool active)
+    {
+        sceneSpecificSliderParent.SetActive(active);
+    }
+    public void OnSceneSpecificSliderChange()
+    {
+        cameraState.hypersceneRenderer.OnSceneSpecificSliderUpdate(sceneSpecificSlider.value);
+    }
+    public void SetSceneSpecificSliderValue(float value)
+    {
+        sceneSpecificSlider.SetValueWithoutNotify(value);
+    }
+
+    public void SetPositionTextActive(bool active)
+    {
+        positionTextParent.gameObject.SetActive(active);
     }
 }

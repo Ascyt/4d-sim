@@ -7,15 +7,15 @@ using UnityEngine;
 /// </summary>
 public class FixedRotationalPlanesHyperscene : Hyperscene
 {
-    private List<Hyperobject> _objects = new()
+    private HashSet<Hyperobject> _objects = new()
     {
     };
-    public override List<Hyperobject> Objects => _objects;
+    public override HashSet<Hyperobject> Objects => _objects;
 
     private const float PLANES_SCALE = 0.25f;
     private const float PLANES_ALPHA = 1f;
 
-    private List<Hyperobject> _fixedObjects = new()
+    private HashSet<Hyperobject> _fixedObjects = new()
     {
         new Axes(),
 
@@ -51,7 +51,7 @@ public class FixedRotationalPlanesHyperscene : Hyperscene
 
         new Cube(new Vector4(0, 0, 0, -0.5f), ConnectedVertices.ConnectionMethod.Wireframe, Color.white, Vector3.one * 0.5f)
     };
-    public override List<Hyperobject> FixedObjects => _fixedObjects;
+    public override HashSet<Hyperobject> FixedObjects => _fixedObjects;
 
     public override bool IsFixed => true;
     public override bool IsOrthographic => true;
