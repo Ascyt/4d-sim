@@ -33,7 +33,8 @@ public class HypersceneRenderer : MonoBehaviour
         Fixed5Cell,
         Fixed16Cell,
         FixedExtrudingCube,
-        FixedRotationalPlanes
+        FixedRotationalPlanes,
+        FixedCliffordTorus,
     }
 
     public static HypersceneRenderer instance { get; private set; } = null!;
@@ -151,6 +152,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.FixedRotationalPlanes:
                 hyperscene = new FixedRotationalPlanesHyperscene();
+                break;
+            case HypersceneOption.FixedCliffordTorus:
+                hyperscene = new FixedCliffordTorusHyperscene();
                 break;
             default:
                 Debug.LogError("HypersceneRenderer: Unknown hyperscene option.");
