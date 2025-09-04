@@ -13,7 +13,7 @@ public class FixedCliffordTorusHyperscene : Hyperscene
         Vector4.zero,
         ConnectedVertices.ConnectionMethod.Wireframe,
         Color.white,
-        scale: new Vector4(0f, 1f, 1f, 1f));
+        scale: new Vector4(0f, 1f, 1f, 1f) / 1.125f);
 
     private readonly HashSet<Hyperobject> _objects = new()
     {
@@ -39,7 +39,7 @@ public class FixedCliffordTorusHyperscene : Hyperscene
     {
         extrudingObject.connectedVertices = new ConnectedVertices[]
         {
-            CliffordTorus.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, extrudingObject.connectedVertices[0].color, new Vector4(value, 1f, 1f, 1f))
+            CliffordTorus.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, extrudingObject.connectedVertices[0].color, new Vector4(value, 1f, 1f, 1f) / 1.125f)
         };
 
         return (null, new() { extrudingObject });
