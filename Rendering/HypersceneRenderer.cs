@@ -33,6 +33,7 @@ public class HypersceneRenderer : MonoBehaviour
         Fixed5Cell,
         Fixed16Cell,
         FixedExtrudingCube,
+        FixedCliffordTorus,
         FixedRotationalPlanes
     }
 
@@ -148,6 +149,9 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
             case HypersceneOption.FixedExtrudingCube:
                 hyperscene = new FixedExtrudingCubeHyperscene();
+                break;
+            case HypersceneOption.FixedCliffordTorus:
+                hyperscene = new FixedCliffordTorusHyperscene();
                 break;
             case HypersceneOption.FixedRotationalPlanes:
                 hyperscene = new FixedRotationalPlanesHyperscene();
