@@ -37,4 +37,7 @@ public abstract class Hyperscene
     public virtual int SceneSliderCount => 0;
     /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
     public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSlidersUpdate(float[] values) { return (null, null); }
+
+    public delegate void OnSceneTextChangeDelegate(string text);
+    public OnSceneTextChangeDelegate? onSceneTextChange;
 }

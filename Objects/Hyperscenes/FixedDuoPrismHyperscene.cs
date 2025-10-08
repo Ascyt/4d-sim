@@ -41,12 +41,17 @@ public class FixedDuoPrismHyperscene : Hyperscene
     public override int SceneSliderCount => 2;
     public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSlidersUpdate(float[] values)
     {
+        int schlaefliP = 2 + (int)(values[0] * 6f);
+        int schlaefliQ = 2 + (int)(values[1] * 6f);
+
         obj.connectedVertices = new ConnectedVertices[]
         {
             DuoPrism.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, obj.connectedVertices[0].color, 
-            2 + (int)(values[0] * 6f), 2 + (int)(values[1] * 6f), 
+            schlaefliP, schlaefliQ, 
             Vector4.one / 1.125f)
         };
+
+        onSceneTextChange?.Invoke($"{schlaefliP}-{schlaefliQ}");
 
         return (null, new() { obj });
     }

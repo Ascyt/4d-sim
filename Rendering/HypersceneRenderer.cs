@@ -166,22 +166,30 @@ public class HypersceneRenderer : MonoBehaviour
                 break;
         }
 
-        hyperscene!.Start();
-
         if (hyperscene!.IsFixed && hyperscene!.Objects.Count > 0)
         {
             Debug.LogWarning("HypersceneRenderer: Fixed hyperscenes should not have any non-fixed objects.");
         }
 
-        cameraPosition.enabled = !hyperscene.IsFixed;
         cameraState.sceneUiHandler.SetPositionTextActive(!hyperscene.IsFixed);
         cameraState.sceneUiHandler.SetSceneSpecificSlidersActive(hyperscene.SceneSliderCount);
         cameraState.sceneUiHandler.SetSceneSpecificSliderValues(new float[hyperscene.SceneSliderCount]);
+        cameraState.sceneUiHandler.SetSceneSpecificText("");
+        
+        hyperscene.onSceneTextChange += OnSceneSpecificSliderTextChange;
+
+        hyperscene!.Start();
+
+        cameraPosition.enabled = !hyperscene.IsFixed;
 
         RenderObjectsInitially();
 
         OnSceneSpecificSliderUpdate(new float[hyperscene.SceneSliderCount]);
     }
+    private void OnSceneSpecificSliderTextChange(string text)
+    {
+        cameraState.sceneUiHandler.SetSceneSpecificText(text);
+    } 
 
     public void RerenderAll()
     {

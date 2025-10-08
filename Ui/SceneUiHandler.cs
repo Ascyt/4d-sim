@@ -120,8 +120,11 @@ public class SceneUiHandler : MonoBehaviour
     [SerializeField]
     private GameObject sceneSpecificSliderParent;
 
-    private List<GameObject> sceneSpecificSliderParentInstances = new();
-    private List<Slider> sceneSpecificSliders = new();
+    [SerializeField]
+    private TextMeshProUGUI sceneSpecificText;
+
+    private readonly List<GameObject> sceneSpecificSliderParentInstances = new();
+    private readonly List<Slider> sceneSpecificSliders = new();
 
     private float lastAvgFpsUpdate = 0f;
     private int frameCount = 0;
@@ -430,5 +433,10 @@ public class SceneUiHandler : MonoBehaviour
     public void SetPositionTextActive(bool active)
     {
         positionTextParent.gameObject.SetActive(active);
+    }
+
+    public void SetSceneSpecificText(string text)
+    {
+        sceneSpecificText.text = text;
     }
 }
