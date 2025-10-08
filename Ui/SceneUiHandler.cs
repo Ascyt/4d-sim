@@ -1,9 +1,11 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -117,8 +119,9 @@ public class SceneUiHandler : MonoBehaviour
     [Space]
     [SerializeField]
     private GameObject sceneSpecificSliderParent;
-    [SerializeField]
-    private Slider sceneSpecificSlider;
+
+    private List<GameObject> sceneSpecificSliderParentInstances = new();
+    private List<Slider> sceneSpecificSliders = new();
 
     private float lastAvgFpsUpdate = 0f;
     private int frameCount = 0;
@@ -140,6 +143,8 @@ public class SceneUiHandler : MonoBehaviour
         previousCameraStateEnabled = cameraState.enabled;
         previousCameraMovementEnabled = cameraState.cameraMovement.enabled;
         previousCameraRotationEnabled = cameraState.cameraRotation.enabled;
+
+        sceneSpecificSliderParent.SetActive(false);
 
         UpdateDisplay();
     }
@@ -386,17 +391,40 @@ public class SceneUiHandler : MonoBehaviour
         yzSliderAbsolute.SetValueWithoutNotify(Helpers.Mod(newValues.yz + Mathf.PI, Mathf.PI * 2f) - Mathf.PI);
     }
 
-    public void SetSceneSpecificSliderActive(bool active)
+    public void SetSceneSpecificSlidersActive(int amount)
     {
-        sceneSpecificSliderParent.SetActive(active);
+        foreach (GameObject obj in sceneSpecificSliderParentInstances)
+        {
+            Destroy(obj);
+        }
+        sceneSpecificSliderParentInstances.Clear();
+        sceneSpecificSliders.Clear();
+
+        // Create new sliders from top to bottom
+        for (int i = amount - 1; i >= 0; i--)
+        {
+            GameObject instance =
+                Instantiate(sceneSpecificSliderParent, sceneSpecificSliderParent.transform.parent);
+
+            instance.transform.localPosition += new Vector3(0f, i * 30f, 0f);
+            instance.SetActive(true);
+
+            sceneSpecificSliderParentInstances.Add(instance);
+
+            Slider slider = instance.GetComponentInChildren<Slider>();
+            sceneSpecificSliders.Add(slider);
+        }
     }
     public void OnSceneSpecificSliderChange()
     {
-        cameraState.hypersceneRenderer.OnSceneSpecificSliderUpdate(sceneSpecificSlider.value);
+        cameraState.hypersceneRenderer.OnSceneSpecificSliderUpdate(sceneSpecificSliders.Select(s => s.value).ToArray());
     }
-    public void SetSceneSpecificSliderValue(float value)
+    public void SetSceneSpecificSliderValues(float[] values)
     {
-        sceneSpecificSlider.SetValueWithoutNotify(value);
+        for (int i = 0; i < values.Length; i++)
+        {
+            sceneSpecificSliders[i].SetValueWithoutNotify(values[i]);
+        }
     }
 
     public void SetPositionTextActive(bool active)

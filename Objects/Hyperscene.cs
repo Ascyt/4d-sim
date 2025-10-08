@@ -34,7 +34,7 @@ public abstract class Hyperscene
     /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
     public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) Update() { return (null, null); }
 
-    public virtual bool ShowSceneSlider => false;
+    public virtual int SceneSliderCount => 0;
     /// <returns>(normal objects to rerender, fixed objects to rerender)</returns>
-    public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSliderUpdate(float value) { return (null, null); }
+    public virtual (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSlidersUpdate(float[] values) { return (null, null); }
 }

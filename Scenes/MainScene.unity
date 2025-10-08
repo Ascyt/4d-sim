@@ -13475,10 +13475,10 @@ GameObject:
   - component: {fileID: 963194233}
   - component: {fileID: 963194236}
   - component: {fileID: 963194237}
-  - component: {fileID: 963194238}
   - component: {fileID: 963194241}
   - component: {fileID: 963194240}
   - component: {fileID: 963194239}
+  - component: {fileID: 963194242}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -13690,27 +13690,6 @@ MonoBehaviour:
   rotation:
     l: {x: 0, y: 0, z: 0, w: 0}
     r: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &963194238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bdc1b59ad45a4442a93110e474f57cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 1
-  MoveRight: 0
-  MoveLeft: 0
-  MoveUp: 0
-  MoveDown: 0
-  MoveForwards: 0
-  MoveBackwards: 0
-  MoveAna: 0
-  MoveKata: 0
 --- !u!114 &963194239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13752,6 +13731,27 @@ MonoBehaviour:
   tesseractRotation:
     l: {x: 0, y: 0, z: 0, w: 1}
     r: {x: 0, y: 0, z: 0, w: 1}
+--- !u!114 &963194242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14dab7977ce0b342aa020b71435824f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 1
+  MoveRight: 0
+  MoveLeft: 0
+  MoveUp: 0
+  MoveDown: 0
+  MoveForwards: 0
+  MoveBackwards: 0
+  MoveAna: 0
+  MoveKata: 0
 --- !u!1 &976932914
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,7 @@ public class HypersceneRenderer : MonoBehaviour
         Fixed16Cell,
         FixedExtrudingCube,
         FixedCliffordTorus,
+        FixedDuoPrism,
         FixedRotationalPlanes
     }
 
@@ -75,9 +77,9 @@ public class HypersceneRenderer : MonoBehaviour
 
         RerenderSpecificObjects(rerenderObjects.Item1, rerenderObjects.Item2);
     }
-    public void OnSceneSpecificSliderUpdate(float value)
+    public void OnSceneSpecificSliderUpdate(float[] values)
     {
-        (HashSet<Hyperobject>?, HashSet<Hyperobject>?) rerenderObjects = hyperscene!.OnSceneSliderUpdate(value);
+        (HashSet<Hyperobject>?, HashSet<Hyperobject>?) rerenderObjects = hyperscene!.OnSceneSlidersUpdate(values);
 
         RerenderSpecificObjects(rerenderObjects.Item1, rerenderObjects.Item2);
     }
@@ -153,6 +155,9 @@ public class HypersceneRenderer : MonoBehaviour
             case HypersceneOption.FixedCliffordTorus:
                 hyperscene = new FixedCliffordTorusHyperscene();
                 break;
+            case HypersceneOption.FixedDuoPrism:
+                hyperscene = new FixedDuoPrismHyperscene();
+                break;
             case HypersceneOption.FixedRotationalPlanes:
                 hyperscene = new FixedRotationalPlanesHyperscene();
                 break;
@@ -170,12 +175,12 @@ public class HypersceneRenderer : MonoBehaviour
 
         cameraPosition.enabled = !hyperscene.IsFixed;
         cameraState.sceneUiHandler.SetPositionTextActive(!hyperscene.IsFixed);
-        cameraState.sceneUiHandler.SetSceneSpecificSliderActive(hyperscene.ShowSceneSlider);
-        cameraState.sceneUiHandler.SetSceneSpecificSliderValue(0f);
+        cameraState.sceneUiHandler.SetSceneSpecificSlidersActive(hyperscene.SceneSliderCount);
+        cameraState.sceneUiHandler.SetSceneSpecificSliderValues(new float[hyperscene.SceneSliderCount]);
 
         RenderObjectsInitially();
 
-        OnSceneSpecificSliderUpdate(0f);
+        OnSceneSpecificSliderUpdate(new float[hyperscene.SceneSliderCount]);
     }
 
     public void RerenderAll()

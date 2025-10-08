@@ -34,12 +34,12 @@ public class FixedCliffordTorusHyperscene : Hyperscene
         _fixedObjects.Add(extrudingObject);
     }
 
-    public override bool ShowSceneSlider => true;
-    public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSliderUpdate(float value)
+    public override int SceneSliderCount => 1;
+    public override (HashSet<Hyperobject>?, HashSet<Hyperobject>?) OnSceneSlidersUpdate(float[] values)
     {
         extrudingObject.connectedVertices = new ConnectedVertices[]
         {
-            CliffordTorus.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, extrudingObject.connectedVertices[0].color, new Vector4(value, 1f, 1f, 1f) / 1.125f)
+            CliffordTorus.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, extrudingObject.connectedVertices[0].color, new Vector4(values[0], 1f, 1f, 1f) / 1.125f)
         };
 
         return (null, new() { extrudingObject });
