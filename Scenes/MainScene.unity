@@ -13796,7 +13796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85dceb617d077ab4fb14ce946f947c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fov: 0
+  fov: 90
 --- !u!114 &963194237
 MonoBehaviour:
   m_ObjectHideFlags: 0

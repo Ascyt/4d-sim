@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class DuoPrism : Hyperobject
+public class Duoprism : Hyperobject
 {
-    public DuoPrism(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int schlaefliP, int schlaefliQ, Vector4? scale = null) : base(new ConnectedVertices[]
+    public Duoprism(Vector4 position, ConnectedVertices.ConnectionMethod connectionMethod, Color color, int schlaefliP, int schlaefliQ, Vector4? scale = null) : base(new ConnectedVertices[]
     {
         GetConnectedVertices(connectionMethod, color, schlaefliP, schlaefliQ, scale)
     }, position)

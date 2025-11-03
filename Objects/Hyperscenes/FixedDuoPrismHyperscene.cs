@@ -7,11 +7,11 @@ using UnityEngine;
 /// <summary>
 /// Includes a Clifford Torus that can be extruded from a cylinder using the scene slider.
 /// </summary>
-public class FixedDuoPrismHyperscene : Hyperscene
+public class FixedDuoprismHyperscene : Hyperscene
 {
     private const int SCHLAEFLI_P = 3;
 
-    private readonly DuoPrism obj = new(
+    private readonly Duoprism obj = new(
         Vector4.zero,
         ConnectedVertices.ConnectionMethod.Wireframe,
         Color.white,
@@ -33,7 +33,7 @@ public class FixedDuoPrismHyperscene : Hyperscene
     public override bool IsFixed => true;
     public override bool IsOrthographic => false;
 
-    public FixedDuoPrismHyperscene()
+    public FixedDuoprismHyperscene()
     {
         _fixedObjects.Add(obj);
     }
@@ -46,7 +46,7 @@ public class FixedDuoPrismHyperscene : Hyperscene
 
         obj.connectedVertices = new ConnectedVertices[]
         {
-            DuoPrism.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, obj.connectedVertices[0].color, 
+            Duoprism.GetConnectedVertices(ConnectedVertices.ConnectionMethod.Wireframe, obj.connectedVertices[0].color, 
             schlaefliP, schlaefliQ, 
             Vector4.one / 1.125f)
         };
